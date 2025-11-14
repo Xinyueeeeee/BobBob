@@ -10,12 +10,12 @@ import SwiftUI
 struct OnboardingView: View {
     var body: some View {
         TabView{
-        //eg
-            //IntroductionScreenView(title: <#T##String#>, description: <#T##String#>, imageName: <#T##String#>, isLastPage: <#T##Bool#>)
+       
        //page1
-            //IntroductionScreenView(title: "Welcome", description: "A task organiser that adapts to the way you acually work", imageName: <#T##String#>, isLastPage: false)
+            IntroductionScreenView(title: "WELCOME", description: "A task organiser that adapts to the way you acually work", imageName: "", isStartingPage: false, isLastPage: false)
+        //page2
+            IntroductionScreenView(title: "", description: "Find your working style", imageName: "", isStartingPage: true, isLastPage: false)
             
-            //IntroductionScreenView(title: <#T##String#>, description: <#T##String#>, imageName: <#T##String#>, isLastPage: <#T##Bool#>)
         }
         .tabViewStyle(PageTabViewStyle())
         .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
@@ -25,7 +25,9 @@ struct IntroductionScreenView : View {
     let title : String
     let description : String
     let imageName : String
+    let isStartingPage: Bool
     let isLastPage : Bool
+  
     @State private var isSheetPresented = false
     
     var body : some View {
@@ -42,6 +44,19 @@ struct IntroductionScreenView : View {
             .multilineTextAlignment(.center)
             .padding(.horizontal)
         
+            if isStartingPage {
+                Button {
+                } label: {
+                    Text("NEXT")
+                        .foregroundColor(.white)
+                        .font(.headline)
+                        .padding()
+                        .frame(minWidth:0,maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(20)
+                        .shadow(color:Color.black.opacity(0.3),radius: 5, x:0,y:3)
+                }
+            }
             if isLastPage {
                 Button {
                     
