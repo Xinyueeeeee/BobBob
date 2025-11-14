@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct addTasksView: View {
+    
+    @Environment(\.dismiss) var dismiss
+    
     @State private var name: String = ""
     @State private var deadline: Date = Date()
     @State private var duration: String = ""
@@ -91,7 +94,7 @@ struct addTasksView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
-                        // save action
+                        dismiss()
                     }
                 }
             }

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TasksView: View {
-    @State private var showingSheet = false
     
     var body: some View {
         NavigationStack{
