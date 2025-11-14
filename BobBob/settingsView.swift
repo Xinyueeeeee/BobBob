@@ -18,27 +18,22 @@ struct settingsView: View {
                     Form {
                         Section(header: Text("general")) {
                             Text("notifications")
-                        }.listRowBackground(Color.white)
+                        }
 
                         Section(header: Text("integrations")) {
                             Text("apple calender")
-                        }.listRowBackground(Color.white)
+                        }
                         
                         Section(header: Text("personal information")) {
                             Text("habitual styles")
                             Text("chronotype")
                             Text("meal timings")
                             Text("other activities")
-                        }.listRowBackground(Color.white)
+                        }
                     }
                 }.navigationTitle("Settings")
             }
-            LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            
         }
     }
 }
