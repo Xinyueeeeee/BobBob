@@ -21,7 +21,19 @@ struct TasksView: View {
                 .ignoresSafeArea()
                 .navigationTitle(Text("Tasks"))
                 VStack {
-                    
+                    Button(action: {
+                        print("Circular button tapped!")
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(
+                                Circle()
+                                    .fill(Color.blue)
+                            )
+                            .frame(width: 60, height: 60)
+                    }
                 }
             }
         }
