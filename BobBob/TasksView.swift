@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct TasksView: View {
+    @State private var showingSheet = false
+    
     var body: some View {
-        
         ZStack {
             Color.blue.opacity(0.3)
                 .ignoresSafeArea()
@@ -21,12 +22,33 @@ struct TasksView: View {
                     Spacer()
                 }
                 Spacer()
+                Button("Show Sheet") {
+                    showingSheet.toggle()
                 }
+            }
+            .sheet(isPresented: $showingSheet) {
+                SheetView()
+            }
             .padding()
         }
     }
 }
 
-#Preview {
-    TasksView()
+struct SheetView: View {
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack {
+            Text("Welcome to the Sheet!")
+                .font(.title)
+                .padding()
+            
+            Button("Done") {
+                dismiss()
+            }
+        }
+    }
+    #Preview {
+        TasksView()
+    }
 }
