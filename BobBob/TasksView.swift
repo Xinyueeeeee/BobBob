@@ -11,29 +11,22 @@ struct TasksView: View {
     @State private var showingSheet = false
     
     var body: some View {
-        ZStack {
-            Color.blue.opacity(0.3)
+        NavigationStack {
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
                 .ignoresSafeArea()
-            VStack {
-                HStack {
-                    Text("Tasks")
-                        .bold()
-                        .font(.largeTitle)
-                    Spacer()
-                }
-                Spacer()
-                Button("Show Sheet") {
-                    showingSheet.toggle()
+                .navigationTitle(Text("Tasks"))
+                VStack {
+                    
                 }
             }
-            .sheet(isPresented: $showingSheet) {
-                SheetView()
-            }
-            .padding()
         }
     }
 }
-
 struct SheetView: View {
     @Environment(\.dismiss) var dismiss
     
@@ -48,7 +41,7 @@ struct SheetView: View {
             }
         }
     }
-    #Preview {
-        TasksView()
-    }
+}
+#Preview {
+    TasksView()
 }
