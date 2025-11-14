@@ -46,8 +46,8 @@ struct IntroductionScreenView : View {
         }
         
     }
-    
-    #Preview {
-        ContentView()
-    }
+}
+
+#Preview {
+    ContentView()
 }

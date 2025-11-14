@@ -11,13 +11,8 @@ struct TasksView: View {
     @State private var showingSheet = false
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+        ZStack {
+            Color.blue.opacity(0.3)
                 .ignoresSafeArea()
                 .navigationTitle(Text("Tasks"))
                 VStack {
@@ -39,6 +34,7 @@ struct TasksView: View {
         }
     }
 }
+
 struct SheetView: View {
     @Environment(\.dismiss) var dismiss
     
@@ -54,6 +50,7 @@ struct SheetView: View {
         }
     }
 }
+
 #Preview {
     TasksView()
 }
