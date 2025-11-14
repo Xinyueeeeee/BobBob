@@ -11,14 +11,16 @@ struct TasksView: View {
     @State private var showingSheet = false
     
     var body: some View {
-        ZStack {
-            Color.blue.opacity(0.3)
+        NavigationStack{
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
                 .ignoresSafeArea()
-                .navigationTitle(Text("Tasks"))
-                VStack {
-                    Button(action: {
-                        print("Circular button tapped!")
-                    }) {
+                
+                NavigationLink(destination: addTasksView()) {
                         Image(systemName: "plus")
                             .font(.title)
                             .foregroundColor(.white)
@@ -28,27 +30,13 @@ struct TasksView: View {
                                     .fill(Color.blue)
                             )
                             .frame(width: 60, height: 60)
-                    }
                 }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                    .padding()
+                }.navigationTitle(Text("Tasks"))
             }
         }
     }
-
-struct SheetView: View {
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        VStack {
-            Text("Welcome to the Sheet!")
-                .font(.title)
-                .padding()
-            
-            Button("Done") {
-                dismiss()
-            }
-        }
-    }
-}
 
 #Preview {
     TasksView()
