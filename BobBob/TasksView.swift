@@ -33,7 +33,6 @@ struct TasksView: View {
             }
         }
     }
-}
 
 struct SheetView: View {
     @Environment(\.dismiss) var dismiss
