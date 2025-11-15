@@ -58,24 +58,30 @@ struct addTasksView: View {
                                 .cornerRadius(12)
                         }
                         
-                        HStack {
-                            Picker("Hours", selection: $selectedHours) {
-                                ForEach(0...maxHours, id:\.self) { hour in
-                                    Text("\(hour)h").tag(hour)
+                        VStack(alignment: .leading) {
+                            Text("duration")
+                                .font(.headline)
+                            HStack {
+                                Picker("Hours", selection: $selectedHours) {
+                                    ForEach(0...maxHours, id:\.self) { hour in
+                                        Text("\(hour)h").tag(hour)
+                                    }
                                 }
-                            }
-                            .pickerStyle(.wheel)
-                            
-                            Picker("Minutes", selection: $selectedMinutes) {
-                                ForEach(0...maxMinutes, id:\.self) { minute in
-                                    Text("\(minute)m").tag(minute)
+                                .pickerStyle(.wheel)
+                                
+                                Picker("Minutes", selection: $selectedMinutes) {
+                                    ForEach(0...maxMinutes, id:\.self) { minute in
+                                        Text("\(minute)m").tag(minute)
+                                    }
                                 }
+                                .pickerStyle(.wheel)
                             }
-                            .pickerStyle(.wheel)
+                            .onChange(of: selectedHours) { updateTotalSeconds() }
+                            .onChange(of: selectedMinutes) { updateTotalSeconds() }
+                            .onAppear(perform: setInitialSelections)
+                            .background(Color.white)
+                            .cornerRadius(12)
                         }
-                        .onChange(of: selectedHours) { updateTotalSeconds() }
-                        .onChange(of: selectedMinutes) { updateTotalSeconds() }
-                        .onAppear(perform: setInitialSelections)
                         
                         Toggle(isOn: $prefersWorkingTime) {
                             Text("preferable working time")
