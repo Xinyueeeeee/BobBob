@@ -437,7 +437,9 @@ struct RestDaysView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-        
+        Text("When do you rest?")
+                .font(.headline)
+                .foregroundColor(.gray)
             HStack {
                 Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
                 Text("Start Date").bold().frame(maxWidth: .infinity, alignment: .leading)
@@ -482,9 +484,8 @@ struct RestDaysView: View {
                 }
                 
                 Spacer()
-                Button(action: {
-                    print("Get started pressed")
-                }) {
+                NavigationLink(destination: CalendarView())
+                {
                     Text("Get started!")
                         .font(.headline)
                         .foregroundColor(.white)
