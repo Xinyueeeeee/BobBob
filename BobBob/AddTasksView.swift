@@ -34,7 +34,7 @@ struct addTasksView: View {
                         Group {
                             Text("name")
                                 .font(.headline)
-                            TextField("", text: $name)
+                            TextField("e.g math project", text: $name)
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(12)
