@@ -60,6 +60,12 @@ struct ChronotypeView2: View {
                 .shadow(color: .black.opacity(0.1), radius: 4)
             }
             .padding(.horizontal)
+            Spacer()
+
+            Text("Different people have different working styles.")
+                .font(.footnote)
+                .foregroundColor(.gray)
+
         }
         .navigationTitle("Chronotype")
     }
