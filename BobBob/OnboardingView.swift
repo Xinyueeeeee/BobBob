@@ -25,6 +25,8 @@ struct OnboardingView: View {
                 
                 NapTimeView()
                 
+                MealTimeView()
+                
             }
             .tabViewStyle(PageTabViewStyle())
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
@@ -128,6 +130,74 @@ struct NapTimeView: View {
         }
     }
 }
+
+import SwiftUI
+
+struct MealTimeView: View {
+    @State private var selectedMeal: MealType? = nil
+    @State private var breakfastTime = Date()
+    @State private var lunchTime = Date()
+    @State private var dinnerTime = Date()
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            
+            Text("When do you have your meals?")
+                .font(.title3)
+                .bold()
+            
+            mealButton(title: "Breakfast", meal: .breakfast)
+            if selectedMeal == .breakfast {
+                DatePicker("",
+                           selection: $breakfastTime,
+                           displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.wheel)
+            }
+            
+            mealButton(title: "Lunch", meal: .lunch)
+            if selectedMeal == .lunch {
+                DatePicker("",
+                           selection: $lunchTime,
+                           displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.wheel)
+            }
+            
+            mealButton(title: "Dinner", meal: .dinner)
+            if selectedMeal == .dinner {
+                DatePicker("",
+                           selection: $dinnerTime,
+                           displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.wheel)
+            }
+            
+            Spacer()
+        }
+        .padding()
+    }
+    
+   
+    @ViewBuilder
+    func mealButton(title: String, meal: MealType) -> some View {
+        Button {
+            withAnimation {
+                selectedMeal = (selectedMeal == meal) ? nil : meal
+            }
+        } label: {
+            Text(title)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(selectedMeal == meal ? Color.blue : Color.white)
+                .foregroundColor(selectedMeal == meal ? .white : .black)
+                .cornerRadius(12)
+                .shadow(radius: 2)
+        }
+    }
+}
+
+enum MealType {
+    case breakfast, lunch, dinner
+}
+
 
 #Preview {
     OnboardingView()
