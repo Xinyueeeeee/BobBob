@@ -28,7 +28,7 @@ struct settingsView: View {
                         }
                         
                         Section(header: Text("personal information")) {
-                            NavigationLink(destination: HabitualStyleView()) {
+                            NavigationLink(destination: HabitualStyleView2()) {
                                 Text("habitual styles")
                             }
                             NavigationLink(destination: ChronotypeView()) {
@@ -37,7 +37,7 @@ struct settingsView: View {
                             NavigationLink(destination: MealTimeView()) {
                                 Text("meal timings")
                             }
-                            NavigationLink(destination: notifsView()) {
+                            NavigationLink(destination: ActivitiesView()) {
                                 Text("other activities")
                             }
                         }
