@@ -21,7 +21,7 @@ struct AddActivitiesView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    // Your form fields here
+                   
                     Text("Activity Name").font(.headline)
                     TextField("e.g. Gym", text: $name)
                         .padding()
@@ -74,7 +74,7 @@ struct AddActivitiesView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .padding()
-                .frame(maxWidth: .infinity) // <- ensures full width
+                .frame(maxWidth: .infinity)
             }
             .navigationTitle("Add Activity")
             .toolbar {
