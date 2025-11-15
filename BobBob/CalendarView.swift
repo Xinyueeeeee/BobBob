@@ -25,10 +25,11 @@ struct CalendarView: View {
                 VStack(spacing: 16) {
                     Spacer().frame(height: 80)
                     
-                    VStack(spacing: 12) {
+                    
+                    VStack(spacing: 8) {
                         HStack {
                             Text(monthTitle(currentDate))
-                                .font(.system(size: 28, weight: .bold))
+                                .font(.system(size: 34, weight: .bold))
                                 .foregroundColor(.black)
                             Spacer()
                         }
@@ -37,16 +38,21 @@ struct CalendarView: View {
                         HStack {
                             Button { changeMonth(-1) } label: {
                                 Image(systemName: "chevron.left")
+                                    .font(.title2)
                                     .foregroundColor(.black)
                             }
                             Spacer()
                             Button { changeMonth(1) } label: {
                                 Image(systemName: "chevron.right")
+                                    .font(.title2)
                                     .foregroundColor(.black)
                             }
                         }
                         .padding(.horizontal)
-                        
+                    }
+                    
+                    // White box with weekdays and grid
+                    VStack(spacing: 12) {
                         HStack {
                             ForEach(weekdaySymbols(), id: \.self) { day in
                                 Text(day)
