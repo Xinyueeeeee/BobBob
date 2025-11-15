@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct OnboardingView: View {
     var body: some View {
         NavigationStack {
@@ -52,10 +50,10 @@ struct IntroductionScreenView2: View {
             Spacer()
             Text("Discover")
                 .font(.largeTitle).bold()
-
+            
             Text("your working style")
                 .padding(.bottom, 40)
-
+            
             NavigationLink(destination: HabitualStyleView()) {
                 Text("Let's get started!")
                     .frame(maxWidth: .infinity)
@@ -64,28 +62,94 @@ struct IntroductionScreenView2: View {
                     .cornerRadius(10)
             }
             .padding(.horizontal)
-
+            
             Spacer()
         }
         .padding()
         .background(Color(.systemBlue).opacity(0.2))
     }
 }
-struct HabitualStyleView: View {
-    var body: some View {
-        VStack {
-            Text("What is your habitual style?")
-                .font(.headline)
+    struct HabitualStyleView: View {
+        @State private var selectedStyle: String? = nil
 
-            Spacer()
+        var body: some View {
+            VStack(spacing: 30) {
 
-            NavigationLink("Next", destination: ChronotypeView())
-                .buttonStyle(.borderedProminent)
+                Text("What is your habitual style?")
+                    .font(.title3)
+                    .bold()
+                    .padding(.top)
+
+               
+                Button(action: {
+                    selectedStyle = "Hopper"
+                }) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Hopper")
+                            .font(.headline)
+                            .foregroundColor(selectedStyle == "Hopper" ? .white : .black)
+
+                        Text("Someone who usually focuses for short bursts of time and prefers breaking activities into multiple sessions.")
+                            .font(.subheadline)
+                            .foregroundColor(selectedStyle == "Hopper" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(selectedStyle == "Hopper" ? Color.blue : Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
+                }
+                .padding(.horizontal)
+
+
+                
+                Button(action: {
+                    selectedStyle = "Hyperfocus"
+                }) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Hyperfocus")
+                            .font(.headline)
+                            .foregroundColor(selectedStyle == "Hyperfocus" ? .white : .black)
+
+                        Text("Someone who prefers focusing for longer periods of time and can finish tasks in a single session.")
+                            .font(.subheadline)
+                            .foregroundColor(selectedStyle == "Hyperfocus" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(selectedStyle == "Hyperfocus" ? Color.blue : Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
+                }
+                .padding(.horizontal)
+
+
+                Spacer()
+
+                Text("Different people have different working styles.")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+
+               
+                NavigationLink(destination: ChronotypeView()) {
+                    Text("Next")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+
+            }
+            .navigationTitle("Habitual Style")
         }
-        .padding()
-        .navigationTitle("Habitual Style")
     }
-}
+
 struct ChronotypeView: View {
     var body: some View {
         VStack {
