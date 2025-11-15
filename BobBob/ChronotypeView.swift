@@ -62,7 +62,7 @@ struct ChronotypeView2: View {
             .padding(.horizontal)
             Spacer()
 
-            Text("Different people have different working styles.")
+            Text("Different people prefer working at different time periods.")
                 .font(.footnote)
                 .foregroundColor(.gray)
 

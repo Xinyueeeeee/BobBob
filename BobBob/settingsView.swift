@@ -34,8 +34,11 @@ struct settingsView: View {
                             NavigationLink(destination: ChronotypeView2()) {
                                 Text("chronotype")
                             }
-                            NavigationLink(destination: MealTimeView()) {
+                            NavigationLink(destination: MealTimeView2()) {
                                 Text("meal timings")
+                            }
+                            NavigationLink(destination: NapTimeView2()) {
+                                Text("sleep schedule")
                             }
                             NavigationLink(destination: ActivitiesView()) {
                                 Text("other activities")
