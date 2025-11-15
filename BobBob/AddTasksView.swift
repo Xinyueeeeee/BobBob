@@ -101,7 +101,7 @@ struct addTasksView: View {
                         VStack(alignment: .leading) {
                             Text("importance")
                                 .font(.headline)
-                            Slider(value: $importance)
+                            Slider(value: $importance, in: 0...1, step: 0.5)
                             HStack {
                                 Text("Most important")
                                 Spacer()
