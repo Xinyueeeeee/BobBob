@@ -72,7 +72,7 @@ struct IntroductionScreenView2: View {
         .padding()
     }
 }
-    struct HabitualStyleView: View {
+struct HabitualStyleView: View {
         @State private var selectedStyle: String? = nil
 
         var body: some View {
@@ -261,8 +261,6 @@ struct NapTimeView: View {
         .navigationTitle("Sleep Time")
     }
 }
-import SwiftUI
-
 struct MealTimeView: View {
     @State private var selectedMeal: String? = nil
     @State private var breakfastTime = Date()
@@ -427,24 +425,85 @@ struct Activity: Identifiable {
     var regularity: String
     var time: Date
 }
-
+struct RestActivity: Identifiable {
+    let id = UUID()
+    var name: String
+    var startDate: Date
+    var endDate: Date
+}
 struct RestDaysView: View {
+    @State private var restActivities: [RestActivity] = []
+    @State private var showingAddSheet = false
+    
     var body: some View {
-        VStack {
-            Text("Rest Days")
-                .font(.headline)
-
-            Spacer()
-
-            Button("Get started!") {
-                print("Done")
+        VStack(spacing: 0) {
+        
+            HStack {
+                Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
+                Text("Start Date").bold().frame(maxWidth: .infinity, alignment: .leading)
+                Text("End Date").bold().frame(maxWidth: .infinity, alignment: .leading)
             }
-            .buttonStyle(.borderedProminent)
+            .padding()
+            .background(Color.white)
+            .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+            
+            Divider()
+            
+            ScrollView {
+                VStack(spacing: 10) {
+                    ForEach(restActivities) { activity in
+                        HStack {
+                            Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
+                            Text(activity.startDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
+                            Text(activity.endDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(8)
+                        .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
+                    }
+                }
+                .padding()
+            }
+            
+            Spacer()
+            HStack {
+                Button(action: {
+                    showingAddSheet = true
+                }) {
+                    Image(systemName: "plus")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue)
+                        .clipShape(Circle())
+                        .shadow(radius: 3)
+                }
+                
+                Spacer()
+                Button(action: {
+                    print("Get started pressed")
+                }) {
+                    Text("Get started!")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            }
+            .padding()
         }
-        .padding()
         .navigationTitle("Rest Days")
+        .sheet(isPresented: $showingAddSheet) {
+            AddRestActivityView(restActivities: $restActivities)
+        }
     }
 }
+
 
 #Preview {
     OnboardingView()
