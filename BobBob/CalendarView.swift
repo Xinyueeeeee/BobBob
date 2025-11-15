@@ -23,7 +23,7 @@ struct CalendarView: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 16) {
-                    Spacer().frame(height: 80) // Move calendar down by adding space
+                    Spacer().frame(height: 80)
                     
                     VStack(spacing: 12) {
                         HStack {
