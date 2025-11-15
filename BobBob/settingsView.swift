@@ -31,7 +31,7 @@ struct settingsView: View {
                             NavigationLink(destination: HabitualStyleView2()) {
                                 Text("habitual styles")
                             }
-                            NavigationLink(destination: ChronotypeView()) {
+                            NavigationLink(destination: ChronotypeView2()) {
                                 Text("chronotype")
                             }
                             NavigationLink(destination: MealTimeView()) {
