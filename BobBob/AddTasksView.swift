@@ -13,11 +13,18 @@ struct addTasksView: View {
     
     @State private var name: String = ""
     @State private var deadline: Date = Date()
-    @State private var duration: String = ""
+    
+    @Binding var totalSeconds: Int
+    @State private var selectedHours: Int = 0
+    @State private var selectedMinutes: Int = 0
+    
+    let maxHours = 23
+    let maxMinutes = 59
+    
     @State private var prefersWorkingTime: Bool = false
     @State private var selectedDate: Date = Date()
     @State private var importance: Double = 0.5
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -27,19 +34,19 @@ struct addTasksView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-
+                
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
-
+                        
                         Group {
                             Text("name")
                                 .font(.headline)
-                            TextField("", text: $name)
+                            TextField("e.g math project", text: $name)
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(12)
                         }
-
+                        
                         Group {
                             Text("deadline")
                                 .font(.headline)
@@ -50,21 +57,31 @@ struct addTasksView: View {
                                 .background(Color.white)
                                 .cornerRadius(12)
                         }
-
-                        Group {
-                            Text("duration")
-                                .font(.headline)
-                            TextField("e.g. 2h30min", text: $duration)
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(12)
+                        
+                        HStack {
+                            Picker("Hours", selection: $selectedHours) {
+                                ForEach(0...maxHours, id:\.self) { hour in
+                                    Text("\(hour)h").tag(hour)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            
+                            Picker("Minutes", selection: $selectedMinutes) {
+                                ForEach(0...maxMinutes, id:\.self) { minute in
+                                    Text("\(minute)m").tag(minute)
+                                }
+                            }
+                            .pickerStyle(.wheel)
                         }
-
+                        .onChange(of: selectedHours) { updateTotalSeconds() }
+                        .onChange(of: selectedMinutes) { updateTotalSeconds() }
+                        .onAppear(perform: setInitialSelections)
+                        
                         Toggle(isOn: $prefersWorkingTime) {
                             Text("preferable working time")
                                 .font(.headline)
                         }
-
+                        
                         if prefersWorkingTime {
                             VStack(alignment: .leading) {
                                 DatePicker("Select time", selection: $selectedDate)
@@ -74,7 +91,7 @@ struct addTasksView: View {
                             .background(Color.white)
                             .cornerRadius(12)
                         }
-
+                        
                         VStack(alignment: .leading) {
                             Text("importance")
                                 .font(.headline)
@@ -100,8 +117,14 @@ struct addTasksView: View {
             }
         }
     }
+    private func setInitialSelections() {
+        selectedHours = totalSeconds / 3600
+        selectedMinutes = (totalSeconds % 3600) / 60
+    }
+    private func updateTotalSeconds() {
+        totalSeconds = selectedHours * 3600 + selectedMinutes * 60
+    }
 }
-
 #Preview {
-    addTasksView()
+    addTasksView(totalSeconds: .constant(0))
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TasksView: View {
+    @Binding var totalSeconds: Int
     
     var body: some View {
         NavigationStack{
@@ -19,7 +20,7 @@ struct TasksView: View {
                 )
                 .ignoresSafeArea()
                 
-                NavigationLink(destination: addTasksView()) {
+                NavigationLink(destination: addTasksView( totalSeconds: $totalSeconds)) {
                         Image(systemName: "plus")
                             .font(.title)
                             .foregroundColor(.white)
@@ -38,5 +39,5 @@ struct TasksView: View {
     }
 
 #Preview {
-    TasksView()
+    TasksView(totalSeconds: .constant(0))
 }
