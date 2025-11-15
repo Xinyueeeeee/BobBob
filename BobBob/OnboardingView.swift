@@ -30,18 +30,20 @@ struct IntroductionCarouselView: View {
 }
 struct IntroductionScreenView1: View {
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Welcome")
-                .font(.largeTitle).bold()
-
-            Text("to a task organiser that adapts to the way you actually work")
-                .multilineTextAlignment(.center)
-                .padding()
-            Spacer()
+        ZStack{
+            VStack {
+                Spacer()
+                Text("Welcome")
+                    .font(.largeTitle).bold()
+                
+                Text("to a task organiser that adapts to the way you actually work")
+                    .multilineTextAlignment(.center)
+                    .padding()
+                Spacer()
+            }
+            .padding()
+           
         }
-        .padding()
-        .background(Color(.systemBlue).opacity(0.2))
     }
 }
 struct IntroductionScreenView2: View {
@@ -60,13 +62,13 @@ struct IntroductionScreenView2: View {
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
             }
             .padding(.horizontal)
             
             Spacer()
         }
         .padding()
-        .background(Color(.systemBlue).opacity(0.2))
     }
 }
     struct HabitualStyleView: View {
@@ -151,35 +153,116 @@ struct IntroductionScreenView2: View {
     }
 
 struct ChronotypeView: View {
+    @State private var selectedChronotype: String? = nil
+
     var body: some View {
-        VStack {
+        VStack(spacing: 30) {
+
             Text("What is your chronotype?")
-                .font(.headline)
+                .font(.title3)
+                .bold()
+                .padding(.top)
+
+            Button(action: {
+                selectedChronotype = "Early Bird"
+            }) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Early Bird")
+                        .font(.headline)
+                        .foregroundColor(selectedChronotype == "Early Bird" ? .white : .black)
+
+                    Text("You prefer starting your day earlier and feel most productive in the morning.")
+                        .font(.subheadline)
+                        .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
+                        .multilineTextAlignment(.leading)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(selectedChronotype == "Early Bird" ? Color.blue : Color.white)
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.1), radius: 4)
+            }
+            .padding(.horizontal)
+           
+            Button(action: {
+                selectedChronotype = "Night Owl"
+            }) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Night Owl")
+                        .font(.headline)
+                        .foregroundColor(selectedChronotype == "Night Owl" ? .white : .black)
+
+                    Text("You focus better later in the day and prefer working at night.")
+                        .font(.subheadline)
+                        .foregroundColor(selectedChronotype == "Night Owl" ? .white.opacity(0.9) : .black.opacity(0.7))
+                        .multilineTextAlignment(.leading)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(selectedChronotype == "Night Owl" ? Color.blue : Color.white)
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.1), radius: 4)
+            }
+            .padding(.horizontal)
 
             Spacer()
-
-            NavigationLink("Next", destination: NapTimeView())
-                .buttonStyle(.borderedProminent)
+            
+            NavigationLink(destination: NapTimeView()) {
+                Text("Next")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .background(Color.blue)
+                    .cornerRadius(10)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
-        .padding()
         .navigationTitle("Chronotype")
     }
 }
+
+
+
 struct NapTimeView: View {
+    @State private var sleepTime = Date()
+    
     var body: some View {
         VStack {
             Text("What time do you go to sleep?")
                 .font(.headline)
-
+                
+            
             Spacer()
-
-            NavigationLink("Next", destination: MealTimeView())
-                .buttonStyle(.borderedProminent)
+            
+            DatePicker(
+                "Select Time",
+                selection: $sleepTime,
+                displayedComponents: .hourAndMinute
+            )
+            .datePickerStyle(.wheel)
+            .labelsHidden()
+            
+            Spacer()
+            
+            NavigationLink(destination: MealTimeView()) {
+                Text("Next")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .background(Color.blue)
+                    .cornerRadius(10)            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
         .padding()
         .navigationTitle("Sleep Time")
     }
 }
+
+
+
 struct MealTimeView: View {
     var body: some View {
         VStack {
