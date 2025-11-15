@@ -15,6 +15,7 @@ struct addTasksView: View {
     @State private var deadline: Date = Date()
     
     @Binding var totalSeconds: Int
+    var onSave: (Task) -> Void
     @State private var selectedHours: Int = 0
     @State private var selectedMinutes: Int = 0
     
@@ -117,6 +118,11 @@ struct addTasksView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
+                        let newTask = Task(name: name,
+                                           deadline: deadline,
+                                           durationSeconds: totalSeconds,
+                                           importance: importance)
+                        onSave(newTask)
                         dismiss()
                     }
                 }
@@ -132,5 +138,6 @@ struct addTasksView: View {
     }
 }
 #Preview {
-    addTasksView(totalSeconds: .constant(0))
+    addTasksView(totalSeconds: .constant(0),
+                 onSave: { _ in })
 }

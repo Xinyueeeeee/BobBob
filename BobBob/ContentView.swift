@@ -15,7 +15,7 @@ struct ContentView: View {
                 CalendarView()
             }
             Tab("tasks",systemImage: "list.bullet"){
-                TasksView(totalSeconds: .constant(0))
+                TasksView()
             }
                     Tab("setttings",systemImage: "gearshape"){
                         settingsView()

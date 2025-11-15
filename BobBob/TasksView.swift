@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct TasksView: View {
-    @Binding var totalSeconds: Int
+    @State private var tasks: [Task] = []
+    @State private var totalSeconds: Int = 0
     
     var body: some View {
         NavigationStack{
@@ -20,7 +21,19 @@ struct TasksView: View {
                 )
                 .ignoresSafeArea()
                 
-                NavigationLink(destination: addTasksView( totalSeconds: $totalSeconds)) {
+                VStack(alignment: .leading) {
+                    ForEach(tasks) { task in
+                        Text(task.name)
+                            .font( .headline)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.white)
+                            .cornerRadius(12)
+                    }
+                    Spacer()
+                }.padding()
+                
+                NavigationLink(destination: addTasksView( totalSeconds: $totalSeconds, onSave: {task in tasks.append(task)})){
                         Image(systemName: "plus")
                             .font(.title)
                             .foregroundColor(.white)
@@ -39,5 +52,5 @@ struct TasksView: View {
     }
 
 #Preview {
-    TasksView(totalSeconds: .constant(0))
+    TasksView()
 }
