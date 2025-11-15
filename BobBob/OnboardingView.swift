@@ -39,6 +39,7 @@ struct IntroductionScreenView1: View {
                 Text("to a task organiser that adapts to the way you actually work")
                     .multilineTextAlignment(.center)
                     .padding()
+                    .foregroundColor(.gray)
                 Spacer()
             }
             .padding()
@@ -55,7 +56,7 @@ struct IntroductionScreenView2: View {
             
             Text("your working style")
                 .padding(.bottom, 40)
-            
+                .foregroundColor(.gray)
             NavigationLink(destination: HabitualStyleView()) {
                 Text("Let's get started!")
                     .frame(maxWidth: .infinity)
@@ -81,7 +82,7 @@ struct IntroductionScreenView2: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
-
+                    .foregroundColor(.gray)
                
                 Button(action: {
                     selectedStyle = "Hopper"
@@ -162,7 +163,7 @@ struct ChronotypeView: View {
                 .font(.title3)
                 .bold()
                 .padding(.top)
-
+                .foregroundColor(.gray)
             Button(action: {
                 selectedChronotype = "Early Bird"
             }) {
@@ -272,7 +273,7 @@ struct MealTimeView: View {
         VStack(spacing: 20) {
             Text("When do you have your meals?")
                 .font(.headline)
-            
+                .foregroundColor(.gray)
             Spacer()
             
             mealButton(title: "Breakfast", isSelected: selectedMeal == "Breakfast", time: $breakfastTime)
@@ -345,20 +346,88 @@ struct MealTimeView: View {
 }
 
 struct ActivitiesView: View {
+    @State private var activities: [Activity] = []
+    @State private var showingAddActivity = false
+    
     var body: some View {
-        VStack {
-            Text("Other scheduled activities")
+        VStack(spacing: 10) {
+            Text("Do you have any recurring activities?")
                 .font(.headline)
-
+                .foregroundColor(.gray)
+            HStack {
+                Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
+                Text("Day").bold().frame(maxWidth: .infinity, alignment: .leading)
+                Text("Regularity").bold().frame(maxWidth: .infinity, alignment: .leading)
+                Text("Time").bold().frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding()
+            .background(Color.white)
+            .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+            
+            Divider()
+            
+            ScrollView {
+                VStack(spacing: 10) {
+                    ForEach(activities) { activity in
+                        HStack {
+                            Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
+                            Text(activity.day).frame(maxWidth: .infinity, alignment: .leading)
+                            Text(activity.regularity).frame(maxWidth: .infinity, alignment: .leading)
+                            Text(activity.time, style: .time).frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(8)
+                        .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
+                    }
+                }
+                .padding()
+            }
+            
             Spacer()
-
-            NavigationLink("Next", destination: RestDaysView())
-                .buttonStyle(.borderedProminent)
+            
+            HStack {
+                Button(action: {
+                    showingAddActivity = true
+                }) {
+                    Image(systemName: "plus")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                
+                Spacer()
+                NavigationLink(destination: RestDaysView()) {
+                    Text("Next")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            .padding()
         }
-        .padding()
         .navigationTitle("Activities")
+        .sheet(isPresented: $showingAddActivity) {
+            AddActivitiesView(activities: $activities)
+        }
     }
 }
+struct Activity: Identifiable {
+    let id = UUID()
+    var name: String
+    var day: String
+    var regularity: String
+    var time: Date
+}
+
 struct RestDaysView: View {
     var body: some View {
         VStack {
