@@ -18,14 +18,27 @@ struct IntroductionCarouselView: View {
     @State private var index = 0
 
     var body: some View {
-        TabView(selection: $index) {
-            IntroductionScreenView1()
-                .tag(0)
+        ZStack{
+            LinearGradient(
+                colors: [
+                    Color(red: 10/255, green: 25/255, blue: 47/255),   // deep navy
+                    Color(red: 25/255, green: 60/255, blue: 120/255)   // soft blue
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
 
-            IntroductionScreenView2()
-                .tag(1)
+                .ignoresSafeArea()
+
+            TabView(selection: $index) {
+                IntroductionScreenView1()
+                    .tag(0)
+                
+                IntroductionScreenView2()
+                    .tag(1)
+            }
+            .tabViewStyle(PageTabViewStyle())
         }
-        .tabViewStyle(PageTabViewStyle())
     }
 }
 struct IntroductionScreenView1: View {
@@ -34,7 +47,9 @@ struct IntroductionScreenView1: View {
             VStack {
                 Spacer()
                 Text("Welcome")
-                    .font(.largeTitle).bold()
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.white)
                 
                 Text("to a task organiser that adapts to the way you actually work")
                     .multilineTextAlignment(.center)
@@ -49,41 +64,51 @@ struct IntroductionScreenView1: View {
 }
 struct IntroductionScreenView2: View {
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Discover")
-                .font(.largeTitle).bold()
-            
-            Text("your working style")
-                .padding(.bottom, 40)
-                .foregroundColor(.gray)
-            NavigationLink(destination: HabitualStyleView()) {
-                Text("Let's get started!")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(10)
-                    .shadow(color: .black.opacity(0.1), radius: 4)
+            VStack {
+                Spacer()
+                Text("Discover")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.white)
+                Text("your working style")
+                    .padding(.bottom, 40)
+                    .foregroundColor(.gray)
+                Spacer()
+                NavigationLink(destination: HabitualStyleView()) {
+                    Text("Let's get started!")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color(red: 180/255, green: 220/255, blue: 255/255))
+                        .cornerRadius(10)
+                        .shadow(color: .black.opacity(0.1), radius: 4)
+                        .foregroundColor(Color(red: 45/255, green: 90/255, blue: 150/255))
+                }
+                
+                .padding(.horizontal)
+                .padding(.bottom,80)
             }
-            .padding(.horizontal)
-            
-            Spacer()
+            .padding()
         }
-        .padding()
     }
-}
 struct HabitualStyleView: View {
-        @State private var selectedStyle: String? = nil
-
-        var body: some View {
+    @State private var selectedStyle: String? = nil
+    
+    var body: some View {
+        ZStack{
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             VStack(spacing: 30) {
-
+                
                 Text("What is your habitual style?")
                     .font(.title3)
                     .bold()
                     .padding(.top)
                     .foregroundColor(.gray)
-               
+                
                 Button(action: {
                     selectedStyle = "Hopper"
                 }) {
@@ -91,7 +116,7 @@ struct HabitualStyleView: View {
                         Text("Hopper")
                             .font(.headline)
                             .foregroundColor(selectedStyle == "Hopper" ? .white : .black)
-
+                        
                         Text("Someone who usually focuses for short bursts of time and prefers breaking activities into multiple sessions.")
                             .font(.subheadline)
                             .foregroundColor(selectedStyle == "Hopper" ? .white.opacity(0.9) : .black.opacity(0.7))
@@ -104,8 +129,8 @@ struct HabitualStyleView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
-
-
+                
+                
                 
                 Button(action: {
                     selectedStyle = "Hyperfocus"
@@ -114,7 +139,7 @@ struct HabitualStyleView: View {
                         Text("Hyperfocus")
                             .font(.headline)
                             .foregroundColor(selectedStyle == "Hyperfocus" ? .white : .black)
-
+                        
                         Text("Someone who prefers focusing for longer periods of time and can finish tasks in a single session.")
                             .font(.subheadline)
                             .foregroundColor(selectedStyle == "Hyperfocus" ? .white.opacity(0.9) : .black.opacity(0.7))
@@ -127,15 +152,15 @@ struct HabitualStyleView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
-
-
+                
+                
                 Spacer()
-
+                
                 Text("Different people have different working styles.")
                     .font(.footnote)
                     .foregroundColor(.gray)
-
-               
+                
+                
                 NavigationLink(destination: ChronotypeView()) {
                     Text("Next")
                         .font(.headline)
@@ -147,83 +172,87 @@ struct HabitualStyleView: View {
                 }
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-
+                
             }
             .navigationTitle("Habitual Style")
         }
     }
-
+}
 struct ChronotypeView: View {
     @State private var selectedChronotype: String? = nil
-
+    
     var body: some View {
-        VStack(spacing: 30) {
-
-            Text("What is your chronotype?")
-                .font(.title3)
-                .bold()
-                .padding(.top)
-                .foregroundColor(.gray)
-            Button(action: {
-                selectedChronotype = "Early Bird"
-            }) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Early Bird")
+        ZStack{
+            VStack(spacing: 30) {
+                
+                Text("What is your chronotype?")
+                    .font(.title3)
+                    .bold()
+                    .padding(.top)
+                    .foregroundColor(.gray)
+                Button(action: {
+                    selectedChronotype = "Early Bird"
+                }) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Early Bird")
+                            .font(.headline)
+                            .foregroundColor(selectedChronotype == "Early Bird" ? .white : .black)
+                        
+                        Text("You prefer starting your day earlier and feel most productive in the morning.")
+                            .font(.subheadline)
+                            .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(selectedChronotype == "Early Bird" ? Color.blue : Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
+                }
+                .padding(.horizontal)
+                
+                Button(action: {
+                    selectedChronotype = "Night Owl"
+                }) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Night Owl")
+                            .font(.headline)
+                            .foregroundColor(selectedChronotype == "Night Owl" ? .white : .black)
+                        
+                        Text("You focus better later in the day and prefer working at night.")
+                            .font(.subheadline)
+                            .foregroundColor(selectedChronotype == "Night Owl" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(selectedChronotype == "Night Owl" ? Color.blue : Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
+                }
+                .padding(.horizontal)
+                
+                Spacer()
+                
+                NavigationLink(destination: NapTimeView()) {
+                    Text("Next")
                         .font(.headline)
-                        .foregroundColor(selectedChronotype == "Early Bird" ? .white : .black)
-
-                    Text("You prefer starting your day earlier and feel most productive in the morning.")
-                        .font(.subheadline)
-                        .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
-                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.blue)
+                        .cornerRadius(10)
                 }
                 .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(selectedChronotype == "Early Bird" ? Color.blue : Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.1), radius: 4)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
-            .padding(.horizontal)
-           
-            Button(action: {
-                selectedChronotype = "Night Owl"
-            }) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Night Owl")
-                        .font(.headline)
-                        .foregroundColor(selectedChronotype == "Night Owl" ? .white : .black)
-
-                    Text("You focus better later in the day and prefer working at night.")
-                        .font(.subheadline)
-                        .foregroundColor(selectedChronotype == "Night Owl" ? .white.opacity(0.9) : .black.opacity(0.7))
-                        .multilineTextAlignment(.leading)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(selectedChronotype == "Night Owl" ? Color.blue : Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.1), radius: 4)
-            }
-            .padding(.horizontal)
-
-            Spacer()
+            .navigationTitle("Chronotype")
             
-            NavigationLink(destination: NapTimeView()) {
-                Text("Next")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                    .background(Color.blue)
-                    .cornerRadius(10)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
-        .navigationTitle("Chronotype")
     }
 }
 
+    
 
 
 struct NapTimeView: View {
