@@ -68,7 +68,9 @@ struct IntroductionScreenView2: View {
                     .padding(.bottom, 40)
                     .foregroundColor(.gray)
                 Spacer()
-                NavigationLink(destination: HabitualStyleView()) {
+                NavigationLink{
+                    HabitualStyleView()
+                }label: {
                     Text("Let's get started!")
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -103,9 +105,9 @@ struct HabitualStyleView: View {
                     .padding(.top)
                     .foregroundColor(.gray)
                 
-                Button(action: {
+                Button {
                     selectedStyle = "Hopper"
-                }) {
+                }label: {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Hopper")
                             .font(.headline)
@@ -126,9 +128,9 @@ struct HabitualStyleView: View {
                 
                 
                 
-                Button(action: {
+                Button{
                     selectedStyle = "Hyperfocus"
-                }) {
+                }label:{
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Hyperfocus")
                             .font(.headline)
@@ -155,7 +157,9 @@ struct HabitualStyleView: View {
                     .foregroundColor(.black.opacity(0.5))
                 
                 
-                NavigationLink(destination: ChronotypeView()) {
+                NavigationLink{
+                    ChronotypeView()
+                }label: {
                     Text("Next")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -192,9 +196,9 @@ struct ChronotypeView: View {
                     .bold()
                     .padding(.top)
                     .foregroundColor(.black).opacity(0.5)
-                Button(action: {
+                Button{
                     selectedChronotype = "Early Bird"
-                }) {
+                }label:{
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Early Bird")
                             .font(.headline)
@@ -213,9 +217,9 @@ struct ChronotypeView: View {
                 }
                 .padding(.horizontal)
                 
-                Button(action: {
+                Button {
                     selectedChronotype = "Night Owl"
-                }) {
+                }label:{
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Night Owl")
                             .font(.headline)
@@ -241,7 +245,9 @@ struct ChronotypeView: View {
                     .font(.footnote)
                     .foregroundColor(.black.opacity(0.5))
                 
-                NavigationLink(destination: NapTimeView()) {
+                NavigationLink{
+                    NapTimeView()
+                }label:{
                     Text("Next")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -310,7 +316,9 @@ struct NapTimeView: View {
                 .font(.footnote)
                 .foregroundColor(.black).opacity(0.5)
             
-            NavigationLink(destination: MealTimeView()) {
+            NavigationLink{
+                MealTimeView()
+            }label:{
                 Text("Next")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -360,7 +368,9 @@ struct MealTimeView: View {
 
                     Spacer()
                     
-                    NavigationLink(destination: ActivitiesView()) {
+                    NavigationLink{
+                        ActivitiesView()
+                    }label:{
                         Text("Next")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -459,7 +469,8 @@ struct ActivitiesView: View {
                         
                         Spacer()
                         
-                        NavigationLink(destination: RestDaysView()) {
+                        NavigationLink{ RestDaysView()
+                        }label: {
                             Text("Next")
                                 .font(.headline)
                                 .foregroundColor(.white)
@@ -554,8 +565,9 @@ struct RestDaysView: View {
                     }
                     
                     Spacer()
-                    NavigationLink(destination: ContentView())
-                    {
+                    NavigationLink{
+                        ContentView()
+                    }label:{
                         Text("Get started!")
                             .font(.headline)
                             .foregroundColor(.white)
