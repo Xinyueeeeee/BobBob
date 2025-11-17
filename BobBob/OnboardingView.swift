@@ -16,7 +16,7 @@ struct OnboardingView: View {
 }
 struct IntroductionCarouselView: View {
     @State private var index = 0
-
+    
     var body: some View {
         ZStack{
             LinearGradient(
@@ -27,9 +27,9 @@ struct IntroductionCarouselView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-
-                .ignoresSafeArea()
-
+            
+            .ignoresSafeArea()
+            
             TabView(selection: $index) {
                 IntroductionScreenView1()
                     .tag(0)
@@ -58,38 +58,38 @@ struct IntroductionScreenView1: View {
                 Spacer()
             }
             .padding()
-           
+            
         }
     }
 }
 struct IntroductionScreenView2: View {
     var body: some View {
-            VStack {
-                Spacer()
-                Text("Discover")
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundColor(.white)
-                Text("your working style")
-                    .padding(.bottom, 40)
-                    .foregroundColor(.gray)
-                Spacer()
-                NavigationLink(destination: HabitualStyleView()) {
-                    Text("Let's get started!")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color(red: 180/255, green: 220/255, blue: 255/255))
-                        .cornerRadius(10)
-                        .shadow(color: .black.opacity(0.1), radius: 4)
-                        .foregroundColor(Color(red: 45/255, green: 90/255, blue: 150/255))
-                }
-                
-                .padding(.horizontal)
-                .padding(.bottom,80)
+        VStack {
+            Spacer()
+            Text("Discover")
+                .font(.largeTitle)
+                .bold()
+                .foregroundColor(.white)
+            Text("your working style")
+                .padding(.bottom, 40)
+                .foregroundColor(.gray)
+            Spacer()
+            NavigationLink(destination: HabitualStyleView()) {
+                Text("Let's get started!")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color(red: 180/255, green: 220/255, blue: 255/255))
+                    .cornerRadius(10)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
+                    .foregroundColor(Color(red: 45/255, green: 90/255, blue: 150/255))
             }
-            .padding()
+            
+            .padding(.horizontal)
+            .padding(.bottom,80)
         }
+        .padding()
     }
+}
 struct HabitualStyleView: View {
     @State private var selectedStyle: String? = nil
     
@@ -266,7 +266,7 @@ struct ChronotypeView: View {
     }
 }
 
-    
+
 
 
 struct NapTimeView: View {
@@ -281,54 +281,60 @@ struct NapTimeView: View {
             )
             .ignoresSafeArea()
             
-        VStack {
-            Text("What time do you go to sleep?")
-                .font(.headline)
-                .foregroundColor(.black).opacity(0.5)
-            
-            Spacer()
-            
-            DatePicker(
-                "Select Time",
-                selection: $sleepTime,
-                displayedComponents: .hourAndMinute
-            )
-            .datePickerStyle(.wheel)
-            .labelsHidden()
-            Text("What time do you wake up?")
-                .font(.headline)
-                .foregroundColor(.black).opacity(0.5)
-            
-            Spacer()
-            
-            DatePicker(
-                "Select Time",
-                selection: $sleepTime,
-                displayedComponents: .hourAndMinute
-            )
-            .datePickerStyle(.wheel)
-            .labelsHidden()
-            
-            Spacer()
-            
-            
-            Text("Different people sleep at different hours.")
-                .font(.footnote)
-                .foregroundColor(.black).opacity(0.5)
-            
-            NavigationLink(destination: MealTimeView()) {
-                Text("Next")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                    .background(Color.blue)
-                .cornerRadius(10)            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            VStack{
+                VStack {
+                    
+                    Spacer()
+                    
+                    Text("What time do you go to sleep?")
+                        .font(.headline)
+                        .foregroundColor(.black).opacity(0.5)
+                    
+                    DatePicker(
+                        "Select Time",
+                        selection: $sleepTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                }.background(Color.white.opacity(0.9))
+                    .cornerRadius(12)
+                
+               padding()
+                
+                VStack{
+                    Text("What time do you wake up?")
+                        .font(.headline)
+                        .foregroundColor(.black).opacity(0.5)
+                    
+                    DatePicker(
+                        "Select Time",
+                        selection: $sleepTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                }.background(Color.white.opacity(0.9))
+                    .cornerRadius(12)
+                
+                Text("Different people sleep at different hours.")
+                    .font(.footnote)
+                    .foregroundColor(.black).opacity(0.5)
+                
+                NavigationLink(destination: MealTimeView()) {
+                    Text("Next")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.blue)
+                    .cornerRadius(10)            }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                
+            }
+            .padding()
+            .navigationTitle("Sleep Time")
         }
-        .padding()
-        .navigationTitle("Sleep Time")
-    }
     }
 }
 struct MealTimeView: View {
@@ -344,14 +350,14 @@ struct MealTimeView: View {
             .ignoresSafeArea()
             
             VStack {
-           Text("When do you have your meals?")
+                Text("When do you have your meals?")
                     .font(.headline)
                     .foregroundColor(.black).opacity(0.5)
                 
                 Spacer()
                 
                 HStack {
-                 
+                    
                     Button {
                         showingAddMeal = true
                     } label: {
@@ -363,7 +369,7 @@ struct MealTimeView: View {
                             .clipShape(Circle())
                             .shadow(radius: 3)
                     }
-
+                    
                     Spacer()
                     
                     NavigationLink(destination: ActivitiesView()) {
@@ -382,7 +388,7 @@ struct MealTimeView: View {
         }
         .sheet(isPresented: $showingAddMeal) {
             AddMealTimeView()
-             
+            
         }
         .navigationTitle("Meal Time")
     }
@@ -396,7 +402,7 @@ struct ActivitiesView: View {
     
     var body: some View {
         ZStack {
-           
+            
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color.blue.opacity(0.2),
@@ -406,7 +412,7 @@ struct ActivitiesView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-
+            
             NavigationStack {
                 VStack(spacing: 20) {
                     
@@ -494,7 +500,7 @@ struct Activity: Identifiable {
     var day: String
     var regularity: String
     var time: Date
-
+    
     var timeFormatted: String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -525,7 +531,7 @@ struct RestDaysView: View {
                 Text("When do you rest?")
                     .font(.headline)
                     .foregroundColor(.black).opacity(0.5)
-               
+                
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(restActivities) { activity in
