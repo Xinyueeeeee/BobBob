@@ -43,6 +43,9 @@ struct settingsView: View {
                             NavigationLink(destination: ActivitiesView()) {
                                 Text("other activities")
                             }
+                            NavigationLink(destination: ActivitiesView()) {
+                                Text("rest days")
+                            }
                         }
                     }
                 }.navigationTitle("Settings")
