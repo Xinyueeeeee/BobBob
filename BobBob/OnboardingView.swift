@@ -183,6 +183,13 @@ struct ChronotypeView: View {
     
     var body: some View {
         ZStack{
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
             VStack(spacing: 30) {
                 
                 Text("What is your chronotype?")
@@ -259,6 +266,14 @@ struct NapTimeView: View {
     @State private var sleepTime = Date()
     
     var body: some View {
+        ZStack{
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
         VStack {
             Text("What time do you go to sleep?")
                 .font(.headline)
@@ -283,11 +298,12 @@ struct NapTimeView: View {
                     .padding(.vertical, 10)
                     .padding(.horizontal, 20)
                     .background(Color.blue)
-                    .cornerRadius(10)            }
+                .cornerRadius(10)            }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
         .padding()
         .navigationTitle("Sleep Time")
+    }
     }
 }
 struct MealTimeView: View {
@@ -297,6 +313,14 @@ struct MealTimeView: View {
     @State private var dinnerTime = Date()
     
     var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
         VStack(spacing: 20) {
             Text("When do you have your meals?")
                 .font(.headline)
@@ -323,7 +347,7 @@ struct MealTimeView: View {
         .padding()
         .navigationTitle("Meal Times")
     }
-    
+}
     @ViewBuilder
     private func mealButton(title: String, isSelected: Bool, time: Binding<Date>) -> some View {
         VStack(spacing: 5) {
@@ -377,73 +401,82 @@ struct ActivitiesView: View {
     @State private var showingAddActivity = false
     
     var body: some View {
-        VStack(spacing: 10) {
-            Text("Do you have any recurring activities?")
-                .font(.headline)
-                .foregroundColor(.gray)
-            HStack {
-                Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
-                Text("Day").bold().frame(maxWidth: .infinity, alignment: .leading)
-                Text("Regularity").bold().frame(maxWidth: .infinity, alignment: .leading)
-                Text("Time").bold().frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding()
-            .background(Color.white)
-            .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+        ZStack{
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
-            Divider()
-            
-            ScrollView {
-                VStack(spacing: 10) {
-                    ForEach(activities) { activity in
-                        HStack {
-                            Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
-                            Text(activity.day).frame(maxWidth: .infinity, alignment: .leading)
-                            Text(activity.regularity).frame(maxWidth: .infinity, alignment: .leading)
-                            Text(activity.time, style: .time).frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.8))
-                        .cornerRadius(8)
-                        .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
-                    }
+            VStack(spacing: 10) {
+                Text("Do you have any recurring activities?")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                HStack {
+                    Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
+                    Text("Day").bold().frame(maxWidth: .infinity, alignment: .leading)
+                    Text("Regularity").bold().frame(maxWidth: .infinity, alignment: .leading)
+                    Text("Time").bold().frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding()
-            }
-            
-            Spacer()
-            
-            HStack {
-                Button(action: {
-                    showingAddActivity = true
-                }) {
-                    Image(systemName: "plus")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
-                        .background(Color.blue)
-                        .cornerRadius(10)
+                .background(Color.white)
+                .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+                
+                Divider()
+                
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(activities) { activity in
+                            HStack {
+                                Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
+                                Text(activity.day).frame(maxWidth: .infinity, alignment: .leading)
+                                Text(activity.regularity).frame(maxWidth: .infinity, alignment: .leading)
+                                Text(activity.time, style: .time).frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 6)
+                            .background(Color.white.opacity(0.8))
+                            .cornerRadius(8)
+                            .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
+                        }
+                    }
+                    .padding()
                 }
                 
                 Spacer()
-                NavigationLink(destination: RestDaysView()) {
-                    Text("Next")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
-                        .background(Color.blue)
-                        .cornerRadius(10)
+                
+                HStack {
+                    Button(action: {
+                        showingAddActivity = true
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    
+                    Spacer()
+                    NavigationLink(destination: RestDaysView()) {
+                        Text("Next")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .padding()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            .padding()
-        }
-        .navigationTitle("Activities")
-        .sheet(isPresented: $showingAddActivity) {
-            AddActivitiesView(activities: $activities)
+            .navigationTitle("Activities")
+            .sheet(isPresented: $showingAddActivity) {
+                AddActivitiesView(activities: $activities)
+            }
         }
     }
 }
@@ -465,71 +498,80 @@ struct RestDaysView: View {
     @State private var showingAddSheet = false
     
     var body: some View {
-        VStack(spacing: 0) {
-        Text("When do you rest?")
-                .font(.headline)
-                .foregroundColor(.gray)
-            HStack {
-                Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
-                Text("Start Date").bold().frame(maxWidth: .infinity, alignment: .leading)
-                Text("End Date").bold().frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding()
-            .background(Color.white)
-            .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+        ZStack{
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
-            Divider()
-            
-            ScrollView {
-                VStack(spacing: 10) {
-                    ForEach(restActivities) { activity in
-                        HStack {
-                            Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
-                            Text(activity.startDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
-                            Text(activity.endDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.8))
-                        .cornerRadius(8)
-                        .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
-                    }
+            VStack(spacing: 0) {
+                Text("When do you rest?")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                HStack {
+                    Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
+                    Text("Start Date").bold().frame(maxWidth: .infinity, alignment: .leading)
+                    Text("End Date").bold().frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding()
-            }
-            
-            Spacer()
-            HStack {
-                Button(action: {
-                    showingAddSheet = true
-                }) {
-                    Image(systemName: "plus")
-                        .font(.title)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .clipShape(Circle())
-                        .shadow(radius: 3)
+                .background(Color.white)
+                .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+                
+                Divider()
+                
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(restActivities) { activity in
+                            HStack {
+                                Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
+                                Text(activity.startDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
+                                Text(activity.endDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 6)
+                            .background(Color.white.opacity(0.8))
+                            .cornerRadius(8)
+                            .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
+                        }
+                    }
+                    .padding()
                 }
                 
                 Spacer()
-                NavigationLink(destination: CalendarView())
-                {
-                    Text("Get started!")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
-                        .background(Color.blue)
-                        .cornerRadius(10)
+                HStack {
+                    Button(action: {
+                        showingAddSheet = true
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .clipShape(Circle())
+                            .shadow(radius: 3)
+                    }
+                    
+                    Spacer()
+                    NavigationLink(destination: ContentView())
+                    {
+                        Text("Get started!")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .padding()
             }
-            .padding()
-        }
-        .navigationTitle("Rest Days")
-        .sheet(isPresented: $showingAddSheet) {
-            AddRestActivityView(restActivities: $restActivities)
+            .navigationTitle("Rest Days")
+            .sheet(isPresented: $showingAddSheet) {
+                AddRestActivityView(restActivities: $restActivities)
+            }
         }
     }
 }
