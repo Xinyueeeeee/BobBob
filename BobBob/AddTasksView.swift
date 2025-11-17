@@ -26,6 +26,8 @@ struct addTasksView: View {
     @State private var selectedDate: Date = Date()
     @State private var importance: Double = 0.5
     
+    var existingTask: Task?
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -112,6 +114,14 @@ struct addTasksView: View {
                         }
                     }
                     .padding()
+                    .onAppear {
+                        if let task = existingTask {
+                            name = task.name
+                            deadline = task.deadline
+                            totalSeconds = task.durationSeconds
+                            importance = task.importance
+                        }
+                    }
                 }
             }
             .navigationTitle("Add tasks")
