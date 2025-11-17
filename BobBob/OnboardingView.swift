@@ -103,7 +103,7 @@ struct HabitualStyleView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
                 
                 Button {
                     selectedStyle = "Hopper"
