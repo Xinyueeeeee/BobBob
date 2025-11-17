@@ -6,79 +6,96 @@
 //
 
 import SwiftUI
-struct RestDaysView2: View{
+struct RestDaysView2: View {
     @State private var restActivities: [RestActivity] = []
     @State private var showingAddSheet = false
-    @State private var selectedRestActivities: String? = nil
     
     var body: some View {
-            VStack(spacing: 0) {
-                Text("When do you rest?")
-                    .font(.headline)
-                    .foregroundColor(.black).opacity(0.5)
-                HStack {
-                    Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Start Date").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("End Date").bold().frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding()
-                .background(Color.white)
-                .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
-                
-                Divider()
-                
-                ScrollView {
-                    VStack(spacing: 10) {
-                        ForEach(restActivities) { activity in
-                            HStack {
-                                Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
-                                Text(activity.startDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
-                                Text(activity.endDate, style: .date).frame(maxWidth: .infinity, alignment: .leading)
+            NavigationStack {
+                VStack(spacing: 20) {
+                    
+                    Text("When do you rest?")
+                        .font(.headline)
+                        .foregroundColor(.black).opacity(0.5)
+                    
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 15) {
+                            ForEach(restActivities) { activity in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    
+                                    Text(activity.name)
+                                        .font(.headline)
+                                        .foregroundColor(.black)
+                                    
+                                    HStack {
+                                        Label(
+                                            activity.startDate.formatted(date: .abbreviated, time: .omitted),
+                                            systemImage: "sunrise"
+                                        )
+                                        
+                                        Label(
+                                            activity.endDate.formatted(date: .abbreviated, time: .omitted),
+                                            systemImage: "sunset"
+                                        )
+                                    }
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                    
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
-                            .padding(.horizontal)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.8))
-                            .cornerRadius(8)
-                            .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
                         }
-                    }
-                    .padding()
-                }
-                
-                Spacer()
-                HStack {
-                    Button(action: {
-                        showingAddSheet = true
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .shadow(radius: 3)
+                        .padding(.horizontal)
+                        .padding(.top, 10)
                     }
                     
                     Spacer()
-                    NavigationLink(destination: settingsView())
-                    {
-                        Text("Save")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(selectedRestActivities == nil ? Color.gray : Color.blue)
-                            .cornerRadius(10)
+                    
+                    
+                    HStack(spacing: 20) {
+                        
+                        Button {
+                            showingAddSheet = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.title)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                        }
+                        
+                        Spacer()
+                        
+                        NavigationLink {
+                            ContentView()
+                        } label: {
+                            Text("Get started!")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 20)
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
                 }
-                .disabled(selectedRestActivities == nil)
-                .padding()
             }
             .navigationTitle("Rest Days")
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingAddSheet) {
                 AddRestActivityView(restActivities: $restActivities)
             }
         }
     }
+
+
 
