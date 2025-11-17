@@ -13,6 +13,7 @@ struct AddActivitiesView: View {
     @State private var day: String = "Monday"
     @State private var regularity: String = "Weekly"
     @State private var time: Date = Date()
+    @State private var duration: Int = 15
     
     let days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     let regularOptions = ["Daily","Weekly","Monthly"]
@@ -57,12 +58,15 @@ struct AddActivitiesView: View {
                         .padding()
                         .background(Color.white)
                         .cornerRadius(12)
+                    Section(header: Text("Duration (min)")) {
+                        Stepper("\(duration) min", value: $duration, in: 5...120, step: 5)
+                    }
                     
-                    Button(action: {
+                    Button {
                         let newActivity = Activity(name: name, day: day, regularity: regularity, time: time)
                         activities.append(newActivity)
                         dismiss()
-                    }) {
+                    }label:{
                         Text("Save")
                             .font(.headline)
                             .foregroundColor(.white)

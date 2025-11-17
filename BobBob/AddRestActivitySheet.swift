@@ -18,7 +18,7 @@ struct AddRestActivityView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Activity Name").font(.headline)
+                    Text("Day").font(.headline)
                     TextField("Enter name", text: $name)
                         .padding()
                         .background(Color.white)
@@ -42,7 +42,7 @@ struct AddRestActivityView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Add Rest Activity")
+            .navigationTitle("Add Rest Day")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
