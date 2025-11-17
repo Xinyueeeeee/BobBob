@@ -343,64 +343,15 @@ struct MealTimeView: View {
             )
             .ignoresSafeArea()
             
-        VStack(spacing: 20) {
-            Text("When do you have your meals?")
-                .font(.headline)
-                .foregroundColor(.black).opacity(0.5)
-            
-            Spacer()
-            
-            mealButton(title: "Breakfast", isSelected: selectedMeal == "Breakfast", time: $breakfastTime)
-            mealButton(title: "Lunch", isSelected: selectedMeal == "Lunch", time: $lunchTime)
-            mealButton(title: "Dinner", isSelected: selectedMeal == "Dinner", time: $dinnerTime)
-            
-            Spacer()
-            
-            Text("Different people eat at different hours.")
-                .font(.footnote)
-                .foregroundColor(.black).opacity(0.5)
-            
-            NavigationLink(destination: ActivitiesView()) {
-                Text("Next")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                    .background(Color.blue)
-                    .cornerRadius(10)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-        }
-        .padding()
-        .navigationTitle("Meal Times")
-    }
-}
-    @ViewBuilder
-    private func mealButton(title: String, isSelected: Bool, time: Binding<Date>) -> some View {
-        VStack(spacing: 5) {
-            Button(action: {
-                withAnimation {
-                    selectedMeal = (selectedMeal == title) ? nil : title
-                }
-            }) {
-                Text(title)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(isSelected ? Color.blue : Color.white)
-                    .foregroundColor(isSelected ? .white : .black)
-                    .cornerRadius(10)
-                    .shadow(color: .gray.opacity(0.2), radius: 3, x: 0, y: 2)
-            }
-            
             VStack {
-              
-                Text("What time do you have your meals?")
+           Text("When do you have your meals?")
                     .font(.headline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
+                
                 Spacer()
                 
                 HStack {
-             
+                 
                     Button {
                         showingAddMeal = true
                     } label: {
@@ -431,10 +382,12 @@ struct MealTimeView: View {
         }
         .sheet(isPresented: $showingAddMeal) {
             AddMealTimeView()
+             
         }
         .navigationTitle("Meal Time")
     }
 }
+
 
 
 struct ActivitiesView: View {
