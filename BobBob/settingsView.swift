@@ -16,34 +16,50 @@ struct settingsView: View {
                 VStack{
                     Form {
                         Section(header: Text("general")) {
-                            NavigationLink(destination: notifsView()) {
+                            NavigationLink{
+                                notifsView()
+                            }label:{
                                 Text("notifications")
                             }
                         }
                         
                         Section(header: Text("integrations")) {
-                            NavigationLink(destination: notifsView()) {
+                            NavigationLink{
+                                notifsView()
+                            }label:{
                                 Text("apple calendar")
                             }
                         }
                         
                         Section(header: Text("personal information")) {
-                            NavigationLink(destination: HabitualStyleView2()) {
+                            NavigationLink{
+                                HabitualStyleView2()
+                            }label: {
                                 Text("habitual styles")
                             }
-                            NavigationLink(destination: ChronotypeView2()) {
+                            NavigationLink{
+                                ChronotypeView2()
+                            }label:{
                                 Text("chronotype")
                             }
-                            NavigationLink(destination: MealTimeView2()) {
+                            NavigationLink{
+                                MealTimeView2()
+                            }label:{
                                 Text("meal timings")
                             }
-                            NavigationLink(destination: NapTimeView2()) {
+                            NavigationLink{
+                                NapTimeView2()
+                            }label:{
                                 Text("sleep schedule")
                             }
-                            NavigationLink(destination: ActivitiesView()) {
+                            NavigationLink{
+                                ActivitiesView2()
+                            }label:{
                                 Text("other activities")
                             }
-                            NavigationLink(destination: RestDaysView2()) {
+                            NavigationLink{
+                                RestDaysView2()
+                            }label: {
                                 Text("rest days")
                             }
                         }

@@ -562,6 +562,7 @@ struct RestDaysView: View {
                             .background(Color.blue)
                             .clipShape(Circle())
                             .shadow(radius: 3)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     }
                     
                     Spacer()
