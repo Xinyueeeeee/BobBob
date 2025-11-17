@@ -73,10 +73,10 @@ struct RestDaysView2: View {
                         
                         Spacer()
                         
-                        NavigationLink {
-                            ContentView()
+                      Button{
+                          settingsView()
                         } label: {
-                            Text("Get started!")
+                            Text("Save")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding(.vertical, 10)
