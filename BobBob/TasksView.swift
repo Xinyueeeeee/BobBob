@@ -21,18 +21,6 @@ struct TasksView: View {
                 )
                 .ignoresSafeArea()
                 
-                VStack(alignment: .leading) {
-                    ForEach(tasks) { task in
-                        Text(task.name)
-                            .font( .headline)
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.white)
-                            .cornerRadius(12)
-                    }
-                    Spacer()
-                }.padding()
-                
                 NavigationLink(destination: addTasksView( totalSeconds: $totalSeconds, onSave: {task in tasks.append(task)})){
                         Image(systemName: "plus")
                             .font(.title)
@@ -46,6 +34,28 @@ struct TasksView: View {
                 }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                     .padding()
+                
+                ForEach(tasks) { task in
+                    NavigationLink {
+                        addTasksView(
+                            totalSeconds: .constant(task.durationSeconds),
+                            onSave: { updatedTask in
+                                if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+                                    tasks[index] = updatedTask
+                                }
+                            },
+                            existingTask: task
+                        )
+                    } label: {
+                        Text(task.name)
+                            .font(.headline)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    }.padding()
+                }
+                
                 }.navigationTitle(Text("Tasks"))
             }
         }
