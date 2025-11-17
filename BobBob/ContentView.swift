@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("isWelcomeScreenOver") var isWelcomeScreenOver = false
     var body: some View {
         
         TabView{

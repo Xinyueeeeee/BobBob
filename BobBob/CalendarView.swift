@@ -9,7 +9,7 @@ struct CalendarView: View {
     @State private var currentDate = Date()
     @State private var days: [CalendarDay] = []
     @State private var path: [Date] = []
-    
+    @AppStorage("isWelcomeScreenOver") var isWelcomeScreenOver = false
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     
     var body: some View {

@@ -36,8 +36,8 @@ struct AddMealTimeView: View {
                 }
                 
                 Section{
-                    Button{
-                        dismiss()
+                    NavigationLink{
+                        ChronotypeView2()
                     }label:{
                         Text("Save")
                             .font(.headline)
