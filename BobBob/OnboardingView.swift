@@ -158,7 +158,7 @@ struct HabitualStyleView: View {
                 
                 Text("Different people have different working styles.")
                     .font(.footnote)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black.opacity(0.5))
                 
                 
                 NavigationLink(destination: ChronotypeView()) {
@@ -167,9 +167,10 @@ struct HabitualStyleView: View {
                         .foregroundColor(.white)
                         .padding(.vertical, 10)
                         .padding(.horizontal, 20)
-                        .background(Color.blue)
+                        .background(selectedStyle == nil ? Color.gray : Color.blue)
                         .cornerRadius(10)
                 }
+                .disabled(selectedStyle == nil)
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 
@@ -240,6 +241,11 @@ struct ChronotypeView: View {
                 .padding(.horizontal)
                 
                 Spacer()
+                Spacer()
+                
+                Text("Different people prefer working at different time periods.")
+                    .font(.footnote)
+                    .foregroundColor(.black.opacity(0.5))
                 
                 NavigationLink(destination: NapTimeView()) {
                     Text("Next")
@@ -247,9 +253,10 @@ struct ChronotypeView: View {
                         .foregroundColor(.white)
                         .padding(.vertical, 10)
                         .padding(.horizontal, 20)
-                        .background(Color.blue)
+                        .background(selectedChronotype == nil ? Color.gray : Color.blue)
                         .cornerRadius(10)
                 }
+                .disabled(selectedChronotype == nil)
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
@@ -276,6 +283,19 @@ struct NapTimeView: View {
             
         VStack {
             Text("What time do you go to sleep?")
+                .font(.headline)
+                .foregroundColor(.gray)
+            
+            Spacer()
+            
+            DatePicker(
+                "Select Time",
+                selection: $sleepTime,
+                displayedComponents: .hourAndMinute
+            )
+            .datePickerStyle(.wheel)
+            .labelsHidden()
+            Text("What time do you wake up?")
                 .font(.headline)
                 .foregroundColor(.gray)
             
@@ -396,7 +416,7 @@ struct MealTimeView: View {
     }
 }
 
-import SwiftUI
+
 
 struct ActivitiesView: View {
     @State private var activities: [Activity] = []
@@ -494,7 +514,6 @@ struct ActivitiesView: View {
     }
 }
 
-// Activity model
 struct Activity: Identifiable {
     let id = UUID()
     var name: String
