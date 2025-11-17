@@ -17,7 +17,7 @@ struct settingsView: View {
                     Form {
                         Section(header: Text("General")) {
                             NavigationLink{
-                                notifsView()
+                                NotifsView()
                             }label:{
                                 Text("Notifications")
                             }
@@ -25,7 +25,7 @@ struct settingsView: View {
                         
                         Section(header: Text("Integrations")) {
                             NavigationLink{
-                                notifsView()
+                                NotifsView()
                             }label:{
                                 Text("Apple Calendar")
                             }
@@ -75,30 +75,26 @@ struct settingsView: View {
 }
 
 
-struct notifsView: View {
-    @State private var startOfTasks: Bool = false
-    @State private var endOfTasks: Bool = false
-    @State private var fiveMinBefTask: Bool = false
+struct NotifsView: View {
+    @AppStorage("startOfTasks") private var startOfTasks: Bool = false
+    @AppStorage("endOfTasks") private var endOfTasks: Bool = false
+    @AppStorage("fiveMinBefTask") private var fiveMinBefTask: Bool = false
+
     var body: some View {
-        NavigationStack{
-            VStack (alignment: .leading, spacing: 24){
-                List{
-                    Toggle(isOn: $startOfTasks) {
-                        Text("At the start of the task")
-                    }
-                    Toggle(isOn: $endOfTasks) {
-                        Text("At the end of the tasks")
-                    }
-                    Toggle(isOn: $fiveMinBefTask) {
-                        Text("5 minutes before task")
-                    }
+        NavigationStack {
+            List {
+                Toggle(isOn: $startOfTasks) {
+                    Text("At the start of the task")
                 }
-            }.navigationTitle(Text("Notifications"))
+                Toggle(isOn: $endOfTasks) {
+                    Text("At the end of the tasks")
+                }
+                Toggle(isOn: $fiveMinBefTask) {
+                    Text("5 minutes before task")
+                }
+            }
+            .navigationTitle("Notifications")
         }
     }
-}
-
-#Preview {
-settingsView()
 }
 
