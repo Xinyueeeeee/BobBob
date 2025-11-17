@@ -339,7 +339,7 @@ struct MealTimeView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.45)]),
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -400,12 +400,8 @@ struct ActivitiesView: View {
     
     var body: some View {
         ZStack {
-           
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.blue.opacity(0.2),
-                    Color.blue.opacity(0.45)
-                ]),
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -415,10 +411,8 @@ struct ActivitiesView: View {
                 VStack(spacing: 20) {
                     
                     Text("Do you have any recurring activities?")
-                        .font(.title3.bold())
+                        .font(.headline)
                         .foregroundColor(.black).opacity(0.5)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
                     
                     
                     ScrollView(showsIndicators: false) {
