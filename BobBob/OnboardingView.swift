@@ -106,7 +106,7 @@ struct HabitualStyleView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
                 
                 Button {
                     selectedStyle = "Hopper"
@@ -343,65 +343,114 @@ struct NapTimeView: View {
     }
 }
 
+
+struct MealTime: Identifiable {
+    let id = UUID()
+    var mealType: String
+    var time: Date
+    var duration: Int
+}
+
 struct MealTimeView: View {
+    @State private var mealTimes: [MealTime] = []
     @State private var showingAddMeal = false
     
     var body: some View {
         ZStack {
             LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                gradient: Gradient(colors: [
+                    Color.blue.opacity(0.2),
+                    Color.blue.opacity(0.6)
+                ]),
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
             
-            VStack {
-           Text("When do you have your meals?")
-                    .font(.headline)
-                    .foregroundColor(.black).opacity(0.5)
-                
-                Spacer()
-                
-                HStack {
-                 
-                    Button {
-                        showingAddMeal = true
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .shadow(radius: 3)
+            NavigationStack {
+                VStack(spacing: 20) {
+                    
+                    Text("When do you have your meals?")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .opacity(0.5)
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 15) {
+                            ForEach(mealTimes) { meal in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    
+                                    Text(meal.mealType)
+                                        .font(.headline)
+                                        .foregroundColor(.black)
+                                    
+                                    HStack {
+                                        Label("\(meal.duration) min", systemImage: "timer")
+                                        Label(meal.time.formatted(date: .omitted, time: .shortened),
+                                              systemImage: "clock")
+                                    }
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                    
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05),
+                                        radius: 6,
+                                        x: 0,
+                                        y: 4)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 10)
                     }
-
+                    
                     Spacer()
                     
-                    NavigationLink{
-                        ActivitiesView()
-                    }label:{
-                        Text("Next")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(Color.blue)
-                            .cornerRadius(10)
+                    HStack(spacing: 20) {
+                        
+                        Button {
+                            showingAddMeal = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.title)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                        }
+                        
+                        Spacer()
+                        
+                        NavigationLink {
+                            RestDaysView()
+                        } label: {
+                            Text("Next")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 20)
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
+                }
+                .navigationTitle("Meals")
+                .navigationBarTitleDisplayMode(.inline)
+                .sheet(isPresented: $showingAddMeal) {
+                    AddMealTimeView { newMeal in
+                        mealTimes.append(newMeal)
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
         }
-        .sheet(isPresented: $showingAddMeal) {
-            AddMealTimeView()
-             
-        }
-        .navigationTitle("Meal Time")
     }
 }
-
 
 
 struct ActivitiesView: View {

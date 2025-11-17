@@ -9,17 +9,18 @@ import SwiftUI
 struct AddMealTimeView: View {
     @Environment(\.dismiss) var dismiss
     
-    @State private var selectedMeal: String = "Breakfast"
-    @State private var mealTime: Date = Date()
-    @State private var duration: Int = 15
-    @State private var selectedMealTime: String? = nil
+    @State private var selectedMeal = "Breakfast"
+    @State private var mealTime = Date()
+    @State private var duration = 15
     
-    let mealOptions = ["Breakfast", "Lunch", "Dinner"]
+    let mealOptions = ["Breakfast", "Lunch", "Dinner", "Snack"]
+    
+    var onSave: (MealTime) -> Void
     
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Meal Type")) {
+                Section(header: Text("MEAL TYPE")) {
                     Picker("Select Meal", selection: $selectedMeal) {
                         ForEach(mealOptions, id: \.self) { meal in
                             Text(meal)
@@ -27,44 +28,50 @@ struct AddMealTimeView: View {
                     }
                 }
                 
-                Section(header: Text("Time")) {
+                Section(header: Text("TIME")) {
                     DatePicker("Meal Time", selection: $mealTime, displayedComponents: .hourAndMinute)
                 }
                 
-                Section(header: Text("Duration (min)")) {
-                    Stepper("\(duration) min", value: $duration, in: 5...120, step: 5)
+                Section(header: Text("DURATION (MIN)")) {
+                    HStack {
+                        Text("\(duration) min")
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            if duration > 1 { duration -= 1 }
+                        }) {
+                            Image(systemName: "minus")
+                        }
+                        
+                        Button(action: {
+                            duration += 1
+                        }) {
+                            Image(systemName: "plus")
+                        }
+                    }
                 }
                 
-                Section{
-                    NavigationLink{
-                        ChronotypeView2()
-                    }label:{
-                        Text("Save")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .frame(maxWidth: .infinity)
-                            .cornerRadius(10)
-                    }
-                    .buttonStyle(.plain)
-                }
-
-            }
-            .navigationTitle("Add Meal Time")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                Section {
+                    Button("Save") {
+                        onSave(
+                            MealTime(mealType: selectedMeal,
+                                     time: mealTime,
+                                     duration: duration)
+                        )
                         dismiss()
                     }
+                    .frame(maxWidth: .infinity)
                 }
             }
+            .navigationTitle("Add Meal Time")
+            .navigationBarItems(leading: Button("Cancel") {
+                dismiss()
+            })
         }
     }
 }
 
-#Preview {
-    AddMealTimeView()
+#Preview{
+    AddMealTimeView { _ in }
 }
-

@@ -41,7 +41,7 @@ struct MealTimeView2: View {
             .padding(.bottom, 20)
         }
         .sheet(isPresented: $showingAddMeal) {
-            AddMealTimeView()
+            AddMealTimeView { _ in }
         }
         .navigationTitle("Meal Time")
     }
