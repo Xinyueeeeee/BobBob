@@ -16,6 +16,9 @@ struct addTasksView: View {
     
     @Binding var totalSeconds: Int
     var onSave: (Task) -> Void
+    
+    var existingTask: Task? = nil
+    
     @State private var selectedHours: Int = 0
     @State private var selectedMinutes: Int = 0
     
@@ -23,10 +26,9 @@ struct addTasksView: View {
     let maxMinutes = 59
     
     @State private var prefersWorkingTime: Bool = false
-    @State private var selectedDate: Date = Date()
+    @State private var startDate: Date = Date()
+    @State private var endDate: Date = Date()
     @State private var importance: Double = 0.5
-    
-    var existingTask: Task?
     
     var body: some View {
         NavigationStack {
@@ -92,13 +94,7 @@ struct addTasksView: View {
                         }
                         
                         if prefersWorkingTime {
-                            VStack(alignment: .leading) {
-                                DatePicker("Select time", selection: $selectedDate)
-                                    .datePickerStyle(.graphical)
-                            }
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
+                            workingTimeSection
                         }
                         
                         VStack(alignment: .leading) {
@@ -120,6 +116,11 @@ struct addTasksView: View {
                             deadline = task.deadline
                             totalSeconds = task.durationSeconds
                             importance = task.importance
+                            if let s = task.startDate {startDate = s}
+                            if let e = task.endDate {endDate = e}
+                            prefersWorkingTime = task.startDate != nil || task.endDate != nil
+                            
+                            setInitialSelections()
                         }
                     }
                 }
@@ -131,7 +132,8 @@ struct addTasksView: View {
                         let newTask = Task(name: name,
                                            deadline: deadline,
                                            durationSeconds: totalSeconds,
-                                           importance: importance)
+                                           importance: importance,
+                                           startDate: prefersWorkingTime ? startDate : nil, endDate: prefersWorkingTime ? endDate : nil)
                         onSave(newTask)
                         dismiss()
                     }
@@ -139,6 +141,54 @@ struct addTasksView: View {
             }
         }
     }
+    
+    private var workingTimeSection: some View {
+        VStack(alignment: .leading) {
+            
+            VStack(alignment: .leading) {
+                Text("Start date")
+                    .font(.subheadline)
+                DatePicker(
+                    "",
+                    selection: $startDate,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+            }
+            
+            VStack(alignment: .leading) {
+                Text("End date")
+                    .font(.subheadline)
+                DatePicker(
+                    "",
+                    selection: $endDate,
+                    in: startDate...,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+            }
+            
+            Text("\(formattedDateRange)")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .padding(.top, 8)
+            
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+    }
+    
+    private var formattedDateRange: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd/MM/yyyy"
+        let s = formatter.string(from: startDate)
+        let e = formatter.string(from: endDate)
+        return "\(s) - \(e)"
+    }
+    
     private func setInitialSelections() {
         selectedHours = totalSeconds / 3600
         selectedMinutes = (totalSeconds % 3600) / 60

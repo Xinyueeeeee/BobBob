@@ -10,7 +10,7 @@ import SwiftUI
 struct TasksView: View {
     @State private var tasks: [Task] = []
     
-    // Only used when adding a task
+
     @State private var newTaskSeconds: Int = 0
     
     var body: some View {
@@ -25,11 +25,10 @@ struct TasksView: View {
                 
                 VStack(alignment: .leading) {
                     
-                    // List of tasks
                     ForEach($tasks) { $task in
                         NavigationLink {
                             addTasksView(
-                                totalSeconds: $task.durationSeconds,   // <-- REAL BINDING
+                                totalSeconds: $task.durationSeconds,
                                 onSave: { updatedTask in
                                     task = updatedTask   // update this exact task
                                 },
@@ -49,13 +48,12 @@ struct TasksView: View {
                 }
                 .padding()
                 
-                // Add button
                 NavigationLink(destination:
                                 addTasksView(
-                                    totalSeconds: $newTaskSeconds,   // NEW TASK state
+                                    totalSeconds: $newTaskSeconds,
                                     onSave: { task in
                                         tasks.append(task)
-                                        newTaskSeconds = 0  // reset for next add
+                                        newTaskSeconds = 0
                                     },
                                     existingTask: nil
                                 )

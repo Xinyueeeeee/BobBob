@@ -13,4 +13,6 @@ struct Task: Identifiable {
     var deadline: Date
     var durationSeconds: Int
     var importance: Double
+    var startDate: Date?
+    var endDate: Date?
 }
