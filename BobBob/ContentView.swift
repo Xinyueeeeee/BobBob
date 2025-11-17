@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var onboardingCompleted = false
+    
     var body: some View {
         
         TabView{
