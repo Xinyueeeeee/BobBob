@@ -73,7 +73,7 @@ struct RestDaysView2: View {
                         
                         Spacer()
                         
-                      Button{
+                      NavigationLink{
                           settingsView()
                         } label: {
                             Text("Save")
