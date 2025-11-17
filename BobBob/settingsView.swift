@@ -43,7 +43,7 @@ struct settingsView: View {
                             NavigationLink(destination: ActivitiesView()) {
                                 Text("other activities")
                             }
-                            NavigationLink(destination: ActivitiesView()) {
+                            NavigationLink(destination: RestDaysView2()) {
                                 Text("rest days")
                             }
                         }

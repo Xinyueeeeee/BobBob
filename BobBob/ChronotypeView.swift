@@ -12,14 +12,6 @@ struct ChronotypeView2: View {
     
     var body: some View {
         NavigationStack{
-            ZStack{
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-            
             VStack(spacing: 30) {
                 
                 Text("What is your chronotype?")
@@ -93,7 +85,7 @@ struct ChronotypeView2: View {
         }
     }
 }
-}
+
 #Preview {
     ChronotypeView2()
 }

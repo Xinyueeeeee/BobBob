@@ -12,13 +12,8 @@ struct HabitualStyleView2: View {
     
     var body: some View {
             NavigationStack{
-                ZStack{
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .ignoresSafeArea()
+            
+                    
                 VStack(spacing: 30) {
                     
                     Text("What is your habitual style?")
@@ -97,7 +92,7 @@ struct HabitualStyleView2: View {
             }
         }
     }
-}
+
 #Preview {
     HabitualStyleView2()
 }
