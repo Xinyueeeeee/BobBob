@@ -36,14 +36,15 @@ struct AddMealTimeView: View {
                 }
                 
                 Section{
-                    NavigationLink(destination: MealTimeView()) {
+                    Button{
+                        dismiss()
+                    }label:{
                         Text("Save")
                             .font(.headline)
                             .foregroundColor(.blue)
                             .padding(.vertical, 10)
                             .padding(.horizontal, 20)
                             .frame(maxWidth: .infinity)
-                           
                             .cornerRadius(10)
                     }
                     .buttonStyle(.plain)
