@@ -15,52 +15,52 @@ struct settingsView: View {
             NavigationStack{
                 VStack{
                     Form {
-                        Section(header: Text("general")) {
+                        Section(header: Text("General")) {
                             NavigationLink{
                                 notifsView()
                             }label:{
-                                Text("notifications")
+                                Text("Notifications")
                             }
                         }
                         
-                        Section(header: Text("integrations")) {
+                        Section(header: Text("Integrations")) {
                             NavigationLink{
                                 notifsView()
                             }label:{
-                                Text("apple calendar")
+                                Text("Apple Calendar")
                             }
                         }
                         
-                        Section(header: Text("personal information")) {
+                        Section(header: Text("Personal Information")) {
                             NavigationLink{
                                 HabitualStyleView2()
                             }label: {
-                                Text("habitual styles")
+                                Text("Habitual Style")
                             }
                             NavigationLink{
                                 ChronotypeView2()
                             }label:{
-                                Text("chronotype")
+                                Text("Chronotype")
                             }
                             NavigationLink{
                                 MealTimeView2()
                             }label:{
-                                Text("meal timings")
+                                Text("Meal Time")
                             }
                             NavigationLink{
                                 NapTimeView2()
                             }label:{
-                                Text("sleep schedule")
+                                Text("Sleep Schedule")
                             }
                             NavigationLink{
                                 ActivitiesView2()
                             }label:{
-                                Text("other activities")
+                                Text("Activitiy")
                             }
                             NavigationLink{
                                 RestDaysView2()
                             }label: {
-                                Text("rest days")
+                                Text("Rest Day")
                             }
                         }
                     }
@@ -84,10 +84,10 @@ struct notifsView: View {
             VStack (alignment: .leading, spacing: 24){
                 List{
                     Toggle(isOn: $startOfTasks) {
-                        Text("at start of tasks")
+                        Text("At the start of the task")
                     }
                     Toggle(isOn: $endOfTasks) {
-                        Text("at end of tasks")
+                        Text("At the end of the tasks")
                     }
                     Toggle(isOn: $fiveMinBefTask) {
                         Text("5 minutes before task")
