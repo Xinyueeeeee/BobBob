@@ -26,11 +26,13 @@ struct NapTimeView2: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+                .background(Color.blue.opacity(0.2))
+                .cornerRadius(12)
                 
                 Text("What time do you wake up?")
                     .font(.headline)
                     .foregroundColor(.black).opacity(0.5)
-                
+                  
                 Spacer()
                 
                 DatePicker(
@@ -40,6 +42,8 @@ struct NapTimeView2: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+                .background(Color.blue.opacity(0.2))
+                .cornerRadius(12)
                 
                 Spacer()
                 
