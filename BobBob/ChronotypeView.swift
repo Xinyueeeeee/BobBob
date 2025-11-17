@@ -15,7 +15,7 @@ struct ChronotypeView2: View {
             VStack(spacing: 30) {
                 
                 Text("What is your chronotype?")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
                     .font(.title3)
                     .bold()
                     .padding(.top)
@@ -66,7 +66,7 @@ struct ChronotypeView2: View {
                 
                 Text("Different people prefer working at different time periods.")
                     .font(.footnote)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
                 
                 NavigationLink(destination: settingsView()) {
                     Text("Save")

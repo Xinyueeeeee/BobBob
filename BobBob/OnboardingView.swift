@@ -197,7 +197,7 @@ struct ChronotypeView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
                 Button(action: {
                     selectedChronotype = "Early Bird"
                 }) {
@@ -284,7 +284,7 @@ struct NapTimeView: View {
         VStack {
             Text("What time do you go to sleep?")
                 .font(.headline)
-                .foregroundColor(.gray)
+                .foregroundColor(.black).opacity(0.5)
             
             Spacer()
             
@@ -297,7 +297,7 @@ struct NapTimeView: View {
             .labelsHidden()
             Text("What time do you wake up?")
                 .font(.headline)
-                .foregroundColor(.gray)
+                .foregroundColor(.black).opacity(0.5)
             
             Spacer()
             
@@ -310,6 +310,11 @@ struct NapTimeView: View {
             .labelsHidden()
             
             Spacer()
+            
+            
+            Text("Different people sleep at different hours.")
+                .font(.footnote)
+                .foregroundColor(.black).opacity(0.5)
             
             NavigationLink(destination: MealTimeView()) {
                 Text("Next")
@@ -337,6 +342,55 @@ struct MealTimeView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
+            
+        VStack(spacing: 20) {
+            Text("When do you have your meals?")
+                .font(.headline)
+                .foregroundColor(.black).opacity(0.5)
+            
+            Spacer()
+            
+            mealButton(title: "Breakfast", isSelected: selectedMeal == "Breakfast", time: $breakfastTime)
+            mealButton(title: "Lunch", isSelected: selectedMeal == "Lunch", time: $lunchTime)
+            mealButton(title: "Dinner", isSelected: selectedMeal == "Dinner", time: $dinnerTime)
+            
+            Spacer()
+            
+            Text("Different people eat at different hours.")
+                .font(.footnote)
+                .foregroundColor(.black).opacity(0.5)
+            
+            NavigationLink(destination: ActivitiesView()) {
+                Text("Next")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .background(Color.blue)
+                    .cornerRadius(10)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+        }
+        .padding()
+        .navigationTitle("Meal Times")
+    }
+}
+    @ViewBuilder
+    private func mealButton(title: String, isSelected: Bool, time: Binding<Date>) -> some View {
+        VStack(spacing: 5) {
+            Button(action: {
+                withAnimation {
+                    selectedMeal = (selectedMeal == title) ? nil : title
+                }
+            }) {
+                Text(title)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(isSelected ? Color.blue : Color.white)
+                    .foregroundColor(isSelected ? .white : .black)
+                    .cornerRadius(10)
+                    .shadow(color: .gray.opacity(0.2), radius: 3, x: 0, y: 2)
+            }
             
             VStack {
               
@@ -400,77 +454,79 @@ struct ActivitiesView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 20) {
-
-                Text("Do you have any recurring activities?")
-                    .font(.title3.bold())
-                    .foregroundColor(.black)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 15) {
-                        ForEach(activities) { activity in
-                            VStack(alignment: .leading, spacing: 6) {
-
-                                Text(activity.name)
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-
-                                HStack {
-                                    Label(activity.day, systemImage: "calendar")
-                                    Label(activity.regularity, systemImage: "repeat")
-                                    Label(activity.timeFormatted, systemImage: "clock")
+            NavigationStack {
+                VStack(spacing: 20) {
+                    
+                    Text("Do you have any recurring activities?")
+                        .font(.title3.bold())
+                        .foregroundColor(.black).opacity(0.5)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                    
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 15) {
+                            ForEach(activities) { activity in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    
+                                    Text(activity.name)
+                                        .font(.headline)
+                                        .foregroundColor(.black)
+                                    
+                                    HStack {
+                                        Label(activity.day, systemImage: "calendar")
+                                        Label(activity.regularity, systemImage: "repeat")
+                                        Label(activity.timeFormatted, systemImage: "clock")
+                                    }
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                    
                                 }
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.white)
-                            .cornerRadius(14)
-                            .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 10)
+                    }
+                    
+                    Spacer()
+                    
+                    
+                    HStack(spacing: 20) {
+                        
+                        Button {
+                            showingAddActivity = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.title)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                        }
+                        
+                        Spacer()
+                        
+                        NavigationLink(destination: RestDaysView()) {
+                            Text("Next")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 20)
+                                .background(Color.blue)
+                                .cornerRadius(10)
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.top, 10)
+                    .padding(.bottom, 20)
                 }
-
-                Spacer()
-
-                
-                HStack(spacing: 20) {
-
-                    Button {
-                        showingAddActivity = true
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .shadow(radius: 3)
-                    }
-
-                    Spacer()
-                    
-                    NavigationLink(destination: RestDaysView()) {
-                        Text("Next")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
-            .navigationTitle("")
+            .navigationTitle("Activites")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingAddActivity) {
                 AddActivitiesView(activities: $activities)
@@ -515,7 +571,7 @@ struct RestDaysView: View {
             VStack(spacing: 0) {
                 Text("When do you rest?")
                     .font(.headline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
                
                 ScrollView {
                     VStack(spacing: 10) {
