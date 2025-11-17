@@ -396,70 +396,82 @@ struct MealTimeView: View {
     }
 }
 
+import SwiftUI
+
 struct ActivitiesView: View {
     @State private var activities: [Activity] = []
     @State private var showingAddActivity = false
     
     var body: some View {
-        ZStack{
+        ZStack {
+           
             LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                gradient: Gradient(colors: [
+                    Color.blue.opacity(0.2),
+                    Color.blue.opacity(0.45)
+                ]),
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-            
-            VStack(spacing: 10) {
+
+            VStack(spacing: 20) {
+
                 Text("Do you have any recurring activities?")
-                    .font(.headline)
-                    .foregroundColor(.gray)
-                HStack {
-                    Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Day").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Regularity").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Time").bold().frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding()
-                .background(Color.white)
-                .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+                    .font(.title3.bold())
+                    .foregroundColor(.black)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+
                 
-                Divider()
-                
-                ScrollView {
-                    VStack(spacing: 10) {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 15) {
                         ForEach(activities) { activity in
-                            HStack {
-                                Text(activity.name).frame(maxWidth: .infinity, alignment: .leading)
-                                Text(activity.day).frame(maxWidth: .infinity, alignment: .leading)
-                                Text(activity.regularity).frame(maxWidth: .infinity, alignment: .leading)
-                                Text(activity.time, style: .time).frame(maxWidth: .infinity, alignment: .leading)
+                            VStack(alignment: .leading, spacing: 6) {
+
+                                Text(activity.name)
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+
+                                HStack {
+                                    Label(activity.day, systemImage: "calendar")
+                                    Label(activity.regularity, systemImage: "repeat")
+                                    Label(activity.timeFormatted, systemImage: "clock")
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+
                             }
-                            .padding(.horizontal)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.8))
-                            .cornerRadius(8)
-                            .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.white)
+                            .cornerRadius(14)
+                            .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top, 10)
                 }
-                
+
                 Spacer()
+
                 
-                HStack {
-                    Button(action: {
+                HStack(spacing: 20) {
+
+                    Button {
                         showingAddActivity = true
-                    }) {
+                    } label: {
                         Image(systemName: "plus")
-                            .font(.headline)
+                            .font(.title)
                             .foregroundColor(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
+                            .padding()
                             .background(Color.blue)
-                            .cornerRadius(10)
+                            .clipShape(Circle())
+                            .shadow(radius: 3)
                     }
-                    
+
                     Spacer()
+                    
                     NavigationLink(destination: RestDaysView()) {
                         Text("Next")
                             .font(.headline)
@@ -470,23 +482,33 @@ struct ActivitiesView: View {
                             .cornerRadius(10)
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                .padding()
+                .padding(.horizontal)
+                .padding(.bottom, 20)
             }
-            .navigationTitle("Activities")
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingAddActivity) {
                 AddActivitiesView(activities: $activities)
             }
         }
     }
 }
+
+// Activity model
 struct Activity: Identifiable {
     let id = UUID()
     var name: String
     var day: String
     var regularity: String
     var time: Date
+
+    var timeFormatted: String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: time)
+    }
 }
+
 struct RestActivity: Identifiable {
     let id = UUID()
     var name: String
@@ -510,17 +532,7 @@ struct RestDaysView: View {
                 Text("When do you rest?")
                     .font(.headline)
                     .foregroundColor(.gray)
-                HStack {
-                    Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Start Date").bold().frame(maxWidth: .infinity, alignment: .leading)
-                    Text("End Date").bold().frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding()
-                .background(Color.white)
-                .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
-                
-                Divider()
-                
+               
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(restActivities) { activity in
@@ -540,6 +552,7 @@ struct RestDaysView: View {
                 }
                 
                 Spacer()
+                
                 HStack {
                     Button(action: {
                         showingAddSheet = true
