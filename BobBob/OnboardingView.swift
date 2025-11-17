@@ -271,6 +271,7 @@ struct ChronotypeView: View {
 
 struct NapTimeView: View {
     @State private var sleepTime = Date()
+    @State private var wakeTime = Date()
     
     var body: some View {
         ZStack{
@@ -281,58 +282,60 @@ struct NapTimeView: View {
             )
             .ignoresSafeArea()
             
-        VStack {
-            Text("What time do you go to sleep?")
-                .font(.headline)
-                .foregroundColor(.black).opacity(0.5)
-            
-            Spacer()
-            
-            DatePicker(
-                "Select Time",
-                selection: $sleepTime,
-                displayedComponents: .hourAndMinute
-            )
-            .datePickerStyle(.wheel)
-            .labelsHidden()
-            Text("What time do you wake up?")
-                .font(.headline)
-                .foregroundColor(.black).opacity(0.5)
-            
-            Spacer()
-            
-            DatePicker(
-                "Select Time",
-                selection: $sleepTime,
-                displayedComponents: .hourAndMinute
-            )
-            .datePickerStyle(.wheel)
-            .labelsHidden()
-            
-            Spacer()
-            
-            
-            Text("Different people sleep at different hours.")
-                .font(.footnote)
-                .foregroundColor(.black).opacity(0.5)
-            
-            NavigationLink{
-                MealTimeView()
-            }label:{
-                Text("Next")
+            VStack {
+                Text("What time do you go to sleep?")
                     .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                    .background(Color.blue)
-                .cornerRadius(10)            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                    .foregroundColor(.black).opacity(0.5)
+                
+                Spacer()
+                
+                DatePicker(
+                    "Select Time",
+                    selection: $sleepTime,
+                    displayedComponents: .hourAndMinute
+                )
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                
+                Text("What time do you wake up?")
+                    .font(.headline)
+                    .foregroundColor(.black).opacity(0.5)
+                
+                Spacer()
+                
+                DatePicker(
+                    "Select Time",
+                    selection: $wakeTime,
+                    displayedComponents: .hourAndMinute
+                )
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                
+                Spacer()
+                
+                Text("Different people sleep at different hours.")
+                    .font(.footnote)
+                    .foregroundColor(.black).opacity(0.5)
+                
+                NavigationLink {
+                    MealTimeView()
+                } label: {
+                    Text("Next")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            }
+            .padding()
+            .navigationTitle("Sleep Time")
         }
-        .padding()
-        .navigationTitle("Sleep Time")
-    }
     }
 }
+
 struct MealTimeView: View {
     @State private var showingAddMeal = false
     
