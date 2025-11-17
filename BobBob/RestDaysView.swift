@@ -15,7 +15,7 @@ struct RestDaysView2: View{
             VStack(spacing: 0) {
                 Text("When do you rest?")
                     .font(.headline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black).opacity(0.5)
                 HStack {
                     Text("Activity Name").bold().frame(maxWidth: .infinity, alignment: .leading)
                     Text("Start Date").bold().frame(maxWidth: .infinity, alignment: .leading)

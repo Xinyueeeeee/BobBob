@@ -29,7 +29,7 @@ struct MealTimeView2: View {
             
             Text("Different people eat at different hours.")
                 .font(.footnote)
-                .foregroundColor(.gray)
+                .foregroundColor(.black).opacity(0.5)
         }
         .padding()
         .navigationTitle("Meal Times")
@@ -49,7 +49,7 @@ struct MealTimeView2: View {
                     .background(isSelected ? Color.blue : Color.white)
                     .foregroundColor(isSelected ? .white : .black)
                     .cornerRadius(10)
-                    .shadow(color: .gray.opacity(0.2), radius: 3, x: 0, y: 2)
+                    .shadow(color: .gray.opacity(0.5), radius: 3, x: 0, y: 2)
             }
             
             if isSelected {

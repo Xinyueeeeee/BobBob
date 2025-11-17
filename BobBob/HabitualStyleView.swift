@@ -17,7 +17,7 @@ struct HabitualStyleView2: View {
                 VStack(spacing: 30) {
                     
                     Text("What is your habitual style?")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.black).opacity(0.5)
                         .font(.title3)
                         .bold()
                         .padding(.top)
@@ -72,7 +72,7 @@ struct HabitualStyleView2: View {
                     
                     Text("Different people have different working styles.")
                         .font(.footnote)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.black).opacity(0.5)
                     
                     NavigationLink(destination: settingsView()) {
                         Text("Save")

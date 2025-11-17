@@ -14,13 +14,13 @@ struct NapTimeView2: View {
         VStack {
             Text("What time do you go to sleep?")
                 .font(.headline)
-                .foregroundColor(.gray)
+                .foregroundColor(.black).opacity(0.5)
             
             Spacer()
             
             Text("Sleep Time")
                 .font(.headline)
-                .foregroundColor(.gray)
+                .foregroundColor(.black).opacity(0.5)
             
             DatePicker(
                 "Select Time",
@@ -32,7 +32,7 @@ struct NapTimeView2: View {
             
             Text("Wake Up Time")
                 .font(.headline)
-                .foregroundColor(.gray)
+                .foregroundColor(.black).opacity(0.5)
             
             DatePicker(
                 "Select Time",
@@ -46,8 +46,7 @@ struct NapTimeView2: View {
             
             Text("Different people sleep at different hours.")
                 .font(.footnote)
-                .foregroundColor(.gray)
-
+                .foregroundColor(.black).opacity(0.5)
         }
         .padding()
         .navigationTitle("Sleep Time")
