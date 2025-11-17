@@ -18,6 +18,22 @@ struct NapTimeView2: View {
             
             Spacer()
             
+            Text("Sleep Time")
+                .font(.headline)
+                .foregroundColor(.gray)
+            
+            DatePicker(
+                "Select Time",
+                selection: $sleepTime,
+                displayedComponents: .hourAndMinute
+            )
+            .datePickerStyle(.wheel)
+            .labelsHidden()
+            
+            Text("Wake Up Time")
+                .font(.headline)
+                .foregroundColor(.gray)
+            
             DatePicker(
                 "Select Time",
                 selection: $sleepTime,
