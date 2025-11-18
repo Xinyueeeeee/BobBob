@@ -26,9 +26,9 @@ struct MealTimeView2: View {
                 Spacer()
                 
                 NavigationLink {
-                    ActivitiesView()
+                    settingsView()
                 } label: {
-                    Text("Next")
+                    Text("Save")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding(.vertical, 10)
@@ -46,4 +46,6 @@ struct MealTimeView2: View {
         .navigationTitle("Meal Time")
     }
 }
-
+#Preview {
+    MealTimeView2()
+}
