@@ -68,7 +68,7 @@ struct ChronotypeView2: View {
                     .font(.footnote)
                     .foregroundColor(.black).opacity(0.5)
                 
-                NavigationLink(destination: settingsView()) {
+                NavigationLink(destination: SettingsView()) {
                     Text("Save")
                         .font(.headline)
                         .foregroundColor(.white)

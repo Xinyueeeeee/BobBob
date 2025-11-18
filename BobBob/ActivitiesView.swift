@@ -61,7 +61,7 @@ struct ActivitiesView2: View {
                     }
                     Spacer()
                     NavigationLink{
-                        settingsView()
+                        SettingsView()
                     }label: {
                         Text("Save")
                             .font(.headline)

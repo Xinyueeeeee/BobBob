@@ -74,7 +74,7 @@ struct RestDaysView2: View {
                         Spacer()
                         
                       NavigationLink{
-                          settingsView()
+                          SettingsView()
                         } label: {
                             Text("Save")
                                 .font(.headline)

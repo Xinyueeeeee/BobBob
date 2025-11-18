@@ -19,7 +19,7 @@ struct ContentView: View {
                 TasksView()
             }
                     Tab("setttings",systemImage: "gearshape"){
-                        settingsView()
+                        SettingsView()
             }
         }
     }

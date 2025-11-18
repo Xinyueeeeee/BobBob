@@ -55,7 +55,7 @@ struct NapTimeView2: View {
                     .foregroundColor(.black).opacity(0.5)
                 
                 NavigationLink {
-                    settingsView()
+                    SettingsView()
                 } label: {
                     Text("Save")
                         .font(.headline)

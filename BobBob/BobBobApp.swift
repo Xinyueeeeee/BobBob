@@ -1,17 +1,15 @@
-//
-//  BobBobApp.swift
-//  BobBob
-//
-//  Created by Huang Qing on 14/11/25.
-//
-
 import SwiftUI
-
 @main
 struct BobBobApp: App {
+    @AppStorage("isWelcomeScreenOver") var isWelcomeScreenOver = false
+    
     var body: some Scene {
         WindowGroup {
-            MainView()
+            if isWelcomeScreenOver {
+                ContentView()
+            } else {
+                RestDaysView()
+            }
         }
     }
 }

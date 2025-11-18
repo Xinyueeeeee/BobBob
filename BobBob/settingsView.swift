@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct settingsView: View {
+struct SettingsView: View {
     
     var body: some View {
         
@@ -71,7 +71,7 @@ struct settingsView: View {
     }
 
 #Preview {
-    settingsView()
+    SettingsView()
 }
 
 
