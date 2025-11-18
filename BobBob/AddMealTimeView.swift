@@ -33,25 +33,8 @@ struct AddMealTimeView: View {
                 }
                 
                 Section(header: Text("DURATION (MIN)")) {
-                    HStack {
-                        Text("\(duration) min")
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            if duration > 1 { duration -= 1 }
-                        }) {
-                            Image(systemName: "minus")
-                        }
-                        
-                        Button(action: {
-                            duration += 1
-                        }) {
-                            Image(systemName: "plus")
-                        }
-                    }
+                    Stepper("\(duration) min", value: $duration, in: 1...60, step: 1)
                 }
-                
                 Section {
                     Button("Save") {
                         onSave(
