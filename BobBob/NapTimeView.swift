@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct NapTimeView2: View {
-    @State private var sleepTime = Date()
-    @State private var wakeTime = Date()
+    struct NapTimeView2: View {
+        @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: Date())!
+        @AppStorage("wakeTime") private var wakeTime = Calendar.current.date(bySettingHour: 6, minute: 0, second: 0, of: Date())!
+
     
     var body: some View {
             VStack {
