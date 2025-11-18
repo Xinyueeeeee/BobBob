@@ -6,68 +6,76 @@
 //
 
 import SwiftUI
+
+
+struct RestActivityy: Identifiable {
+    let id = UUID()
+    var name: String
+    var startDate: Date
+    var endDate: Date
+}
+
 struct AddRestActivityView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var restActivities: [RestActivity]
     
     @State private var name: String = ""
-    @State private var startDate: Date = Date()
-    @State private var endDate: Date = Date()
+   
+    @State private var startDate: Date = Calendar.current.startOfDay(for: Date())
+    @State private var endDate: Date = Calendar.current.startOfDay(for: Date())
+    
+   
+    private var isFormComplete: Bool {
+        
+        !name.isEmpty && startDate <= endDate
+    }
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Day").font(.headline)
-                    TextField("Enter name", text: $name)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                    
-                    Text("Start Date").font(.headline)
-                    DatePicker("", selection: $startDate, displayedComponents: .date)
-                        .datePickerStyle(.graphical)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                    
-                    Text("End Date").font(.headline)
-                    DatePicker("", selection: $endDate, displayedComponents: .date)
-                        .datePickerStyle(.graphical)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                    
-                    Spacer()
+           
+            Form {
+              
+                Section(header: Text("Activity name")) {
+                    TextField("e.g., Vacation, Staycation, Sick Leave", text: $name)
                 }
-                .padding()
-            }
-            .navigationTitle("Add Rest Day")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                
+                Section(header: Text("REST PERIOD")) {
+                    
+                    DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
+                    
+                    DatePicker("End Date", selection: $endDate, displayedComponents: .date)
+                }
+                
+               
+                Section {
                     Button("Save") {
                         let newActivity = RestActivity(name: name, startDate: startDate, endDate: endDate)
                         restActivities.append(newActivity)
                         dismiss()
                     }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                    .background(isFormComplete ? Color.blue : Color.gray)
-                    .cornerRadius(10)
+                    .frame(maxWidth: .infinity)
                     .disabled(!isFormComplete)
                 }
-                
+            }
+            .navigationTitle("Add Rest Day")
+            .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
                 }
             }
         }
     }
-    
-    private var isFormComplete: Bool {
-        !name.isEmpty && startDate <= endDate
-    }
 }
 
+struct AddRestActivityView_Previews: PreviewProvider {
+    struct PreviewWrapper: View {
+        @State var activities: [RestActivity] = []
+        var body: some View {
+            AddRestActivityView(restActivities: $activities)
+        }
+    }
+    
+    static var previews: some View {
+        PreviewWrapper()
+    }
+}
