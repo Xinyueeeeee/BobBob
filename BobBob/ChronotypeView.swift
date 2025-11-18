@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ChronotypeView2: View {
-    @State private var selectedChronotype: String? = nil
+    @AppStorage("selectedChronotype") private var selectedChronotype: String?
+
     
     var body: some View {
         NavigationStack{

@@ -181,7 +181,8 @@ struct HabitualStyleView: View {
     }
 }
 struct ChronotypeView: View {
-    @State private var selectedChronotype: String? = nil
+    @AppStorage("selectedChronotype") private var selectedChronotype: String?
+
     
     var body: some View {
         ZStack{
