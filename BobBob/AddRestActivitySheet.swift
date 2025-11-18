@@ -70,3 +70,4 @@ struct AddRestActivityView: View {
         !name.isEmpty && startDate <= endDate
     }
 }
+

@@ -426,7 +426,7 @@ struct MealTimeView: View {
                         Spacer()
                         
                         NavigationLink {
-                            RestDaysView()
+                            ActivitiesView()
                         } label: {
                             Text("Next")
                                 .font(.headline)
@@ -583,76 +583,79 @@ struct RestDaysView: View {
             )
             .ignoresSafeArea()
             
-            VStack(spacing: 20) {
-                Text("When do you rest?")
-                    .font(.headline)
-                    .foregroundColor(.black).opacity(0.5)
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 15) {
-                        ForEach(restActivities) { activity in
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(activity.name)
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                
-                                HStack {
-                                    Label(
-                                        activity.startDate.formatted(date: .abbreviated, time: .omitted),
-                                        systemImage: "sunrise"
-                                    )
-                                    Label(
-                                        activity.endDate.formatted(date: .abbreviated, time: .omitted),
-                                        systemImage: "sunset"
-                                    )
+            NavigationStack {
+                VStack(spacing: 20) {
+                    Text("When do you rest?")
+                        .font(.headline)
+                        .foregroundColor(.black).opacity(0.5)
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 15) {
+                            ForEach(restActivities) { activity in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(activity.name)
+                                        .font(.headline)
+                                        .foregroundColor(.black)
+                                    
+                                    HStack {
+                                        Label(
+                                            activity.startDate.formatted(date: .abbreviated, time: .omitted),
+                                            systemImage: "sunrise"
+                                        )
+                                        Label(
+                                            activity.endDate.formatted(date: .abbreviated, time: .omitted),
+                                            systemImage: "sunset"
+                                        )
+                                    }
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
                                 }
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.white)
-                            .cornerRadius(14)
-                            .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                         }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-                }
-                
-                Spacer()
-                
-                HStack(spacing: 20) {
-                    Button {
-                        showingAddSheet = true
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .shadow(radius: 3)
+                        .padding(.horizontal)
+                        .padding(.top, 10)
                     }
                     
                     Spacer()
                     
-                   
-                    Button {
-                        isWelcomeScreenOver = true
-                    } label: {
-                        Text("Get Started!")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .cornerRadius(10)
+                    HStack(spacing: 20) {
+                        Button {
+                            showingAddSheet = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.title)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                        }
+                        
+                        Spacer()
+                        
+                        
+                        Button {
+                            isWelcomeScreenOver = true
+                        } label: {
+                            Text("Get Started!")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 20)
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        .navigationTitle("Rest Days")
+                        .navigationBarTitleDisplayMode(.inline)
                     }
-                    
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
         }
         .sheet(isPresented: $showingAddSheet) {
