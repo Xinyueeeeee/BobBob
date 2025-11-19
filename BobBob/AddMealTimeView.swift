@@ -11,7 +11,8 @@ struct AddMealTimeView: View {
     
     @State private var selectedMeal = "Breakfast"
     @State private var mealTime = Date()
-    @State private var duration = 15
+    @State private var durationHours: Int = 0
+    @State private var durationMinutes: Int = 15
     
     let mealOptions = ["Breakfast", "Lunch", "Dinner", "Snack"]
     
@@ -32,15 +33,33 @@ struct AddMealTimeView: View {
                     DatePicker("Meal Time", selection: $mealTime, displayedComponents: .hourAndMinute)
                 }
                 
-                Section(header: Text("DURATION (MIN)")) {
-                    Stepper("\(duration) min", value: $duration, in: 1...60, step: 1)
+                Section(header: Text("DURATION")) {
+                    HStack {
+                    Picker("Hours", selection: $durationHours) {
+                        ForEach(0..<24) { hour in
+                            Text("\(hour) h")
+                        }
+                    }
+                    .pickerStyle( .wheel)
+                    .frame(maxWidth: .infinity)
+                    
+                    Picker("Minutes", selection: $durationMinutes) {
+                        ForEach(0..<60) { min in
+                            Text("\(min) m")
+                        }
+                    }
+                    .pickerStyle( .wheel)
                 }
+                }
+                
                 Section {
                     Button("Save") {
+                        let totalMinutes = durationHours * 60 + durationMinutes
+                        
                         onSave(
                             MealTime(mealType: selectedMeal,
                                      time: mealTime,
-                                     duration: duration)
+                                     duration: totalMinutes)
                         )
                         dismiss()
                     }
