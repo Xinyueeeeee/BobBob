@@ -15,6 +15,7 @@ struct IntroductionCarouselView: View {
     @Binding var hasSeenOnboarding: Bool
 
     var body: some View {
+
         ZStack {
             LinearGradient(
                 colors: [
@@ -25,6 +26,7 @@ struct IntroductionCarouselView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
+
 
             TabView(selection: $index) {
                 IntroductionScreenView1(hasSeenOnboarding: $hasSeenOnboarding)
@@ -108,7 +110,9 @@ struct HabitualStyleView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
+
                     .foregroundColor(.black).opacity(0.5)
+
                 Button {
                     selectedStyle = "Hopper"
                 } label: {
@@ -150,10 +154,12 @@ struct HabitualStyleView: View {
                 Spacer()
                 Text("Different people have different working styles.")
                     .font(.footnote)
+
                     .foregroundColor(.black.opacity(0.5))
                 NavigationLink {
                     ChronotypeView(hasSeenOnboarding: $hasSeenOnboarding)
                 } label: {
+
                     Text("Next")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -188,8 +194,10 @@ struct ChronotypeView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
+
                     .foregroundColor(.black).opacity(0.5)
                 Button {
+
                     selectedChronotype = "Early Bird"
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {
@@ -231,10 +239,12 @@ struct ChronotypeView: View {
                 Spacer()
                 Text("Different people prefer working at different time periods.")
                     .font(.footnote)
+
                     .foregroundColor(.black.opacity(0.5))
                 NavigationLink {
                     NapTimeView(hasSeenOnboarding: $hasSeenOnboarding)
                 } label: {
+
                     Text("Next")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -253,9 +263,11 @@ struct ChronotypeView: View {
 }
 
 struct NapTimeView: View {
+
     @State private var sleepTime = Date()
     @State private var wakeTime = Date()
     @Binding var hasSeenOnboarding: Bool
+
 
     var body: some View {
         ZStack {
@@ -268,7 +280,9 @@ struct NapTimeView: View {
             VStack {
                 Text("What time do you go to sleep?")
                     .font(.headline)
+
                     .foregroundColor(.black).opacity(0.5)
+
                 Spacer()
                 DatePicker(
                     "Select Time",
@@ -277,9 +291,11 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+
                 Text("What time do you wake up?")
                     .font(.headline)
                     .foregroundColor(.black).opacity(0.5)
+
                 Spacer()
                 DatePicker(
                     "Select Time",
@@ -288,10 +304,13 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+
                 Spacer()
                 Text("Different people sleep at different hours.")
                     .font(.footnote)
+
                     .foregroundColor(.black).opacity(0.5)
+
                 NavigationLink {
                     MealTimeView(hasSeenOnboarding: $hasSeenOnboarding)
                 } label: {
@@ -338,8 +357,10 @@ struct MealTimeView: View {
                 VStack(spacing: 20) {
                     Text("When do you have your meals?")
                         .font(.headline)
+
                         .foregroundColor(.black)
                         .opacity(0.5)
+
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(mealTimes) { meal in
@@ -426,7 +447,9 @@ struct ActivitiesView: View {
                 VStack(spacing: 20) {
                     Text("Do you have any recurring activities?")
                         .font(.headline)
+
                         .foregroundColor(.black).opacity(0.5)
+
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(activities) { activity in
@@ -529,7 +552,9 @@ struct RestDaysView: View {
                 VStack(spacing: 20) {
                     Text("When do you rest?")
                         .font(.headline)
+
                         .foregroundColor(.black).opacity(0.5)
+
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(restActivities) { activity in
