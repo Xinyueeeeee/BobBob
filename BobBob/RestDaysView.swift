@@ -90,7 +90,6 @@ struct RestDaysView2: View {
                 }
             }
             .navigationTitle("Rest Days")
-            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingAddSheet) {
                 AddRestActivityView(restActivities: $restActivities)
             }
