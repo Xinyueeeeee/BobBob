@@ -17,7 +17,7 @@ struct TasksView: View {
 
                 VStack {
 
-                    List {
+                    Form {
                         ForEach($taskStore.tasks) { $task in
                             NavigationLink {
                                 addTasksView(
