@@ -106,7 +106,7 @@ struct HabitualStyleView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(8.0))
                 
                 Button {
                     selectedStyle = "Hopper"
@@ -199,7 +199,7 @@ struct ChronotypeView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(8.0))
                 Button{
                     selectedChronotype = "Early Bird"
                 }label:{
@@ -247,7 +247,7 @@ struct ChronotypeView: View {
                 
                 Text("Different people prefer working at different time periods.")
                     .font(.footnote)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(.gray.opacity(8.0))
                 
                 NavigationLink{
                     NapTimeView()
@@ -290,7 +290,7 @@ struct NapTimeView: View {
             VStack {
                 Text("What time do you go to sleep?")
                     .font(.headline)
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(8.0))
                 
                 Spacer()
                 
@@ -306,7 +306,7 @@ struct NapTimeView: View {
                 
                 Text("What time do you wake up?")
                     .font(.headline)
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(8.0))
                 
                 Spacer()
                 
@@ -324,7 +324,7 @@ struct NapTimeView: View {
                 
                 Text("Different people sleep at different hours.")
                     .font(.footnote)
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(8.0))
                 
                 NavigationLink {
                     MealTimeView()
@@ -374,8 +374,7 @@ struct MealTimeView: View {
                     
                     Text("When do you have your meals?")
                         .font(.headline)
-                        .foregroundColor(.black)
-                        .opacity(0.5)
+                        .foregroundColor(.gray.opacity(8.0))
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -473,7 +472,7 @@ struct ActivitiesView: View {
                     
                     Text("Do you have any recurring activities?")
                         .font(.headline)
-                        .foregroundColor(.black).opacity(0.5)
+                        .foregroundColor(.gray.opacity(8.0))
                     
                     
                     ScrollView(showsIndicators: false) {
@@ -589,7 +588,7 @@ struct RestDaysView: View {
                 VStack(spacing: 20) {
                     Text("When do you rest?")
                         .font(.headline)
-                        .foregroundColor(.black).opacity(0.5)
+                        .foregroundColor(.gray.opacity(8.0))
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
