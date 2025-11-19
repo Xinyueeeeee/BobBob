@@ -10,6 +10,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @Binding var hasSeenOnboarding: Bool
+    @StateObject private var mealStore = MealTimeStore()
+
     var body: some View {
         
             NavigationStack{
@@ -39,7 +41,7 @@ struct SettingsView: View {
                                 Text("Chronotype")
                             }
                             NavigationLink{
-                                MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
+                                MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding,mealStore: mealStore)
                             }label:{
                                 Text("Meal Time")
                             }

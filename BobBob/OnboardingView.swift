@@ -639,73 +639,101 @@ struct RestDaysView: View {
     }
 }
 
+
+
+
+
 struct AddMealTimeView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
+
+    var meal: MealTime? = nil          // nil = add mode
+
+    @State private var mealType: String = ""
+    @State private var time: Date = Date()
     
-    @State private var selectedMeal = "Breakfast"
-    @State private var mealTime = Date()
-    @State private var durationHours: Int = 0
-    @State private var durationMinutes: Int = 15
+    // Wheel picker values
+    @State private var selectedHours: Int = 0
+    @State private var selectedMinutes: Int = 30   // default
     
-    let mealOptions = ["Breakfast", "Lunch", "Dinner", "Snack"]
-    
+    // Convert hours + minutes into total minutes for saving
+    private func totalDuration() -> Int {
+        (selectedHours * 60) + selectedMinutes
+    }
+
+    // Extract hours + minutes when editing
+    private func setInitialSelections() {
+        guard let meal = meal else { return }
+        selectedHours = meal.duration / 60
+        selectedMinutes = meal.duration % 60
+        mealType = meal.mealType
+        time = meal.time
+    }
+
+    // Dummy max values so wheel works
+    private let maxHours = 5
+    private let maxMinutes = 59
+
     var onSave: (MealTime) -> Void
-    
+
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("MEAL TYPE")) {
-                    Picker("Select Meal", selection: $selectedMeal) {
-                        ForEach(mealOptions, id: \.self) { meal in
-                            Text(meal)
-                        }
-                    }
-                }
                 
-                Section(header: Text("TIME")) {
-                    DatePicker("Meal Time", selection: $mealTime, displayedComponents: .hourAndMinute)
-                }
-                
-                Section(header: Text("DURATION")) {
+                TextField("Meal Type", text: $mealType)
+
+                DatePicker("Time",
+                           selection: $time,
+                           displayedComponents: .hourAndMinute)
+
+                // ********** YOUR CUSTOM WHEEL DURATION PICKER **********
+                VStack(alignment: .leading) {
+                    Text("Duration")
+                        .font(.headline)
+
                     HStack {
-                    Picker("Hours", selection: $durationHours) {
-                        ForEach(0..<24) { hour in
-                            Text("\(hour) h")
+                        Picker("Hours", selection: $selectedHours) {
+                            ForEach(0...maxHours, id: \.self) { hour in
+                                Text("\(hour)h").tag(hour)
+                            }
                         }
-                    }
-                    .pickerStyle( .wheel)
-                    .frame(maxWidth: .infinity)
-                    
-                    Picker("Minutes", selection: $durationMinutes) {
-                        ForEach(0..<60) { min in
-                            Text("\(min) m")
+                        .pickerStyle(.wheel)
+
+                        Picker("Minutes", selection: $selectedMinutes) {
+                            ForEach(0...maxMinutes, id: \.self) { minute in
+                                Text("\(minute)m").tag(minute)
+                            }
                         }
+                        .pickerStyle(.wheel)
                     }
-                    .pickerStyle( .wheel)
+                    .frame(height: 120)   // wheel height
+                    .background(Color.white)
+                    .cornerRadius(12)
                 }
-                }
-                
-                Section {
+                // *******************************************************
+            }
+            .navigationTitle(meal == nil ? "Add Meal" : "Edit Meal")
+            .onAppear(perform: setInitialSelections)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        let totalMinutes = durationHours * 60 + durationMinutes
-                        
-                        onSave(
-                            MealTime(mealType: selectedMeal,
-                                     time: mealTime,
-                                     duration: totalMinutes)
+                        let updatedMeal = MealTime(
+                            id: meal?.id ?? UUID(),
+                            mealType: mealType,
+                            time: time,
+                            duration: totalDuration()
                         )
+                        onSave(updatedMeal)
                         dismiss()
                     }
-                    .frame(maxWidth: .infinity)
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
                 }
             }
-            .navigationTitle("Add Meal Time")
-            .navigationBarItems(leading: Button("Cancel") {
-                dismiss()
-            })
         }
     }
 }
+
 
 struct AddActivitiesView: View {
     @Environment(\.dismiss) var dismiss
