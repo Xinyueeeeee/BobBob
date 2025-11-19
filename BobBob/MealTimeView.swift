@@ -79,7 +79,6 @@ struct MealTimeView2: View {
                     .padding(.bottom, 20)
                 }
                 .navigationTitle("Meals")
-                .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showingAddMeal) {
                     AddMealTimeView { newMeal in
                         mealTimes.append(newMeal)
