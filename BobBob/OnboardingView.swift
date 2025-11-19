@@ -16,15 +16,12 @@ struct IntroductionCarouselView: View {
     
     var body: some View {
         ZStack{
+           
             LinearGradient(
-                colors: [
-                    Color(red: 10/255, green: 25/255, blue: 47/255),   // deep navy
-                    Color(red: 25/255, green: 60/255, blue: 120/255)   // soft blue
-                ],
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
-
                 .ignoresSafeArea()
 
             TabView(selection: $index) {
