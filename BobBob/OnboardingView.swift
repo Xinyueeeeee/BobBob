@@ -13,22 +13,22 @@ struct OnboardingView: View {
 struct IntroductionCarouselView: View {
     @State private var index = 0
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
-
+        
         ZStack {
-                LinearGradient(
-                                colors: [
-                                    Color(red: 10/255, green: 25/255, blue: 47/255),
-                                    Color(red: 25/255, green: 60/255, blue: 120/255)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .ignoresSafeArea()
-
-
-
+            LinearGradient(
+                colors: [
+                    Color(red: 10/255, green: 25/255, blue: 47/255),
+                    Color(red: 25/255, green: 60/255, blue: 120/255)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            
+            
             TabView(selection: $index) {
                 IntroductionScreenView1(hasSeenOnboarding: $hasSeenOnboarding)
                     .tag(0)
@@ -42,7 +42,7 @@ struct IntroductionCarouselView: View {
 
 struct IntroductionScreenView1: View {
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
         ZStack {
             VStack {
@@ -64,7 +64,7 @@ struct IntroductionScreenView1: View {
 
 struct IntroductionScreenView2: View {
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
         VStack {
             Spacer()
@@ -97,7 +97,7 @@ struct IntroductionScreenView2: View {
 struct HabitualStyleView: View {
     @State private var selectedStyle: String? = nil
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -111,9 +111,9 @@ struct HabitualStyleView: View {
                     .font(.title3)
                     .bold()
                     .padding(.top)
-
+                
                     .foregroundColor(.gray.opacity(0.5))
-
+                
                 Button {
                     selectedStyle = "Hopper"
                 } label: {
@@ -155,12 +155,12 @@ struct HabitualStyleView: View {
                 Spacer()
                 Text("Different people have different working styles.")
                     .font(.footnote)
-
+                
                     .foregroundColor(.gray.opacity(0.5))
                 NavigationLink {
                     ChronotypeView(hasSeenOnboarding: $hasSeenOnboarding)
                 } label: {
-
+                    
                     Text("Next")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -181,7 +181,7 @@ struct HabitualStyleView: View {
 struct ChronotypeView: View {
     @AppStorage("selectedChronotype") private var selectedChronotype: String?
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -190,14 +190,14 @@ struct ChronotypeView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-
+            
             VStack(spacing: 30) {
                 Text("What is your chronotype?")
                     .font(.title3)
                     .bold()
                     .padding(.top)
                     .foregroundColor(.black.opacity(0.5))
-
+                
                     .foregroundColor(.gray.opacity(8.0))
                 Button {
                     selectedChronotype = "Early Bird"
@@ -206,7 +206,7 @@ struct ChronotypeView: View {
                         Text("Early Bird")
                             .font(.headline)
                             .foregroundColor(selectedChronotype == "Early Bird" ? .white : .black)
-
+                        
                         Text("You prefer starting your day earlier and feel most productive in the morning.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
@@ -218,7 +218,7 @@ struct ChronotypeView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
-
+                
                 // Night Owl
                 Button {
                     selectedChronotype = "Night Owl"
@@ -227,7 +227,7 @@ struct ChronotypeView: View {
                         Text("Night Owl")
                             .font(.headline)
                             .foregroundColor(selectedChronotype == "Night Owl" ? .white : .black)
-
+                        
                         Text("You focus better later in the day and prefer working at night.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Night Owl" ? .white.opacity(0.9) : .black.opacity(0.7))
@@ -239,12 +239,12 @@ struct ChronotypeView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
-
+                
                 Spacer()
                 Text("Different people prefer working at different time periods.")
                     .font(.footnote)
                     .foregroundColor(.black.opacity(0.5))
-
+                
                     .foregroundColor(.gray.opacity(8.0))
                 NavigationLink {
                     NapTimeView(hasSeenOnboarding: $hasSeenOnboarding)
@@ -266,7 +266,7 @@ struct ChronotypeView: View {
 }
 
 struct NapTimeView: View {
-   
+    
     @Binding var hasSeenOnboarding: Bool
     @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(
         bySettingHour: 22, minute: 0, second: 0, of: Date()
@@ -275,8 +275,8 @@ struct NapTimeView: View {
     @AppStorage("wakeTime") private var wakeTime = Calendar.current.date(
         bySettingHour: 6, minute: 0, second: 0, of: Date()
     )!
-
-
+    
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -288,9 +288,9 @@ struct NapTimeView: View {
             VStack {
                 Text("What time do you go to sleep?")
                     .font(.headline)
-
+                
                     .foregroundColor(.gray.opacity(0.8))
-
+                
                 Spacer()
                 DatePicker(
                     "Select Time",
@@ -299,11 +299,11 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-
+                
                 Text("What time do you wake up?")
                     .font(.headline)
                     .foregroundColor(.gray.opacity(0.8))
-
+                
                 Spacer()
                 DatePicker(
                     "Select Time",
@@ -312,13 +312,13 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-
+                
                 Spacer()
                 Text("Different people sleep at different hours.")
                     .font(.footnote)
-
+                
                     .foregroundColor(.gray.opacity(0.8))
-
+                
                 NavigationLink {
                     MealTimeView(hasSeenOnboarding: $hasSeenOnboarding)
                 } label: {
@@ -348,7 +348,7 @@ struct MealTime: Identifiable, Codable {
         self.id = id
         self.mealType = mealType
         self.time = time
-        self.duration = duration   
+        self.duration = duration
     }
 }
 
@@ -357,7 +357,7 @@ struct MealTimeView: View {
     @State private var mealTimes: [MealTime] = []
     @State private var showingAddMeal = false
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -373,9 +373,9 @@ struct MealTimeView: View {
                 VStack(spacing: 20) {
                     Text("When do you have your meals?")
                         .font(.headline)
-
+                    
                         .foregroundColor(.gray.opacity(0.8))
-
+                    
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(mealTimes) { meal in
@@ -419,7 +419,7 @@ struct MealTimeView: View {
                         }
                         Spacer()
                         NavigationLink {
-                           ActivitiesView(hasSeenOnboarding: $hasSeenOnboarding)
+                            ActivitiesView(hasSeenOnboarding: $hasSeenOnboarding)
                         } label: {
                             Text("Next")
                                 .font(.headline)
@@ -449,7 +449,7 @@ struct ActivitiesView: View {
     @State private var activities: [Activity] = []
     @State private var showingAddActivity = false
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -462,9 +462,9 @@ struct ActivitiesView: View {
                 VStack(spacing: 20) {
                     Text("Do you have any recurring activities?")
                         .font(.headline)
-
+                    
                         .foregroundColor(.gray.opacity(0.5))
-
+                    
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(activities) { activity in
@@ -535,6 +535,8 @@ struct Activity: Identifiable {
     var day: String
     var regularity: String
     var time: Date
+    var durationMinutes: Int
+    
     var timeFormatted: String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -554,7 +556,7 @@ struct RestDaysView: View {
     @State private var restActivities: [RestActivity] = []
     @State private var showingAddSheet = false
     @Binding var hasSeenOnboarding: Bool
-
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -567,9 +569,9 @@ struct RestDaysView: View {
                 VStack(spacing: 20) {
                     Text("When do you rest?")
                         .font(.headline)
-
+                    
                         .foregroundColor(.gray.opacity(0.5))
-
+                    
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(restActivities) { activity in
@@ -639,101 +641,73 @@ struct RestDaysView: View {
     }
 }
 
-
-
-
-
 struct AddMealTimeView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var meal: MealTime? = nil          // nil = add mode
-
-    @State private var mealType: String = ""
-    @State private var time: Date = Date()
+    @Environment(\.dismiss) var dismiss
     
-    // Wheel picker values
-    @State private var selectedHours: Int = 0
-    @State private var selectedMinutes: Int = 30   // default
+    @State private var selectedMeal = "Breakfast"
+    @State private var mealTime = Date()
+    @State private var durationHours: Int = 0
+    @State private var durationMinutes: Int = 15
     
-    // Convert hours + minutes into total minutes for saving
-    private func totalDuration() -> Int {
-        (selectedHours * 60) + selectedMinutes
-    }
-
-    // Extract hours + minutes when editing
-    private func setInitialSelections() {
-        guard let meal = meal else { return }
-        selectedHours = meal.duration / 60
-        selectedMinutes = meal.duration % 60
-        mealType = meal.mealType
-        time = meal.time
-    }
-
-    // Dummy max values so wheel works
-    private let maxHours = 5
-    private let maxMinutes = 59
-
+    let mealOptions = ["Breakfast", "Lunch", "Dinner", "Snack"]
+    
     var onSave: (MealTime) -> Void
-
+    
     var body: some View {
         NavigationStack {
             Form {
-                
-                TextField("Meal Type", text: $mealType)
-
-                DatePicker("Time",
-                           selection: $time,
-                           displayedComponents: .hourAndMinute)
-
-                // ********** YOUR CUSTOM WHEEL DURATION PICKER **********
-                VStack(alignment: .leading) {
-                    Text("Duration")
-                        .font(.headline)
-
-                    HStack {
-                        Picker("Hours", selection: $selectedHours) {
-                            ForEach(0...maxHours, id: \.self) { hour in
-                                Text("\(hour)h").tag(hour)
-                            }
+                Section(header: Text("MEAL TYPE")) {
+                    Picker("Select Meal", selection: $selectedMeal) {
+                        ForEach(mealOptions, id: \.self) { meal in
+                            Text(meal)
                         }
-                        .pickerStyle(.wheel)
-
-                        Picker("Minutes", selection: $selectedMinutes) {
-                            ForEach(0...maxMinutes, id: \.self) { minute in
-                                Text("\(minute)m").tag(minute)
-                            }
-                        }
-                        .pickerStyle(.wheel)
                     }
-                    .frame(height: 120)   // wheel height
-                    .background(Color.white)
-                    .cornerRadius(12)
                 }
-                // *******************************************************
-            }
-            .navigationTitle(meal == nil ? "Add Meal" : "Edit Meal")
-            .onAppear(perform: setInitialSelections)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
+                
+                Section(header: Text("TIME")) {
+                    DatePicker("Meal Time", selection: $mealTime, displayedComponents: .hourAndMinute)
+                }
+                
+                Section(header: Text("DURATION")) {
+                    HStack {
+                        Picker("Hours", selection: $durationHours) {
+                            ForEach(0..<24) { hour in
+                                Text("\(hour) h")
+                            }
+                        }
+                        .pickerStyle( .wheel)
+                        .frame(maxWidth: .infinity)
+                        
+                        Picker("Minutes", selection: $durationMinutes) {
+                            ForEach(0..<60) { min in
+                                Text("\(min) m")
+                            }
+                        }
+                        .pickerStyle( .wheel)
+                    }
+                }
+                
+                Section {
                     Button("Save") {
-                        let updatedMeal = MealTime(
-                            id: meal?.id ?? UUID(),
-                            mealType: mealType,
-                            time: time,
-                            duration: totalDuration()
+                        let totalMinutes = durationHours * 60 + durationMinutes
+                        
+                        onSave(
+                            MealTime(mealType: selectedMeal,
+                                     time: mealTime,
+                                     duration: totalMinutes)
                         )
-                        onSave(updatedMeal)
                         dismiss()
                     }
-                }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    .frame(maxWidth: .infinity)
                 }
             }
+            .navigationTitle("Add Meal Time")
+            .navigationBarItems(leading: Button("Cancel") {
+                dismiss()
+            })
         }
     }
 }
-
 
 struct AddActivitiesView: View {
     @Environment(\.dismiss) var dismiss
@@ -743,79 +717,84 @@ struct AddActivitiesView: View {
     @State private var day: String = "Monday"
     @State private var regularity: String = "Weekly"
     @State private var time: Date = Date()
-    @State private var duration: Int = 15
     
+    @State private var durationHours: Int = 0
+    @State private var durationMinutes: Int = 15
+    
+    private var totalDurationMinutes: Int {
+        durationHours * 60 + durationMinutes
+    }
     
     let days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     let regularOptions = ["Daily","Weekly","Monthly"]
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                   
-                    Text("Activity Name").font(.headline)
+            Form {
+                Section(header: Text("MEAL TYPE")) {
                     TextField("e.g. Gym", text: $name)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
-                    
-                    Text("Day").font(.headline)
-                    Picker("Day", selection: $day) {
-                        ForEach(days, id: \.self) { day in
-                            Text(day)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    
-                    Text("Regularity").font(.headline)
-                    Picker("Regularity", selection: $regularity) {
-                        ForEach(regularOptions, id: \.self) { option in
-                            Text(option)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    
-                    Text("Time").font(.headline)
-                    DatePicker("", selection: $time, displayedComponents: .hourAndMinute)
-                        .datePickerStyle(.wheel)
-                        .labelsHidden()
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
-                    Section(header: Text("Duration (min)")) {
-                        Stepper("\(duration) min", value: $duration, in: 5...120, step: 5)
-                    }
-                    
-                    Button {
-                        let newActivity = Activity(name: name, day: day, regularity: regularity, time: time)
-                        activities.append(newActivity)
-                        dismiss()
-                    }label:{
-                        Text("Save")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                    }
-                    .frame(maxWidth: .infinity)
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
+                
+                Section(header: Text("DAY")) {
+                Picker("Day", selection: $day) {
+                    ForEach(days, id: \.self) { day in
+                        Text(day)
+                    }
+                }
             }
-            .navigationTitle("Add Activity")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Cancel") { dismiss() }
+                .pickerStyle(.menu)
+                
+                Section(header: Text("REGULARITY")) {
+                Picker("Regularity", selection: $regularity) {
+                    ForEach(regularOptions, id: \.self) { option in
+                        Text(option)
+                    }
                 }
+            }
+                .pickerStyle(.menu)
+                
+                Section(header: Text("TIME")) {
+                    DatePicker("", selection: $time, displayedComponents: .hourAndMinute)
+                }
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                
+                Section(header: Text("DURATION")) {
+                    HStack {
+                        Picker("Hours", selection: $durationHours) {
+                            ForEach(0..<24) { hour in
+                                Text("\(hour) h")
+                            }
+                        }
+                        .pickerStyle( .wheel)
+                        .frame(maxWidth: .infinity)
+                        
+                        Picker("Minutes", selection: $durationMinutes) {
+                            ForEach(0..<60) { min in
+                                Text("\(min) m")
+                            }
+                        }
+                        .pickerStyle( .wheel)
+                    }
+                }
+                
+                Button {
+                    let newActivity = Activity(name: name, day: day, regularity: regularity, time: time, durationMinutes: totalDurationMinutes)
+                    activities.append(newActivity)
+                    dismiss()
+                }label:{
+                    Text("Save")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity)
+                        .cornerRadius(10)
+                }
+            }
+        }
+        .navigationTitle("Add Activity")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Cancel") { dismiss() }
             }
         }
     }
@@ -833,11 +812,11 @@ struct AddRestActivityView: View {
     @Binding var restActivities: [RestActivity]
     
     @State private var name: String = ""
-   
+    
     @State private var startDate: Date = Calendar.current.startOfDay(for: Date())
     @State private var endDate: Date = Calendar.current.startOfDay(for: Date())
     
-   
+    
     private var isFormComplete: Bool {
         
         !name.isEmpty && startDate <= endDate
@@ -845,9 +824,9 @@ struct AddRestActivityView: View {
     
     var body: some View {
         NavigationStack {
-           
+            
             Form {
-              
+                
                 Section(header: Text("Activity name")) {
                     TextField("e.g., Vacation, Staycation, Sick Leave", text: $name)
                 }
@@ -859,7 +838,7 @@ struct AddRestActivityView: View {
                     DatePicker("End Date", selection: $endDate, displayedComponents: .date)
                 }
                 
-               
+                
                 Section {
                     Button("Save") {
                         let newActivity = RestActivity(name: name, startDate: startDate, endDate: endDate)
@@ -880,10 +859,9 @@ struct AddRestActivityView: View {
     }
 }
 
-    
-    struct OnboardingView_Previews: PreviewProvider {
-        static var previews: some View {
-            OnboardingView(hasSeenOnboarding: .constant(false))
-        }
-    }
 
+struct OnboardingView_Previews: PreviewProvider {
+    static var previews: some View {
+        OnboardingView(hasSeenOnboarding: .constant(false))
+    }
+}
