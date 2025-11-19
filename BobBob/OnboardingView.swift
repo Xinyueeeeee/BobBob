@@ -18,10 +18,7 @@ struct IntroductionCarouselView: View {
 
         ZStack {
             LinearGradient(
-                colors: [
-                    Color(red: 10/255, green: 25/255, blue: 47/255),
-                    Color(red: 25/255, green: 60/255, blue: 120/255)
-                ],
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -93,6 +90,89 @@ struct IntroductionScreenView2: View {
     }
 }
 
+struct HabitualStyleView: View {
+    @State private var selectedStyle: String? = nil
+    @Binding var hasSeenOnboarding: Bool
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            VStack(spacing: 30) {
+                Text("What is your habitual style?")
+                    .font(.title3)
+                    .bold()
+                    .padding(.top)
+
+                    .foregroundColor(.gray.opacity(0.5))
+
+                Button {
+                    selectedStyle = "Hopper"
+                } label: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Hopper")
+                            .font(.headline)
+                            .foregroundColor(selectedStyle == "Hopper" ? .white : .black)
+                        Text("Someone who usually focuses for short bursts of time and prefers breaking activities into multiple sessions.")
+                            .font(.subheadline)
+                            .foregroundColor(selectedStyle == "Hopper" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(selectedStyle == "Hopper" ? Color.blue : Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
+                }
+                .padding(.horizontal)
+                Button {
+                    selectedStyle = "Hyperfocus"
+                } label: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Hyperfocus")
+                            .font(.headline)
+                            .foregroundColor(selectedStyle == "Hyperfocus" ? .white : .black)
+                        Text("Someone who prefers focusing for longer periods of time and can finish tasks in a single session.")
+                            .font(.subheadline)
+                            .foregroundColor(selectedStyle == "Hyperfocus" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(selectedStyle == "Hyperfocus" ? Color.blue : Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.1), radius: 4)
+                }
+                .padding(.horizontal)
+                Spacer()
+                Text("Different people have different working styles.")
+                    .font(.footnote)
+
+                    .foregroundColor(.gray.opacity(0.5))
+                NavigationLink {
+                    ChronotypeView(hasSeenOnboarding: $hasSeenOnboarding)
+                } label: {
+
+                    Text("Next")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(selectedStyle == nil ? Color.gray : Color.blue)
+                        .cornerRadius(10)
+                }
+                .disabled(selectedStyle == nil)
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            }
+            .navigationTitle("Habitual Style")
+        }
+    }
+}
 
 struct ChronotypeView: View {
     @State private var selectedChronotype: String? = nil
@@ -112,7 +192,7 @@ struct ChronotypeView: View {
                     .bold()
                     .padding(.top)
 
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(8.0))
                 Button {
 
                     selectedChronotype = "Early Bird"
@@ -157,7 +237,7 @@ struct ChronotypeView: View {
                 Text("Different people prefer working at different time periods.")
                     .font(.footnote)
 
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(.gray.opacity(8.0))
                 NavigationLink {
                     NapTimeView(hasSeenOnboarding: $hasSeenOnboarding)
                 } label: {
@@ -198,7 +278,7 @@ struct NapTimeView: View {
                 Text("What time do you go to sleep?")
                     .font(.headline)
 
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(0.8))
 
                 Spacer()
                 DatePicker(
@@ -211,7 +291,7 @@ struct NapTimeView: View {
 
                 Text("What time do you wake up?")
                     .font(.headline)
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(0.8))
 
                 Spacer()
                 DatePicker(
@@ -226,7 +306,7 @@ struct NapTimeView: View {
                 Text("Different people sleep at different hours.")
                     .font(.footnote)
 
-                    .foregroundColor(.black).opacity(0.5)
+                    .foregroundColor(.gray.opacity(0.8))
 
                 NavigationLink {
                     MealTimeView(hasSeenOnboarding: $hasSeenOnboarding)
@@ -275,8 +355,7 @@ struct MealTimeView: View {
                     Text("When do you have your meals?")
                         .font(.headline)
 
-                        .foregroundColor(.black)
-                        .opacity(0.5)
+                        .foregroundColor(.gray.opacity(0.8))
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -365,7 +444,7 @@ struct ActivitiesView: View {
                     Text("Do you have any recurring activities?")
                         .font(.headline)
 
-                        .foregroundColor(.black).opacity(0.5)
+                        .foregroundColor(.gray.opacity(0.5))
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -470,7 +549,7 @@ struct RestDaysView: View {
                     Text("When do you rest?")
                         .font(.headline)
 
-                        .foregroundColor(.black).opacity(0.5)
+                        .foregroundColor(.gray.opacity(0.5))
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
