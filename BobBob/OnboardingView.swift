@@ -266,8 +266,7 @@ struct ChronotypeView: View {
 }
 
 struct NapTimeView: View {
-    @AppStorage("sleepTime") private var sleepTime: Date = Date()
-    @AppStorage("wakeTime") private var wakeTime: Date = Date()
+   
     @Binding var hasSeenOnboarding: Bool
     @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(
         bySettingHour: 22, minute: 0, second: 0, of: Date()
