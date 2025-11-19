@@ -5,27 +5,31 @@
 //  Created by Huang Qing on 14/11/25.
 //
 
+
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("isWelcomeScreenOver") var isWelcomeScreenOver = false
+    @Binding var hasSeenOnboarding: Bool
     var body: some View {
-        
-        TabView{
-            Tab("calendar",systemImage: "calendar"){
-                CalendarView()
-            }
-            Tab("tasks",systemImage: "list.bullet"){
-                TasksView()
-            }
-                    Tab("setttings",systemImage: "gearshape"){
-                        SettingsView()
-            }
+        MainTabView()
+    }
+}
+
+struct MainTabView: View {
+    var body: some View {
+        TabView {
+            CalendarView()
+                .tabItem { Label("Calendar", systemImage: "calendar") }
+
+            TasksView()
+                .tabItem { Label("Tasks", systemImage: "list.bullet") }
+
+            SettingsView(hasSeenOnboarding: .constant(false))
+                .tabItem { Label("Settings", systemImage: "gearshape") }
         }
     }
 }
 
-
 #Preview {
-    ContentView()
+    ContentView(hasSeenOnboarding:.constant(false))
 }

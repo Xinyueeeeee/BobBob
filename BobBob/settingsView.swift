@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    
+    @Binding var hasSeenOnboarding: Bool
     var body: some View {
         
             NavigationStack{
@@ -33,32 +33,32 @@ struct SettingsView: View {
                         
                         Section(header: Text("Personal Information")) {
                             NavigationLink{
-                                HabitualStyleView2()
+                                HabitualStyleView2(hasSeenOnboarding: $hasSeenOnboarding)
                             }label: {
                                 Text("Habitual Style")
                             }
                             NavigationLink{
-                                ChronotypeView2()
+                                ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding)
                             }label:{
                                 Text("Chronotype")
                             }
                             NavigationLink{
-                                MealTimeView2()
+                                MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
                             }label:{
                                 Text("Meal Time")
                             }
                             NavigationLink{
-                                NapTimeView2()
+                                NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
                             }label:{
                                 Text("Sleep Schedule")
                             }
                             NavigationLink{
-                                ActivitiesView2()
+                                ActivitiesView2(hasSeenOnboarding: $hasSeenOnboarding)
                             }label:{
                                 Text("Activitiy")
                             }
                             NavigationLink{
-                                RestDaysView2()
+                                RestDaysView2(hasSeenOnboarding: $hasSeenOnboarding)
                             }label: {
                                 Text("Rest Day")
                             }
@@ -71,7 +71,7 @@ struct SettingsView: View {
     }
 
 #Preview {
-    SettingsView()
+    SettingsView(hasSeenOnboarding: .constant(false))
 }
 
 

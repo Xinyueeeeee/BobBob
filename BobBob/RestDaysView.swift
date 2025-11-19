@@ -9,7 +9,7 @@ import SwiftUI
 struct RestDaysView2: View {
     @State private var restActivities: [RestActivity] = []
     @State private var showingAddSheet = false
-    
+    @Binding var hasSeenOnboarding: Bool
     var body: some View {
             NavigationStack {
                 VStack(spacing: 20) {
@@ -74,7 +74,7 @@ struct RestDaysView2: View {
                         Spacer()
                         
                       NavigationLink{
-                          SettingsView()
+                          SettingsView(hasSeenOnboarding: .constant(false))
                         } label: {
                             Text("Save")
                                 .font(.headline)

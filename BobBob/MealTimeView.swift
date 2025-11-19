@@ -1,5 +1,6 @@
 import SwiftUI
 struct MealTimeView2: View {
+    @Binding var hasSeenOnboarding: Bool
     @State private var mealTimes: [MealTime] = []
     @State private var showingAddMeal = false
     
@@ -63,7 +64,7 @@ struct MealTimeView2: View {
                         Spacer()
                         
                         NavigationLink {
-                            ActivitiesView()
+                            ActivitiesView(hasSeenOnboarding: $hasSeenOnboarding)
                         } label: {
                             Text("Next")
                                 .font(.headline)
@@ -91,5 +92,5 @@ struct MealTimeView2: View {
 
 
 #Preview {
-    MealTimeView2()
+    MealTimeView2(hasSeenOnboarding: .constant(false))
 }

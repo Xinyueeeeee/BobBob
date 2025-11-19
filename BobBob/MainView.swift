@@ -7,16 +7,15 @@
 import SwiftUI
 
 struct MainView: View {
-    
-    @AppStorage("isWelcomeScreenOver") var isWelcomeScreenOver = false
+    @Binding var hasSeenOnboarding: Bool
     @State var checkWelcomeScreen: Bool = false
     
     var body: some View {
         VStack {
             if checkWelcomeScreen {
-                ContentView()
+                ContentView(hasSeenOnboarding: $hasSeenOnboarding)
             } else {
-                OnboardingView()
+                OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
             }
         }
         
@@ -24,5 +23,5 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    MainView(hasSeenOnboarding: .constant(false))
 }

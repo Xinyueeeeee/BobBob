@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChronotypeView2: View {
     @AppStorage("selectedChronotype") private var selectedChronotype: String?
-
+    @Binding var hasSeenOnboarding: Bool
     
     var body: some View {
         NavigationStack{
@@ -69,7 +69,7 @@ struct ChronotypeView2: View {
                     .font(.footnote)
                     .foregroundColor(.black).opacity(0.5)
                 
-                NavigationLink(destination: SettingsView()) {
+                NavigationLink(destination: SettingsView(hasSeenOnboarding: $hasSeenOnboarding)) {
                     Text("Save")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -88,6 +88,6 @@ struct ChronotypeView2: View {
 }
 
 #Preview {
-    ChronotypeView2()
+    ChronotypeView2(hasSeenOnboarding: .constant(false))
 }
 

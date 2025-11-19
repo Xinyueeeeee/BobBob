@@ -1,14 +1,14 @@
 import SwiftUI
 @main
 struct BobBobApp: App {
-    @AppStorage("isWelcomeScreenOver") var isWelcomeScreenOver = false
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     
     var body: some Scene {
         WindowGroup {
-            if isWelcomeScreenOver {
-                ContentView()
+            if hasSeenOnboarding {
+                ContentView(hasSeenOnboarding: $hasSeenOnboarding)
             } else {
-                RestDaysView()
+                OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
             }
         }
     }

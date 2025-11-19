@@ -11,7 +11,7 @@ import SwiftUI
 struct ActivitiesView2: View {
     @State private var activities: [Activity] = []
     @State private var showingAddActivity = false
-    
+    @Binding var hasSeenOnboarding: Bool
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
@@ -61,7 +61,7 @@ struct ActivitiesView2: View {
                     }
                     Spacer()
                     NavigationLink{
-                        SettingsView()
+                        SettingsView(hasSeenOnboarding: $hasSeenOnboarding)
                     }label: {
                         Text("Save")
                             .font(.headline)
