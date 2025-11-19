@@ -102,9 +102,9 @@ struct addTasksView: View {
                                 .font(.headline)
                             Slider(value: $importance, in: 0...1, step: 0.5)
                             HStack {
-                                Text("Most important")
-                                Spacer()
                                 Text("Least important")
+                                Spacer()
+                                Text("Most important")
                             }
                             .font(.caption)
                         }

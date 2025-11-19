@@ -17,12 +17,16 @@ struct IntroductionCarouselView: View {
     var body: some View {
 
         ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+                LinearGradient(
+                                colors: [
+                                    Color(red: 10/255, green: 25/255, blue: 47/255),
+                                    Color(red: 25/255, green: 60/255, blue: 120/255)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .ignoresSafeArea()
+
 
 
             TabView(selection: $index) {
@@ -265,6 +269,13 @@ struct NapTimeView: View {
     @AppStorage("sleepTime") private var sleepTime: Date = Date()
     @AppStorage("wakeTime") private var wakeTime: Date = Date()
     @Binding var hasSeenOnboarding: Bool
+    @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(
+        bySettingHour: 22, minute: 0, second: 0, of: Date()
+    )!
+    
+    @AppStorage("wakeTime") private var wakeTime = Calendar.current.date(
+        bySettingHour: 6, minute: 0, second: 0, of: Date()
+    )!
 
 
     var body: some View {
