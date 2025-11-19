@@ -15,30 +15,32 @@ struct TasksView: View {
                 )
                 .ignoresSafeArea()
 
-                VStack(alignment: .leading) {
+                VStack {
 
-                    ForEach($taskStore.tasks) { $task in
-                        NavigationLink {
-                            addTasksView(
-                                totalSeconds: $task.durationSeconds,
-                                onSave: { updatedTask in
-                                    task = updatedTask   // update this exact task
-                                },
-                                existingTask: task
-                            )
-                        } label: {
-                            Text(task.name)
-                                .font(.headline)
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
-                                .cornerRadius(12)
+                    List {
+                        ForEach($taskStore.tasks) { $task in
+                            NavigationLink {
+                                addTasksView(
+                                    totalSeconds: $task.durationSeconds,
+                                    onSave: { updatedTask in
+                                        task = updatedTask   // update this task
+                                    },
+                                    existingTask: task
+                                )
+                            } label: {
+                                Text(task.name)
+                                    .font(.headline)
+                                    .padding(.vertical, 8)
+                            }
                         }
+                        .onDelete(perform: deleteTask)
                     }
+                    .scrollContentBackground(.hidden) // makes List transparent
+                    .background(Color.clear)
 
                     Spacer()
                 }
-                .padding()
+                .padding(.horizontal)
 
                 NavigationLink(
                     destination: addTasksView(
@@ -64,4 +66,12 @@ struct TasksView: View {
             .navigationTitle("Tasks")
         }
     }
+
+    private func deleteTask(at offsets: IndexSet) {
+        taskStore.tasks.remove(atOffsets: offsets)
+    }
+}
+
+#Preview{
+    TasksView()
 }
