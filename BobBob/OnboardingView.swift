@@ -157,7 +157,7 @@ struct HabitualStyleView: View {
                 
                 Text("Different people have different working styles.")
                     .font(.footnote)
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(.gray.opacity(8.0))
                 
                 
                 NavigationLink{
@@ -274,7 +274,7 @@ struct ChronotypeView: View {
 
 
 struct NapTimeView: View {
-        @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: Date())!
+            @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: Date())!
         @AppStorage("wakeTime") private var wakeTime = Calendar.current.date(bySettingHour: 6, minute: 0, second: 0, of: Date())!
 
     
@@ -301,7 +301,7 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-                .background(Color.white)
+                .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
                 
                 Text("What time do you wake up?")
@@ -317,7 +317,7 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-                .background(Color.white)
+                .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
                 
                 Spacer()

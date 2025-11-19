@@ -26,7 +26,7 @@ struct AddActivitiesView: View {
                     Text("Activity Name").font(.headline)
                     TextField("e.g. Gym", text: $name)
                         .padding()
-                        .background(Color.white)
+                        .background(Color.gray.opacity(0.2))
                         .cornerRadius(12)
                     
                     Text("Day").font(.headline)
@@ -56,7 +56,7 @@ struct AddActivitiesView: View {
                         .datePickerStyle(.wheel)
                         .labelsHidden()
                         .padding()
-                        .background(Color.white)
+                        .background(Color.gray.opacity(0.2))
                         .cornerRadius(12)
                     Section(header: Text("Duration (min)")) {
                         Stepper("\(duration) min", value: $duration, in: 5...120, step: 5)
