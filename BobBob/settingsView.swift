@@ -32,11 +32,7 @@ struct SettingsView: View {
                         }
                         
                         Section(header: Text("Personal Information")) {
-                            NavigationLink{
-                                HabitualStyleView2(hasSeenOnboarding: $hasSeenOnboarding)
-                            }label: {
-                                Text("Habitual Style")
-                            }
+                            
                             NavigationLink{
                                 ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding)
                             }label:{

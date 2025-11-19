@@ -8,7 +8,9 @@ struct BobBobApp: App {
             if hasSeenOnboarding {
                 ContentView(hasSeenOnboarding: $hasSeenOnboarding)
             } else {
+
                 OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
+
             }
         }
     }
