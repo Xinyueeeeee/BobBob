@@ -17,10 +17,9 @@ struct ActivitiesView2: View {
             VStack(spacing: 20) {
                 
                 Text("Do you have any recurring activities?")
-                    .font(.title3.bold())
+                    .font(.headline)
                     .foregroundColor(.black).opacity(0.5)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
+                
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 15) {
                         ForEach(activities) { activity in
@@ -77,7 +76,6 @@ struct ActivitiesView2: View {
             }
         }
         .navigationTitle("Activites")
-        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingAddActivity) {
             AddActivitiesView(activities: $activities)
         }
