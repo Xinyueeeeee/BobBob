@@ -95,7 +95,7 @@ struct IntroductionScreenView2: View {
 
 
 struct ChronotypeView: View {
-    @State private var selectedChronotype: String? = nil
+    @AppStorage("selectedChronotype") private var selectedChronotype: String?
     @Binding var hasSeenOnboarding: Bool
 
     var body: some View {
@@ -106,25 +106,26 @@ struct ChronotypeView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
+
             VStack(spacing: 30) {
                 Text("What is your chronotype?")
                     .font(.title3)
                     .bold()
                     .padding(.top)
+                    .foregroundColor(.black.opacity(0.5))
 
-                    .foregroundColor(.black).opacity(0.5)
+                // Early Bird
                 Button {
-
                     selectedChronotype = "Early Bird"
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Early Bird")
                             .font(.headline)
                             .foregroundColor(selectedChronotype == "Early Bird" ? .white : .black)
+
                         Text("You prefer starting your day earlier and feel most productive in the morning.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
-                            .multilineTextAlignment(.leading)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -133,6 +134,8 @@ struct ChronotypeView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
+
+                // Night Owl
                 Button {
                     selectedChronotype = "Night Owl"
                 } label: {
@@ -140,10 +143,10 @@ struct ChronotypeView: View {
                         Text("Night Owl")
                             .font(.headline)
                             .foregroundColor(selectedChronotype == "Night Owl" ? .white : .black)
+
                         Text("You focus better later in the day and prefer working at night.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Night Owl" ? .white.opacity(0.9) : .black.opacity(0.7))
-                            .multilineTextAlignment(.leading)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -152,16 +155,15 @@ struct ChronotypeView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
-                Spacer()
+
                 Spacer()
                 Text("Different people prefer working at different time periods.")
                     .font(.footnote)
-
                     .foregroundColor(.black.opacity(0.5))
+
                 NavigationLink {
                     NapTimeView(hasSeenOnboarding: $hasSeenOnboarding)
                 } label: {
-
                     Text("Next")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -172,7 +174,6 @@ struct ChronotypeView: View {
                 }
                 .disabled(selectedChronotype == nil)
                 .padding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
             .navigationTitle("Chronotype")
         }
@@ -180,9 +181,8 @@ struct ChronotypeView: View {
 }
 
 struct NapTimeView: View {
-
-    @State private var sleepTime = Date()
-    @State private var wakeTime = Date()
+    @AppStorage("sleepTime") private var sleepTime: Date = Date()
+    @AppStorage("wakeTime") private var wakeTime: Date = Date()
     @Binding var hasSeenOnboarding: Bool
 
 
@@ -247,11 +247,18 @@ struct NapTimeView: View {
     }
 }
 
-struct MealTime: Identifiable {
-    let id = UUID()
+struct MealTime: Identifiable, Codable {
+    let id: UUID
     var mealType: String
     var time: Date
     var duration: Int
+    
+    init(id: UUID = UUID(), mealType: String, time: Date, duration: Int) {
+        self.id = id
+        self.mealType = mealType
+        self.time = time
+        this.duration = duration
+    }
 }
 
 struct MealTimeView: View {
