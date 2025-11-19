@@ -338,9 +338,10 @@ struct MealTime: Identifiable, Codable {
         self.id = id
         self.mealType = mealType
         self.time = time
-        this.duration = duration
+        self.duration = duration   
     }
 }
+
 
 struct MealTimeView: View {
     @State private var mealTimes: [MealTime] = []

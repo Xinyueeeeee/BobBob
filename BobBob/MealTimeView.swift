@@ -1,19 +1,9 @@
 import SwiftUI
 struct MealTimeView2: View {
     @Binding var hasSeenOnboarding: Bool
+    @State private var mealTimes: [MealTime] = []
     @State private var showingAddMeal = false
-   
-    @AppStorage("mealTimes") private var mealTimesData: Data = Data()
-        
-    var mealTimes: [MealTime] {
-        get {
-            (try? JSONDecoder().decode([MealTime].self, from: mealTimesData)) ?? []
-        }
-        set {
-            mealTimesData = (try? JSONEncoder().encode(newValue)) ?? Data()
-        }
-    }
-
+    
     var body: some View {
             NavigationStack {
                 VStack(spacing: 20) {
@@ -92,10 +82,7 @@ struct MealTimeView2: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showingAddMeal) {
                     AddMealTimeView { newMeal in
-                        var updated = mealTimes
-                        updated.append(newMeal)
-                        mealTimes = updated
-
+                        mealTimes.append(newMeal)
                     }
                 }
             }
@@ -106,11 +93,4 @@ struct MealTimeView2: View {
 
 #Preview {
     MealTimeView2(hasSeenOnboarding: .constant(false))
-}
-
-struct MealTime: Identifiable, Codable {
-    let id = UUID()
-    var mealType: String
-    var duration: Int
-    var time: Date
 }

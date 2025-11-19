@@ -1,18 +1,10 @@
-//
-//  TasksView.swift
-//  BobBob
-//
-//  Created by Huang Qing on 14/11/25.
-//
-
 import SwiftUI
 
 struct TasksView: View {
-    @State private var tasks: [Task] = []
-    
+    @ObservedObject private var taskStore = TaskStore.shared
 
     @State private var newTaskSeconds: Int = 0
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -22,10 +14,10 @@ struct TasksView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-                
+
                 VStack(alignment: .leading) {
-                    
-                    ForEach($tasks) { $task in
+
+                    ForEach($taskStore.tasks) { $task in
                         NavigationLink {
                             addTasksView(
                                 totalSeconds: $task.durationSeconds,
@@ -43,20 +35,20 @@ struct TasksView: View {
                                 .cornerRadius(12)
                         }
                     }
-                    
+
                     Spacer()
                 }
                 .padding()
-                
-                NavigationLink(destination:
-                                addTasksView(
-                                    totalSeconds: $newTaskSeconds,
-                                    onSave: { task in
-                                        tasks.append(task)
-                                        newTaskSeconds = 0
-                                    },
-                                    existingTask: nil
-                                )
+
+                NavigationLink(
+                    destination: addTasksView(
+                        totalSeconds: $newTaskSeconds,
+                        onSave: { task in
+                            taskStore.tasks.append(task)
+                            newTaskSeconds = 0
+                        },
+                        existingTask: nil
+                    )
                 ) {
                     Image(systemName: "plus")
                         .font(.title)
@@ -67,13 +59,9 @@ struct TasksView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 .padding()
-                
+
             }
             .navigationTitle("Tasks")
         }
     }
-}
-
-#Preview {
-    TasksView()
 }
