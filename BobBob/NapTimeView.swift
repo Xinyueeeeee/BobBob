@@ -58,18 +58,7 @@ struct NapTimeView2: View {
                 .font(.footnote)
                 .foregroundColor(.black.opacity(0.5))
             
-            Button {
-                dismiss()   // ← go back to Settings (correct behavior)
-            } label: {
-                Text("Save")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                    .background(Color.blue)
-                    .cornerRadius(10)
-            }
-            .frame(maxWidth: .infinity, alignment: .bottomTrailing)
+            
         }
         .padding()
         .navigationTitle("Sleep Time")

@@ -73,18 +73,7 @@ struct RestDaysView2: View {
                         
                         Spacer()
                         
-                      NavigationLink{
-                          SettingsView(hasSeenOnboarding: .constant(false))
-                        } label: {
-                            Text("Save")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 20)
-                                .background(Color.blue)
-                                .cornerRadius(10)
                         }
-                    }
                     .padding(.horizontal)
                     .padding(.bottom, 20)
                 }

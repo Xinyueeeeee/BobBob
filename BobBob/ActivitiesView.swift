@@ -59,20 +59,7 @@ struct ActivitiesView2: View {
                             .shadow(radius: 3)
                     }
                     Spacer()
-                    NavigationLink{
-                        SettingsView(hasSeenOnboarding: $hasSeenOnboarding)
-                    }label: {
-                        Text("Save")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                    }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
         }
         .navigationTitle("Activites")

@@ -69,19 +69,7 @@ struct ChronotypeView2: View {
                     .font(.footnote)
                     .foregroundColor(.black).opacity(0.5)
                 
-                NavigationLink(destination: SettingsView(hasSeenOnboarding: $hasSeenOnboarding)) {
-                    Text("Save")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
-                        .background(selectedChronotype == nil ? Color.gray : Color.blue)
-                        .cornerRadius(10)
-                }
-                .disabled(selectedChronotype == nil)
-                .padding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            }
+                            }
             .navigationTitle("Chronotype")
         }
     }
