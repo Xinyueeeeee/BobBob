@@ -257,6 +257,7 @@ struct ChronotypeView: View {
                         .background(selectedChronotype == nil ? Color.gray : Color.blue)
                         .cornerRadius(10)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .disabled(selectedChronotype == nil)
                 .padding()
             }
@@ -379,31 +380,39 @@ struct MealTimeView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(mealTimes) { meal in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(meal.mealType)
-                                        .font(.headline)
-                                        .foregroundColor(.black)
-                                    HStack {
-                                        Label("\(meal.duration) min", systemImage: "timer")
-                                        Label(meal.time.formatted(date: .omitted, time: .shortened),
-                                              systemImage: "clock")
+                                SwipeableCard(onDelete: {
+                                    deleteMeal(meal)
+                                }) {
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        
+                                        Text(meal.mealType)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+                                        
+                                        HStack {
+                                            Label("\(meal.duration) min", systemImage: "timer")
+                                            Label(
+                                                meal.time.formatted(date: .omitted, time: .shortened),
+                                                systemImage: "clock"
+                                            )
+                                        }
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
                                     }
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .shadow(color: .black.opacity(0.05),
+                                            radius: 6, x: 0, y: 4)
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
-                                .cornerRadius(14)
-                                .shadow(color: .black.opacity(0.05),
-                                        radius: 6,
-                                        x: 0,
-                                        y: 4)
                             }
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
+
+
                     Spacer()
                     HStack(spacing: 20) {
                         Button {
@@ -443,7 +452,95 @@ struct MealTimeView: View {
             }
         }
     }
+    
+    private func deleteMeal(_ meal: MealTime) {
+        withAnimation {
+            mealTimes.removeAll { $0.id == meal.id }
+        }
+    }
 }
+
+
+struct SwipeableCard<Content: View>: View {
+    let content: Content
+    let onDelete: () -> Void
+
+    @GestureState private var dragOffset: CGFloat = 0
+    @State private var revealDelete: Bool = false
+    @State private var removed: Bool = false
+
+    init(onDelete: @escaping () -> Void, @ViewBuilder content: () -> Content) {
+        self.content = content()
+        self.onDelete = onDelete
+    }
+
+    var body: some View {
+        ZStack(alignment: .trailing) {
+
+            HStack {
+                Spacer()
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.red)
+                    .frame(width: 80)
+                    .overlay(
+                        Image(systemName: "trash")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                    )
+            }
+
+            content
+                .background(Color.white)
+                .cornerRadius(14)
+                .offset(x: removed ? -500 : (revealDelete ? -80 : 0) + dragOffset)
+                .gesture(
+                    DragGesture()
+                        .updating($dragOffset) { value, state, _ in
+                            if value.translation.width < 0 {
+                                state = value.translation.width
+                            }
+                        }
+                        .onEnded { value in
+                            withAnimation(.spring()) {
+                                if value.translation.width < -40 {
+                                    revealDelete = true
+                                } else {
+                                    revealDelete = false
+                                }
+                            }
+                        }
+                )
+                .onTapGesture {
+                    if revealDelete {
+                        withAnimation {
+                            revealDelete = false
+                        }
+                    }
+                }
+                .animation(.easeOut, value: dragOffset)
+
+        }
+        .frame(maxWidth: .infinity)
+        .clipped()
+        .onChange(of: revealDelete) { newValue in
+            if newValue == false { return }
+        }
+        .simultaneousGesture(
+            TapGesture()
+                .onEnded {
+                    if revealDelete {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            removed = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            onDelete()
+                        }
+                    }
+                }
+        )
+    }
+}
+
 
 struct ActivitiesView: View {
     @State private var activities: [Activity] = []

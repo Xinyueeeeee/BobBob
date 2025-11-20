@@ -1,12 +1,23 @@
-
 import SwiftUI
+
+// MARK: - Enum to control sheet states
+enum MealSheet: Identifiable {
+    case add
+    case edit(MealTime)
+
+    var id: String {
+        switch self {
+        case .add: return "add"
+        case .edit(let meal): return meal.id.uuidString
+        }
+    }
+}
 
 struct MealTimeView2: View {
     @Binding var hasSeenOnboarding: Bool
     @ObservedObject var mealStore: MealTimeStore
 
-    @State private var showingAddMeal = false
-    @State private var editingMeal: MealTime? = nil
+    @State private var activeSheet: MealSheet? = nil   // <-- one sheet controller
 
     var body: some View {
         NavigationStack {
@@ -23,7 +34,7 @@ struct MealTimeView2: View {
                         VStack(spacing: 15) {
                             ForEach(mealStore.meals) { meal in
                                 Button {
-                                    editingMeal = meal
+                                    activeSheet = .edit(meal)
                                 } label: {
                                     VStack(alignment: .leading, spacing: 6) {
                                         Text(meal.mealType)
@@ -54,8 +65,9 @@ struct MealTimeView2: View {
                     Spacer(minLength: 80)
                 }
 
+                // ADD BUTTON — bottom-left
                 Button {
-                    showingAddMeal = true
+                    activeSheet = .add
                 } label: {
                     Image(systemName: "plus")
                         .font(.title)
@@ -70,27 +82,27 @@ struct MealTimeView2: View {
             }
             .navigationTitle("Meals")
 
-
-            // ADD MODE
-            .sheet(isPresented: $showingAddMeal) {
-                AddMealTimeView(
-                    meal: nil,
-                    onSave: { newMeal in
-                        mealStore.meals.append(newMeal)
-                    }
-                )
-            }
-
-            // EDIT MODE (reuse same view)
-            .sheet(item: $editingMeal) { meal in
-                AddMealTimeView(
-                    meal: meal,
-                    onSave: { updatedMeal in
-                        if let index = mealStore.meals.firstIndex(where: { $0.id == updatedMeal.id }) {
-                            mealStore.meals[index] = updatedMeal
+            // MARK: - ONE SHEET ONLY
+            .sheet(item: $activeSheet) { sheet in
+                switch sheet {
+                case .add:
+                    AddMealTimeView(
+                        meal: nil,
+                        onSave: { newMeal in
+                            mealStore.meals.append(newMeal)
                         }
-                    }
-                )
+                    )
+
+                case .edit(let meal):
+                    AddMealTimeView(
+                        meal: meal,
+                        onSave: { updatedMeal in
+                            if let index = mealStore.meals.firstIndex(where: { $0.id == updatedMeal.id }) {
+                                mealStore.meals[index] = updatedMeal
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -102,7 +114,6 @@ struct MealTimeView2: View {
         mealStore: MealTimeStore()
     )
 }
-
 
 #Preview {
     MealTimeView2(hasSeenOnboarding: .constant(false), mealStore: MealTimeStore() )
