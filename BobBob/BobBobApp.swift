@@ -15,12 +15,14 @@ struct BobBobApp: App {
                     .environmentObject(mealStore)
                     .environmentObject(restActivityStore)
                     .environmentObject(activityStore)
+                    .environmentObject(taskStore)
             } else {
 
                 OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
                     .environmentObject(mealStore)
                     .environmentObject(restActivityStore)
                     .environmentObject(activityStore)
+                    .environmentObject(taskStore)
             }
         }
     }
