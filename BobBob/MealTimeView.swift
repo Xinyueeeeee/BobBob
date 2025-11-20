@@ -16,10 +16,10 @@ enum MealSheet: Identifiable {
 struct MealTimeView2: View {
     @Binding var hasSeenOnboarding: Bool
     @EnvironmentObject var mealStore: MealTimeStore
+   
 
 
-
-    @State private var activeSheet: MealSheet? = nil   // <-- one sheet controller
+    @State private var activeSheet: MealSheet? = nil
 
     var body: some View {
         NavigationStack {

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NapTimeView2: View {
     @Binding var hasSeenOnboarding: Bool
+    @EnvironmentObject var scheduleVM: SchedulerViewModel
     @Environment(\.dismiss) private var dismiss
     
     @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(
@@ -36,6 +37,11 @@ struct NapTimeView2: View {
             .datePickerStyle(.wheel)
             .labelsHidden()
             .padding(.bottom)
+            .onChange(of: sleepTime) {
+                scheduleVM.refreshSchedule()
+            }
+
+
             
             Text("What time do you wake up?")
                 .font(.headline)
@@ -51,6 +57,10 @@ struct NapTimeView2: View {
             .datePickerStyle(.wheel)
             .labelsHidden()
             .padding()
+            .onChange(of: wakeTime) {
+                scheduleVM.refreshSchedule()
+            }
+
             
             Spacer()
             

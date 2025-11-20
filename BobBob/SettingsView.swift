@@ -13,6 +13,7 @@ struct SettingsView: View {
 
     // Shared persistent stores
     @EnvironmentObject var mealStore: MealTimeStore
+    @StateObject var scheduleVM = SchedulerViewModel()
 
     @StateObject private var restActivityStore = RestActivityStore()
 
@@ -63,6 +64,7 @@ struct SettingsView: View {
                     
                     NavigationLink {
                         NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
+                            .environmentObject(scheduleVM)
                     } label: {
                         Text("Sleep Schedule")
                     }

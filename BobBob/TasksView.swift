@@ -15,46 +15,58 @@ struct TasksView: View {
                 .ignoresSafeArea()
 
                 VStack {
-                    
+
                     List {
                         ForEach($taskStore.tasks) { $task in
-                            HStack(spacing: 14) {
+                            SwipeableCard(onDelete: {
+                                deleteTask(task.wrappedValue)
+                            }) {
+                                HStack(spacing: 14) {
 
-                                // COMPLETION CIRCLE
-                                Button {
-                                    task.isCompleted.toggle()
-                                } label: {
-                                    ReminderCircle(isCompleted: task.isCompleted)
-                                }
-                                .buttonStyle(.plain)
-
-                                // EVERYTHING ON THE RIGHT OPENS THE EDIT VIEW
-                                NavigationLink {
-                                    addTasksView(
-                                        totalSeconds: $task.durationSeconds,
-                                        onSave: { updated in task = updated },
-                                        existingTask: task
-                                    )
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(task.name)
-                                            .font(.headline)
-                                            .foregroundColor(task.isCompleted ? .gray : .black)
-                                            .opacity(task.isCompleted ? 0.5 : 1)
-
-                                        Text("Due: \(task.deadline.formatted(date: .abbreviated, time: .shortened))")
-                                            .font(.caption)
-                                            .foregroundColor(task.isCompleted ? .gray.opacity(0.6) : .gray)
+                                 
+                                    Button {
+                                        task.isCompleted.toggle()
+                                    } label: {
+                                        ReminderCircle(isCompleted: task.isCompleted)
                                     }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .contentShape(Rectangle())  // ← Makes entire area tappable
+                                    .buttonStyle(.plain)
+
+                                 
+                                    NavigationLink {
+                                        addTasksView(
+                                            totalSeconds: $task.durationSeconds,
+                                            onSave: { updated in
+                                                task = updated
+                                            },
+                                            existingTask: task
+                                        )
+                                    } label: {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(task.name)
+                                                .font(.headline)
+                                                .foregroundColor(task.isCompleted ? .gray : .black)
+                                                .opacity(task.isCompleted ? 0.5 : 1)
+
+                                            Text("Due: \(task.deadline.formatted(date: .abbreviated, time: .shortened))")
+                                                .font(.caption)
+                                                .foregroundColor(task.isCompleted ? .gray.opacity(0.6) : .gray)
+                                        }
+
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .contentShape(Rectangle())
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05),
+                                        radius: 6, x: 0, y: 4)
                             }
-                            .padding(.vertical, 6)
                             .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
                         }
-                        .onDelete(perform: deleteTask)
                     }
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
@@ -62,7 +74,7 @@ struct TasksView: View {
                     Spacer()
                 }
 
-                // ADD BUTTON (BOTTOM LEFT)
+                
                 NavigationLink(
                     destination: addTasksView(
                         totalSeconds: $newTaskSeconds,
@@ -81,7 +93,9 @@ struct TasksView: View {
                         .frame(width: 60, height: 60)
                         .shadow(radius: 4)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                .frame(maxWidth: .infinity,
+                       maxHeight: .infinity,
+                       alignment: .bottomLeading)
                 .padding(.leading, 20)
                 .padding(.bottom, 20)
             }
@@ -89,6 +103,14 @@ struct TasksView: View {
         }
     }
 
+
+    private func deleteTask(_ task: Task) {
+        if let index = taskStore.tasks.firstIndex(where: { $0.id == task.id }) {
+            taskStore.tasks.remove(at: index)
+        }
+    }
+
+   
     private func deleteTask(at offsets: IndexSet) {
         taskStore.tasks.remove(atOffsets: offsets)
     }
@@ -103,17 +125,90 @@ struct ReminderCircle: View {
 
     var body: some View {
         ZStack {
-            // Outer ring
+          
             Circle()
                 .stroke(isCompleted ? Color.blue : Color.gray.opacity(0.5), lineWidth: 2)
                 .frame(width: 22, height: 22)
 
-            // Inner dot when completed
+    
             if isCompleted {
                 Circle()
                     .fill(Color.blue)
                     .frame(width: 15, height: 15)
             }
         }
+    }
+}
+struct SwipeableCard<Content: View>: View {
+    let content: Content
+    let onDelete: () -> Void
+
+    @GestureState private var dragOffset: CGFloat = 0
+    @State private var revealDelete: Bool = false
+    @State private var removed: Bool = false
+
+    init(onDelete: @escaping () -> Void, @ViewBuilder content: () -> Content) {
+        self.content = content()
+        self.onDelete = onDelete
+    }
+
+    var body: some View {
+        ZStack(alignment: .trailing) {
+
+            // DELETE BACKGROUND
+            HStack {
+                Spacer()
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.red)
+                    .frame(width: 80)
+                    .overlay(
+                        Image(systemName: "trash")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                    )
+            }
+
+            // MAIN CARD
+            content
+                .background(Color.white)
+                .cornerRadius(14)
+                .offset(x: removed ? -500 : (revealDelete ? -80 : 0) + dragOffset)
+                .gesture(
+                    DragGesture()
+                        .updating($dragOffset) { value, state, _ in
+                            if value.translation.width < 0 {
+                                state = value.translation.width
+                            }
+                        }
+                        .onEnded { value in
+                            withAnimation(.spring()) {
+                                revealDelete = value.translation.width < -40
+                            }
+                        }
+                )
+                .onTapGesture {
+                    if revealDelete {
+                        withAnimation {
+                            revealDelete = false
+                        }
+                    }
+                }
+                .animation(.easeOut, value: dragOffset)
+        }
+        .frame(maxWidth: .infinity)
+        .clipped()
+        .simultaneousGesture(
+            TapGesture()
+                .onEnded {
+                    if revealDelete {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            removed = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            onDelete()
+                        }
+                    }
+                }
+        )
     }
 }

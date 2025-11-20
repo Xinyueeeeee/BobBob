@@ -23,6 +23,7 @@ struct BobBobApp: App {
                     .environmentObject(taskStore)
                     .environmentObject(scheduleVM)
                     .environmentObject(prefs)
+                
                     
             } else {
                 OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
