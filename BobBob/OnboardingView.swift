@@ -46,11 +46,11 @@ struct IntroductionScreenView1: View {
         ZStack {
             VStack {
                 Spacer()
-                Text("Welcome")
+                Text("Welcome to Timely!")
                     .font(.largeTitle)
                     .bold()
                     .foregroundColor(.white)
-                Text("to a task organiser that adapts to the way you actually work")
+                Text("a task organiser that adapts to the way you actually work")
                     .multilineTextAlignment(.center)
                     .padding()
                     .foregroundColor(.gray)
