@@ -94,96 +94,14 @@ struct IntroductionScreenView2: View {
     }
 }
 
-struct HabitualStyleView: View {
-    @State private var selectedStyle: String? = nil
-    @Binding var hasSeenOnboarding: Bool
-
-    var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            VStack(spacing: 30) {
-                Text("What is your habitual style?")
-                    .font(.title3)
-                    .bold()
-                    .padding(.top)
-
-                    .foregroundColor(.gray.opacity(0.5))
-
-                Button {
-                    selectedStyle = "Hopper"
-                } label: {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Hopper")
-                            .font(.headline)
-                            .foregroundColor(selectedStyle == "Hopper" ? .white : .black)
-                        Text("Someone who usually focuses for short bursts of time and prefers breaking activities into multiple sessions.")
-                            .font(.subheadline)
-                            .foregroundColor(selectedStyle == "Hopper" ? .white.opacity(0.9) : .black.opacity(0.7))
-                            .multilineTextAlignment(.leading)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(selectedStyle == "Hopper" ? Color.blue : Color.white)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.1), radius: 4)
-                }
-                .padding(.horizontal)
-                Button {
-                    selectedStyle = "Hyperfocus"
-                } label: {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Hyperfocus")
-                            .font(.headline)
-                            .foregroundColor(selectedStyle == "Hyperfocus" ? .white : .black)
-                        Text("Someone who prefers focusing for longer periods of time and can finish tasks in a single session.")
-                            .font(.subheadline)
-                            .foregroundColor(selectedStyle == "Hyperfocus" ? .white.opacity(0.9) : .black.opacity(0.7))
-                            .multilineTextAlignment(.leading)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(selectedStyle == "Hyperfocus" ? Color.blue : Color.white)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.1), radius: 4)
-                }
-                .padding(.horizontal)
-                Spacer()
-                Text("Different people have different working styles.")
-                    .font(.footnote)
-
-                    .foregroundColor(.gray.opacity(0.5))
-                NavigationLink {
-                    ChronotypeView(hasSeenOnboarding: $hasSeenOnboarding)
-                } label: {
-
-                    Text("Next")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
-                        .background(selectedStyle == nil ? Color.gray : Color.blue)
-                        .cornerRadius(10)
-                }
-                .disabled(selectedStyle == nil)
-                .padding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            }
-            .navigationTitle("Habitual Style")
-        }
-    }
-}
-
 struct ChronotypeView: View {
     @AppStorage("selectedChronotype") private var selectedChronotype: String?
     @Binding var hasSeenOnboarding: Bool
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomTrailing) {
+
+            // Background
             LinearGradient(
                 gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
@@ -191,6 +109,7 @@ struct ChronotypeView: View {
             )
             .ignoresSafeArea()
 
+            // MAIN CONTENT
             VStack(spacing: 30) {
                 Text("What is your chronotype?")
                     .font(.title3)
@@ -198,7 +117,7 @@ struct ChronotypeView: View {
                     .padding(.top)
                     .foregroundColor(.black.opacity(0.5))
 
-                    .foregroundColor(.gray.opacity(8.0))
+                // EARLY BIRD
                 Button {
                     selectedChronotype = "Early Bird"
                 } label: {
@@ -219,7 +138,7 @@ struct ChronotypeView: View {
                 }
                 .padding(.horizontal)
 
-                // Night Owl
+                // NIGHT OWL
                 Button {
                     selectedChronotype = "Night Owl"
                 } label: {
@@ -241,29 +160,34 @@ struct ChronotypeView: View {
                 .padding(.horizontal)
 
                 Spacer()
+
                 Text("Different people prefer working at different time periods.")
                     .font(.footnote)
                     .foregroundColor(.black.opacity(0.5))
-
-                    .foregroundColor(.gray.opacity(8.0))
-                NavigationLink {
-                    NapTimeView(hasSeenOnboarding: $hasSeenOnboarding)
-                } label: {
-                    Text("Next")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
-                        .background(selectedChronotype == nil ? Color.gray : Color.blue)
-                        .cornerRadius(10)
-                }
-                .disabled(selectedChronotype == nil)
-                .padding()
             }
-            .navigationTitle("Chronotype")
+            .padding(.bottom, 80) // Prevent overlap with button
+
+            // BOTTOM-RIGHT BUTTON (Overlay)
+            NavigationLink {
+                NapTimeView(hasSeenOnboarding: $hasSeenOnboarding)
+            } label: {
+                Text("Next")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .background(selectedChronotype == nil ? Color.gray : Color.blue)
+                    .cornerRadius(10)
+            }
+            .disabled(selectedChronotype == nil)
+            .padding(.trailing, 20)
+            .padding(.bottom, 20)
+
         }
+        .navigationTitle("Chronotype")
     }
 }
+
 
 struct NapTimeView: View {
    
@@ -354,9 +278,12 @@ struct MealTime: Identifiable, Codable {
 
 
 struct MealTimeView: View {
-    @State private var mealTimes: [MealTime] = []
-    @State private var showingAddMeal = false
+
+    @EnvironmentObject var mealStore: MealTimeStore
     @Binding var hasSeenOnboarding: Bool
+
+    @State private var showingAddMeal = false
+    @State private var editingMeal: MealTime? = nil   // EDIT MODE
 
     var body: some View {
         ZStack {
@@ -369,42 +296,54 @@ struct MealTimeView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
+
             NavigationStack {
                 VStack(spacing: 20) {
+
                     Text("When do you have your meals?")
                         .font(.headline)
-
                         .foregroundColor(.gray.opacity(0.8))
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
-                            ForEach(mealTimes) { meal in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(meal.mealType)
-                                        .font(.headline)
-                                        .foregroundColor(.black)
-                                    HStack {
-                                        Label("\(meal.duration) min", systemImage: "timer")
-                                        Label(meal.time.formatted(date: .omitted, time: .shortened),
-                                              systemImage: "clock")
+
+                            ForEach(mealStore.meals) { meal in
+
+                                // TAPPABLE — OPEN EDIT MODE
+                                Button {
+                                    editingMeal = meal
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(meal.mealType)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+
+                                        HStack {
+                                            Label("\(meal.duration) min", systemImage: "timer")
+                                            Label(
+                                                meal.time.formatted(date: .omitted, time: .shortened),
+                                                systemImage: "clock"
+                                            )
+                                        }
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+
                                     }
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
-                                .cornerRadius(14)
-                                .shadow(color: .black.opacity(0.05),
-                                        radius: 6,
-                                        x: 0,
-                                        y: 4)
                             }
+
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
+
                     Spacer()
+
                     HStack(spacing: 20) {
                         Button {
                             showingAddMeal = true
@@ -417,9 +356,13 @@ struct MealTimeView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
                         }
+                        .padding(.leading, 25)
+                        .padding(.bottom, 25)
+
                         Spacer()
+
                         NavigationLink {
-                           ActivitiesView(hasSeenOnboarding: $hasSeenOnboarding)
+                            ActivitiesView(hasSeenOnboarding: $hasSeenOnboarding)
                         } label: {
                             Text("Next")
                                 .font(.headline)
@@ -435,9 +378,18 @@ struct MealTimeView: View {
                 }
                 .navigationTitle("Meals")
                 .navigationBarTitleDisplayMode(.inline)
+                // ADD MODE
                 .sheet(isPresented: $showingAddMeal) {
-                    AddMealTimeView { newMeal in
-                        mealTimes.append(newMeal)
+                    AddMealTimeView(meal: nil) { newMeal in
+                        mealStore.meals.append(newMeal)
+                    }
+                }
+                // EDIT MODE
+                .sheet(item: $editingMeal) { meal in
+                    AddMealTimeView(meal: meal) { updated in
+                        if let i = mealStore.meals.firstIndex(where: { $0.id == updated.id }) {
+                            mealStore.meals[i] = updated
+                        }
                     }
                 }
             }
@@ -445,55 +397,75 @@ struct MealTimeView: View {
     }
 }
 
+
+import SwiftUI
+
 struct ActivitiesView: View {
-    @State private var activities: [Activity] = []
-    @State private var showingAddActivity = false
+    @EnvironmentObject var activityStore: ActivityStore
     @Binding var hasSeenOnboarding: Bool
+
+    @State private var showingAdd = false
+    @State private var editingActivity: Activity? = nil
 
     var body: some View {
         ZStack {
             LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                colors: [
+                    Color.blue.opacity(0.2),
+                    Color.blue.opacity(0.6)
+                ],
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
+
             NavigationStack {
                 VStack(spacing: 20) {
+
                     Text("Do you have any recurring activities?")
                         .font(.headline)
-
                         .foregroundColor(.gray.opacity(0.5))
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
-                            ForEach(activities) { activity in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(activity.name)
-                                        .font(.headline)
-                                        .foregroundColor(.black)
-                                    HStack {
-                                        Label(activity.day, systemImage: "calendar")
-                                        Label(activity.regularity, systemImage: "repeat")
-                                        Label(activity.timeFormatted, systemImage: "clock")
+
+                            ForEach(activityStore.activities) { activity in
+                                Button {
+                                    editingActivity = activity
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(activity.name)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+
+                                        HStack {
+                                            Label(activity.day, systemImage: "calendar")
+                                            Label(activity.regularity, systemImage: "repeat")
+                                            Label(activity.timeFormatted, systemImage: "clock")
+                                        }
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
                                     }
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .shadow(color: .black.opacity(0.05),
+                                            radius: 6, x: 0, y: 4)
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
-                                .cornerRadius(14)
-                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
+
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
+
                     Spacer()
-                    HStack(spacing: 20) {
+
+                    HStack {
+                        // Floating + Button
                         Button {
-                            showingAddActivity = true
+                            showingAdd = true
                         } label: {
                             Image(systemName: "plus")
                                 .font(.title)
@@ -503,7 +475,9 @@ struct ActivitiesView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
                         }
+
                         Spacer()
+
                         NavigationLink {
                             RestDaysView(hasSeenOnboarding: $hasSeenOnboarding)
                         } label: {
@@ -519,89 +493,134 @@ struct ActivitiesView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 20)
                 }
+                .navigationTitle("Activities")
             }
-            .navigationTitle("Activites")
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $showingAddActivity) {
-                AddActivitiesView(activities: $activities)
+        }
+        .sheet(isPresented: $showingAdd) {
+            AddActivitiesView(activity: nil) { new in
+                activityStore.activities.append(new)
+            }
+        }
+        .sheet(item: $editingActivity) { activity in
+            AddActivitiesView(activity: activity) { updated in
+                if let i = activityStore.activities.firstIndex(where: { $0.id == updated.id }) {
+                    activityStore.activities[i] = updated
+                }
             }
         }
     }
 }
 
-struct Activity: Identifiable {
-    let id = UUID()
+struct Activity: Identifiable, Codable, Equatable {
+    let id: UUID
     var name: String
     var day: String
     var regularity: String
     var time: Date
+
     var timeFormatted: String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter.string(from: time)
     }
+
+    init(id: UUID = UUID(), name: String, day: String, regularity: String, time: Date) {
+        self.id = id
+        self.name = name
+        self.day = day
+        self.regularity = regularity
+        self.time = time
+    }
 }
 
-struct RestActivity: Identifiable {
-    let id = UUID()
+
+
+struct RestActivity: Identifiable, Codable, Equatable {
+    let id: UUID
     var name: String
     var startDate: Date
     var endDate: Date
+
+    init(id: UUID = UUID(), name: String, startDate: Date, endDate: Date) {
+        self.id = id
+        self.name = name
+        self.startDate = startDate
+        self.endDate = endDate
+    }
 }
 
+
 struct RestDaysView: View {
-    
-    @State private var restActivities: [RestActivity] = []
-    @State private var showingAddSheet = false
+
+    @EnvironmentObject var restStore: RestActivityStore
     @Binding var hasSeenOnboarding: Bool
 
+    @State private var showingAddSheet = false
+    @State private var editingActivity: RestActivity? = nil   // EDIT MODE
+
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            NavigationStack {
+        NavigationStack {
+            ZStack {
+
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.blue.opacity(0.2),
+                        Color.blue.opacity(0.6)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+
                 VStack(spacing: 20) {
+
                     Text("When do you rest?")
                         .font(.headline)
-
                         .foregroundColor(.gray.opacity(0.5))
+                        .padding(.top)
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
-                            ForEach(restActivities) { activity in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(activity.name)
-                                        .font(.headline)
-                                        .foregroundColor(.black)
-                                    HStack {
-                                        Label(
-                                            activity.startDate.formatted(date: .abbreviated, time: .omitted),
-                                            systemImage: "sunrise"
-                                        )
-                                        Label(
-                                            activity.endDate.formatted(date: .abbreviated, time: .omitted),
-                                            systemImage: "sunset"
-                                        )
+
+                            ForEach(restStore.activities) { activity in
+
+                                Button {
+                                    editingActivity = activity
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(activity.name)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+
+                                        HStack {
+                                            Label(activity.startDate.formatted(date: .abbreviated, time: .omitted),
+                                                  systemImage: "sunrise")
+                                            Label(activity.endDate.formatted(date: .abbreviated, time: .omitted),
+                                                  systemImage: "sunset")
+                                        }
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
                                     }
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
-                                .cornerRadius(14)
-                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
+
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
+
+                    Spacer(minLength: 40)
+                }
+
+                // ADD BUTTON
+                VStack {
                     Spacer()
-                    HStack(spacing: 20) {
+                    HStack {
                         Button {
                             showingAddSheet = true
                         } label: {
@@ -613,6 +632,16 @@ struct RestDaysView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
                         }
+                        .padding(.leading, 25)
+                        .padding(.bottom, 25)
+                        Spacer()
+                    }
+                }
+
+                // NEXT BUTTON
+                VStack {
+                    Spacer()
+                    HStack {
                         Spacer()
                         Button {
                             hasSeenOnboarding = true
@@ -625,23 +654,29 @@ struct RestDaysView: View {
                                 .background(Color.blue)
                                 .cornerRadius(10)
                         }
+                        .padding(.trailing, 25)
+                        .padding(.bottom, 25)
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
                 }
-                .navigationTitle("Rest Days")
-                .navigationBarTitleDisplayMode(.inline)
-                .sheet(isPresented: $showingAddSheet) {
-                    AddRestActivityView(restActivities: $restActivities)
+            }
+            .navigationTitle("Rest Days")
+            // ADD MODE
+            .sheet(isPresented: $showingAddSheet) {
+                AddRestActivityView(activity: nil) { newActivity in
+                    restStore.activities.append(newActivity)
+                }
+            }
+            // EDIT MODE
+            .sheet(item: $editingActivity) { activity in
+                AddRestActivityView(activity: activity) { updated in
+                    if let i = restStore.activities.firstIndex(where: { $0.id == updated.id }) {
+                        restStore.activities[i] = updated
+                    }
                 }
             }
         }
     }
 }
-
-
-
-
 
 struct AddMealTimeView: View {
     @Environment(\.dismiss) private var dismiss
@@ -735,91 +770,79 @@ struct AddMealTimeView: View {
 }
 
 
+import SwiftUI
+
 struct AddActivitiesView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var activities: [Activity]
-    
+
+    var activity: Activity? = nil
+    var onSave: (Activity) -> Void
+
     @State private var name: String = ""
     @State private var day: String = "Monday"
     @State private var regularity: String = "Weekly"
     @State private var time: Date = Date()
-    @State private var duration: Int = 15
-    
-    
+
     let days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     let regularOptions = ["Daily","Weekly","Monthly"]
-    
+
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                   
-                    Text("Activity Name").font(.headline)
+            Form {
+                Section(header: Text("Activity Name")) {
                     TextField("e.g. Gym", text: $name)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
-                    
-                    Text("Day").font(.headline)
-                    Picker("Day", selection: $day) {
-                        ForEach(days, id: \.self) { day in
-                            Text(day)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    
-                    Text("Regularity").font(.headline)
-                    Picker("Regularity", selection: $regularity) {
-                        ForEach(regularOptions, id: \.self) { option in
-                            Text(option)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    
-                    Text("Time").font(.headline)
-                    DatePicker("", selection: $time, displayedComponents: .hourAndMinute)
-                        .datePickerStyle(.wheel)
-                        .labelsHidden()
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
-                    Section(header: Text("Duration (min)")) {
-                        Stepper("\(duration) min", value: $duration, in: 5...120, step: 5)
-                    }
-                    
-                    Button {
-                        let newActivity = Activity(name: name, day: day, regularity: regularity, time: time)
-                        activities.append(newActivity)
-                        dismiss()
-                    }label:{
-                        Text("Save")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                    }
-                    .frame(maxWidth: .infinity)
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
+
+                Section(header: Text("Day")) {
+                    Picker("Day", selection: $day) {
+                        ForEach(days, id: \.self) { Text($0) }
+                    }
+                }
+
+                Section(header: Text("Regularity")) {
+                    Picker("Regularity", selection: $regularity) {
+                        ForEach(regularOptions, id: \.self) { Text($0) }
+                    }
+                }
+
+                Section(header: Text("Time")) {
+                    DatePicker("",
+                               selection: $time,
+                               displayedComponents: .hourAndMinute)
+                        .labelsHidden()
+                }
             }
-            .navigationTitle("Add Activity")
+            .navigationTitle(activity == nil ? "Add Activity" : "Edit Activity")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        let updated = Activity(
+                            id: activity?.id ?? UUID(),
+                            name: name,
+                            day: day,
+                            regularity: regularity,
+                            time: time
+                        )
+                        onSave(updated)
+                        dismiss()
+                    }
+                }
+            }
+            .onAppear {
+                if let a = activity {
+                    name = a.name
+                    day = a.day
+                    regularity = a.regularity
+                    time = a.time
                 }
             }
         }
     }
 }
+
 
 struct RestActivityy: Identifiable {
     let id = UUID()
@@ -829,58 +852,57 @@ struct RestActivityy: Identifiable {
 }
 
 struct AddRestActivityView: View {
-    @Environment(\.dismiss) var dismiss
-    @Binding var restActivities: [RestActivity]
-    
+    @Environment(\.dismiss) private var dismiss
+
+    var activity: RestActivity? = nil   // nil = add mode
+    var onSave: (RestActivity) -> Void
+
     @State private var name: String = ""
-   
-    @State private var startDate: Date = Calendar.current.startOfDay(for: Date())
-    @State private var endDate: Date = Calendar.current.startOfDay(for: Date())
-    
-   
-    private var isFormComplete: Bool {
-        
-        !name.isEmpty && startDate <= endDate
-    }
-    
+    @State private var startDate: Date = Date()
+    @State private var endDate: Date = Date()
+
     var body: some View {
         NavigationStack {
-           
             Form {
-              
-                Section(header: Text("Activity name")) {
-                    TextField("e.g., Vacation, Staycation, Sick Leave", text: $name)
-                }
-                
-                Section(header: Text("REST PERIOD")) {
-                    
-                    DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
-                    
-                    DatePicker("End Date", selection: $endDate, displayedComponents: .date)
-                }
-                
-               
-                Section {
+                TextField("E.g.Vacation, Sick, Public Holiday", text: $name)
+
+                DatePicker("Start Date",
+                           selection: $startDate,
+                           displayedComponents: .date)
+
+                DatePicker("End Date",
+                           selection: $endDate,
+                           displayedComponents: .date)
+            }
+            .navigationTitle(activity == nil ? "Add Rest Day" : "Edit Rest Day")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        let newActivity = RestActivity(name: name, startDate: startDate, endDate: endDate)
-                        restActivities.append(newActivity)
+                        let updated = RestActivity(
+                            id: activity?.id ?? UUID(),
+                            name: name,
+                            startDate: startDate,
+                            endDate: endDate
+                        )
+                        onSave(updated)
                         dismiss()
                     }
-                    .frame(maxWidth: .infinity)
-                    .disabled(!isFormComplete)
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
                 }
             }
-            .navigationTitle("Add Rest Day")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { dismiss() }
+            .onAppear {
+                if let a = activity {
+                    name = a.name
+                    startDate = a.startDate
+                    endDate = a.endDate
                 }
             }
         }
     }
 }
 
-    
     struct OnboardingView_Previews: PreviewProvider {
         static var previews: some View {
             OnboardingView(hasSeenOnboarding: .constant(false))

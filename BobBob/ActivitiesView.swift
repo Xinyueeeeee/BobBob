@@ -7,48 +7,58 @@
 
 
 import SwiftUI
-
 struct ActivitiesView2: View {
-    @State private var activities: [Activity] = []
-    @State private var showingAddActivity = false
+    @EnvironmentObject var activityStore: ActivityStore
     @Binding var hasSeenOnboarding: Bool
+
+    @State private var showingAdd = false
+    @State private var editingActivity: Activity? = nil
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                
-                Text("Do you have any recurring activities?")
+
+                Text("Recurring Activities")
                     .font(.headline)
-                    .foregroundColor(.black).opacity(0.5)
-                
+                    .foregroundColor(.black.opacity(0.5))
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 15) {
-                        ForEach(activities) { activity in
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(activity.name)
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                HStack {
-                                    Label(activity.day, systemImage: "calendar")
-                                    Label(activity.regularity, systemImage: "repeat")
-                                    Label(activity.timeFormatted, systemImage: "clock")
+                        ForEach(activityStore.activities) { activity in
+                            Button {
+                                editingActivity = activity
+                            } label: {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(activity.name)
+                                        .font(.headline)
+                                        .foregroundColor(.black)
+
+                                    HStack {
+                                        Label(activity.day, systemImage: "calendar")
+                                        Label(activity.regularity, systemImage: "repeat")
+                                        Label(activity.timeFormatted, systemImage: "clock")
+                                    }
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
                                 }
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.white)
-                            .cornerRadius(14)
-                            .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                         }
                     }
                     .padding(.horizontal)
                     .padding(.top, 10)
                 }
+
                 Spacer()
-                HStack(spacing: 20) {
+
+                // Bottom-left Add Button
+                HStack {
                     Button {
-                        showingAddActivity = true
+                        showingAdd = true
                     } label: {
                         Image(systemName: "plus")
                             .font(.title)
@@ -58,15 +68,51 @@ struct ActivitiesView2: View {
                             .clipShape(Circle())
                             .shadow(radius: 3)
                     }
+
                     Spacer()
                 }
+                .padding(.leading, 25)
+                .padding(.bottom, 30)
             }
         }
-        .navigationTitle("Activites")
-        .sheet(isPresented: $showingAddActivity) {
-            AddActivitiesView(activities: $activities)
+        .navigationTitle("Activities")
+        .sheet(isPresented: $showingAdd) {
+            AddActivitiesView(activity: nil) { new in
+                activityStore.activities.append(new)
+            }
+        }
+        .sheet(item: $editingActivity) { activity in
+            AddActivitiesView(activity: activity) { updated in
+                if let i = activityStore.activities.firstIndex(where: { $0.id == updated.id }) {
+                    activityStore.activities[i] = updated
+                }
+            }
         }
     }
 }
 
+class ActivityStore: ObservableObject {
+    @Published var activities: [Activity] = [] {
+        didSet { saveActivities() }
+    }
+
+    private let storageKey = "savedActivities"
+
+    init() {
+        loadActivities()
+    }
+
+    private func loadActivities() {
+        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
+        if let decoded = try? JSONDecoder().decode([Activity].self, from: data) {
+            self.activities = decoded
+        }
+    }
+
+    private func saveActivities() {
+        if let encoded = try? JSONEncoder().encode(activities) {
+            UserDefaults.standard.set(encoded, forKey: storageKey)
+        }
+    }
+}
 

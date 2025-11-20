@@ -3,7 +3,9 @@ import SwiftUI
 
 struct MealTimeView2: View {
     @Binding var hasSeenOnboarding: Bool
-    @ObservedObject var mealStore: MealTimeStore
+    @EnvironmentObject var mealStore: MealTimeStore
+
+
 
     @State private var showingAddMeal = false
     @State private var editingMeal: MealTime? = nil
@@ -18,6 +20,8 @@ struct MealTimeView2: View {
                         .font(.headline)
                         .foregroundColor(.black.opacity(0.5))
                         .padding(.top)
+                        .padding(.horizontal, 20)
+
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -54,6 +58,7 @@ struct MealTimeView2: View {
                     Spacer(minLength: 80)
                 }
 
+                // Floating button
                 Button {
                     showingAddMeal = true
                 } label: {
@@ -65,48 +70,44 @@ struct MealTimeView2: View {
                         .clipShape(Circle())
                         .shadow(radius: 3)
                 }
-                .padding(.leading, 25)
-                .padding(.bottom, 30)
+                .padding([.leading, .bottom], 25)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+
             .navigationTitle("Meals")
+        }
 
+        // ADD SHEET
+        .sheet(isPresented: $showingAddMeal) {
+            AddMealTimeView(
+                meal: nil,
+                onSave: { newMeal in
+                    mealStore.meals.append(newMeal)
+                }
+            )
+        }
 
-            // ADD MODE
-            .sheet(isPresented: $showingAddMeal) {
-                AddMealTimeView(
-                    meal: nil,
-                    onSave: { newMeal in
-                        mealStore.meals.append(newMeal)
+        // EDIT SHEET
+        .sheet(item: $editingMeal) { meal in
+            AddMealTimeView(
+                meal: meal,
+                onSave: { updatedMeal in
+                    if let index = mealStore.meals.firstIndex(where: { $0.id == updatedMeal.id }) {
+                        mealStore.meals[index] = updatedMeal
                     }
-                )
-            }
-
-            // EDIT MODE (reuse same view)
-            .sheet(item: $editingMeal) { meal in
-                AddMealTimeView(
-                    meal: meal,
-                    onSave: { updatedMeal in
-                        if let index = mealStore.meals.firstIndex(where: { $0.id == updatedMeal.id }) {
-                            mealStore.meals[index] = updatedMeal
-                        }
-                    }
-                )
-            }
+                }
+            )
         }
     }
 }
 
-#Preview {
-    MealTimeView2(
-        hasSeenOnboarding: .constant(false),
-        mealStore: MealTimeStore()
-    )
-}
 
 
 #Preview {
-    MealTimeView2(hasSeenOnboarding: .constant(false), mealStore: MealTimeStore() )
+    MealTimeView2(hasSeenOnboarding: .constant(false))
+        .environmentObject(MealTimeStore())
 }
+
 //
 //  MealTimeStore.swift
 //  BobBob

@@ -4,61 +4,69 @@
 //
 //  Created by Hanyi on 17/11/25.
 //
-
 import SwiftUI
 struct RestDaysView2: View {
-    @State private var restActivities: [RestActivity] = []
-    @State private var showingAddSheet = false
     @Binding var hasSeenOnboarding: Bool
+    @EnvironmentObject var restStore: RestActivityStore
+
+    @State private var showingAddSheet = false
+    @State private var editingActivity: RestActivity? = nil
+
     var body: some View {
-            NavigationStack {
+        NavigationStack {
+            ZStack {
+
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea()
+
                 VStack(spacing: 20) {
-                    
+
                     Text("When do you rest?")
                         .font(.headline)
-                        .foregroundColor(.black).opacity(0.5)
-                    
-                    
+                        .foregroundColor(.black.opacity(0.5))
+                        .padding(.top)
+
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
-                            ForEach(restActivities) { activity in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    
-                                    Text(activity.name)
-                                        .font(.headline)
-                                        .foregroundColor(.black)
-                                    
-                                    HStack {
-                                        Label(
-                                            activity.startDate.formatted(date: .abbreviated, time: .omitted),
-                                            systemImage: "sunrise"
-                                        )
-                                        
-                                        Label(
-                                            activity.endDate.formatted(date: .abbreviated, time: .omitted),
-                                            systemImage: "sunset"
-                                        )
+                            ForEach(restStore.activities) { activity in
+
+                                Button {
+                                    editingActivity = activity
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 6) {
+
+                                        Text(activity.name)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+
+                                        HStack {
+                                            Label(activity.startDate.formatted(date: .abbreviated, time: .omitted),
+                                                  systemImage: "sunrise")
+                                            Label(activity.endDate.formatted(date: .abbreviated, time: .omitted),
+                                                  systemImage: "sunset")
+                                        }
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
                                     }
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                    
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
-                                .cornerRadius(14)
-                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
-                    
+
+                    Spacer(minLength: 80)
+                }
+
+                // Bottom-left ADD
+                VStack {
                     Spacer()
-                    
-                    
-                    HStack(spacing: 20) {
-                        
+                    HStack {
                         Button {
                             showingAddSheet = true
                         } label: {
@@ -70,20 +78,53 @@ struct RestDaysView2: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
                         }
-                        
+                        .padding(.leading, 25)
+                        .padding(.bottom, 25)
                         Spacer()
-                        
-                        }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
+                    }
                 }
             }
             .navigationTitle("Rest Days")
             .sheet(isPresented: $showingAddSheet) {
-                AddRestActivityView(restActivities: $restActivities)
+                AddRestActivityView(activity: nil) { new in
+                    restStore.activities.append(new)
+                }
+            }
+            .sheet(item: $editingActivity) { activity in
+                AddRestActivityView(activity: activity) { updated in
+                    if let i = restStore.activities.firstIndex(where: { $0.id == updated.id }) {
+                        restStore.activities[i] = updated      // ← EDIT SUPPORT
+                    }
+                }
             }
         }
     }
+}
 
+
+class RestActivityStore: ObservableObject {
+    @Published var activities: [RestActivity] = [] {
+        didSet { saveActivities() }
+    }
+
+    private let storageKey = "savedRestActivities"
+
+    init() {
+        loadActivities()
+    }
+
+    private func loadActivities() {
+        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
+        if let decoded = try? JSONDecoder().decode([RestActivity].self, from: data) {
+            self.activities = decoded
+        }
+    }
+
+    private func saveActivities() {
+        if let encoded = try? JSONEncoder().encode(activities) {
+            UserDefaults.standard.set(encoded, forKey: storageKey)
+        }
+    }
+}
 
 
