@@ -65,21 +65,36 @@ struct NotifsView: View {
     @AppStorage("endOfTasks") private var endOfTasks: Bool = false
     @AppStorage("fiveMinBefTask") private var fiveMinBefTask: Bool = false
 
+    @EnvironmentObject var scheduleVM: SchedulerViewModel
+
     var body: some View {
         NavigationStack {
             List {
                 Toggle(isOn: $startOfTasks) {
                     Text("At the start of the task")
                 }
+                .onChange(of: startOfTasks) { _ in
+                    NotificationManager.shared.requestPermission()
+                    scheduleVM.refreshNotifications()
+                }
+
                 Toggle(isOn: $endOfTasks) {
                     Text("At the end of the tasks")
                 }
+                .onChange(of: endOfTasks) { _ in
+                    NotificationManager.shared.requestPermission()
+                    scheduleVM.refreshNotifications()
+                }
+
                 Toggle(isOn: $fiveMinBefTask) {
                     Text("5 minutes before task")
+                }
+                .onChange(of: fiveMinBefTask) { _ in
+                    NotificationManager.shared.requestPermission()
+                    scheduleVM.refreshNotifications()
                 }
             }
             .navigationTitle("Notifications")
         }
     }
 }
-
