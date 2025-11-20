@@ -99,24 +99,18 @@ struct ChronotypeView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-
-            // Background
             LinearGradient(
                 gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-
-            // MAIN CONTENT
             VStack(spacing: 30) {
                 Text("What is your chronotype?")
                     .font(.title3)
                     .bold()
                     .padding(.top)
                     .foregroundColor(.black.opacity(0.5))
-
-                // EARLY BIRD
                 Button {
                     selectedChronotype = "Early Bird"
                 } label: {
@@ -136,8 +130,6 @@ struct ChronotypeView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
-
-                // NIGHT OWL
                 Button {
                     selectedChronotype = "Night Owl"
                 } label: {
@@ -164,9 +156,7 @@ struct ChronotypeView: View {
                     .font(.footnote)
                     .foregroundColor(.black.opacity(0.5))
             }
-            .padding(.bottom, 80) // Prevent overlap with button
-
-            // BOTTOM-RIGHT BUTTON (Overlay)
+            .padding(.bottom, 80)
             NavigationLink {
                 NapTimeView(hasSeenOnboarding: $hasSeenOnboarding)
             } label: {
@@ -281,7 +271,7 @@ struct MealTimeView: View {
     @Binding var hasSeenOnboarding: Bool
 
     @State private var showingAddMeal = false
-    @State private var editingMeal: MealTime? = nil   // EDIT MODE
+    @State private var editingMeal: MealTime? = nil
 
     var body: some View {
         ZStack {
@@ -306,8 +296,6 @@ struct MealTimeView: View {
                         VStack(spacing: 15) {
 
                             ForEach(mealStore.meals) { meal in
-
-                                // TAPPABLE — OPEN EDIT MODE
                                 Button {
                                     editingMeal = meal
                                 } label: {
@@ -376,13 +364,11 @@ struct MealTimeView: View {
                 }
                 .navigationTitle("Meals")
                 .navigationBarTitleDisplayMode(.inline)
-                // ADD MODE
                 .sheet(isPresented: $showingAddMeal) {
                     AddMealTimeView(meal: nil) { newMeal in
                         mealStore.meals.append(newMeal)
                     }
                 }
-                // EDIT MODE
                 .sheet(item: $editingMeal) { meal in
                     AddMealTimeView(meal: meal) { updated in
                         if let i = mealStore.meals.firstIndex(where: { $0.id == updated.id }) {
@@ -461,7 +447,6 @@ struct ActivitiesView: View {
                     Spacer()
 
                     HStack {
-                        // Floating + Button
                         Button {
                             showingAdd = true
                         } label: {
@@ -614,8 +599,6 @@ struct RestDaysView: View {
 
                     Spacer(minLength: 40)
                 }
-
-                // ADD BUTTON
                 VStack {
                     Spacer()
                     HStack {
@@ -636,7 +619,6 @@ struct RestDaysView: View {
                     }
                 }
 
-                // NEXT BUTTON
                 VStack {
                     Spacer()
                     HStack {
@@ -658,13 +640,13 @@ struct RestDaysView: View {
                 }
             }
             .navigationTitle("Rest Days")
-            // ADD MODE
+
             .sheet(isPresented: $showingAddSheet) {
                 AddRestActivityView(activity: nil) { newActivity in
                     restStore.activities.append(newActivity)
                 }
             }
-            // EDIT MODE
+
             .sheet(item: $editingActivity) { activity in
                 AddRestActivityView(activity: activity) { updated in
                     if let i = restStore.activities.firstIndex(where: { $0.id == updated.id }) {
@@ -678,22 +660,19 @@ struct RestDaysView: View {
 
 struct AddMealTimeView: View {
     @Environment(\.dismiss) private var dismiss
-
-    var meal: MealTime? = nil          // nil = add mode
+    var meal: MealTime? = nil
 
     @State private var mealType: String = ""
     @State private var time: Date = Date()
-    
-    // Wheel picker values
+
     @State private var selectedHours: Int = 0
-    @State private var selectedMinutes: Int = 30   // default
-    
-    // Convert hours + minutes into total minutes for saving
+    @State private var selectedMinutes: Int = 30
+
     private func totalDuration() -> Int {
         (selectedHours * 60) + selectedMinutes
     }
 
-    // Extract hours + minutes when editing
+
     private func setInitialSelections() {
         guard let meal = meal else { return }
         selectedHours = meal.duration / 60
@@ -701,8 +680,6 @@ struct AddMealTimeView: View {
         mealType = meal.mealType
         time = meal.time
     }
-
-    // Dummy max values so wheel works
     private let maxHours = 5
     private let maxMinutes = 59
 
@@ -717,8 +694,6 @@ struct AddMealTimeView: View {
                 DatePicker("Time",
                            selection: $time,
                            displayedComponents: .hourAndMinute)
-
-                // ********** YOUR CUSTOM WHEEL DURATION PICKER **********
                 VStack(alignment: .leading) {
                     Text("Duration")
                         .font(.headline)
@@ -738,11 +713,10 @@ struct AddMealTimeView: View {
                         }
                         .pickerStyle(.wheel)
                     }
-                    .frame(height: 120)   // wheel height
+                    .frame(height: 120)
                     .background(Color.white)
                     .cornerRadius(12)
                 }
-                // *******************************************************
             }
             .navigationTitle(meal == nil ? "Add Meal" : "Edit Meal")
             .onAppear(perform: setInitialSelections)

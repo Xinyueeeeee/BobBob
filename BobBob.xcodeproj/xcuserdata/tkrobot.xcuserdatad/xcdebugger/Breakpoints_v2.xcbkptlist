@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-   uuid = "6BE96F00-BB91-4E3B-9803-06D19145B255"
+   uuid = "70C11D3F-604F-4778-82D2-8040EBD75E21"
    type = "1"
    version = "2.0">
-   <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6BDD7BD0-410E-47C5-B161-FFF5759F4D7B"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BobBob/AddTasksView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "6"
-            endingLineNumber = "6"
-            landmarkName = "unknown"
-            landmarkType = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-   </Breakpoints>
 </Bucket>

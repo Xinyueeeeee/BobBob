@@ -18,7 +18,5 @@ struct Task: Identifiable, Codable {
     var importance: Double
     var startDate: Date?
     var endDate: Date?
-
-    // NEW
     var isCompleted: Bool = false
 }

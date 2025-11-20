@@ -33,8 +33,6 @@ private extension TasksView {
 private extension TasksView {
     var content: some View {
         VStack(spacing: 20) {
-
-            // 🔥 Replaced LIST with ScrollView to REMOVE CLIPPING
             ScrollView {
                 LazyVStack(spacing: 16) {
                     ForEach($taskStore.tasks) { $task in
@@ -57,16 +55,12 @@ private extension TasksView {
         }) {
 
             HStack(spacing: 14) {
-
-                // Completion Toggle
                 Button {
                     task.isCompleted.wrappedValue.toggle()
                 } label: {
                     ReminderCircle(isCompleted: task.wrappedValue.isCompleted)
                 }
                 .buttonStyle(.plain)
-
-                // Tap to edit
                 NavigationLink {
                     addTasksView(
                         totalSeconds: task.durationSeconds,
@@ -143,7 +137,7 @@ struct ReminderCircle: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(isCompleted ? Color.blue : Color.gray.opacity(0.5), lineWidth: 2)
+                .stroke(isCompleted ? Color.blue : Color.gray.opacity(0.9), lineWidth: 2)
                 .frame(width: 22, height: 22)
 
             if isCompleted {

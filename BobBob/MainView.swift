@@ -18,7 +18,6 @@ struct MainView: View {
                 OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
             }
         }
-        
     }
 }
 
