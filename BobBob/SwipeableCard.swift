@@ -5,7 +5,6 @@
 //  Created by Hanyi on 20/11/25.
 //
 
-
 import SwiftUI
 
 struct SwipeableCard<Content: View>: View {
@@ -25,6 +24,7 @@ struct SwipeableCard<Content: View>: View {
     var body: some View {
         ZStack(alignment: .trailing) {
 
+            // DELETE BACKGROUND
             if revealDelete || dragOffset < 0 {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(Color.red)
@@ -37,6 +37,7 @@ struct SwipeableCard<Content: View>: View {
                     .transition(.opacity)
             }
 
+            // CARD CONTENT
             content
                 .background(
                     GeometryReader { geo in
@@ -53,13 +54,20 @@ struct SwipeableCard<Content: View>: View {
                 .gesture(
                     DragGesture()
                         .updating($dragOffset) { value, state, _ in
+                            // Only allow left drag
                             if value.translation.width < 0 {
                                 state = value.translation.width
                             }
                         }
                         .onEnded { value in
                             withAnimation(.spring()) {
-                                revealDelete = value.translation.width < -40
+                                if value.translation.width < -40 {
+                                    // SWIPE LEFT → reveal delete
+                                    revealDelete = true
+                                } else {
+                                    // SWIPE RIGHT or insufficient left → close delete
+                                    revealDelete = false
+                                }
                             }
                         }
                 )
@@ -72,6 +80,7 @@ struct SwipeableCard<Content: View>: View {
             TapGesture()
                 .onEnded {
                     if revealDelete {
+                        // Perform delete animation
                         withAnimation(.easeInOut(duration: 0.25)) {
                             removed = true
                         }
