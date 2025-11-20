@@ -19,6 +19,7 @@ final class SchedulerViewModel: ObservableObject {
     }
 
     private func setupBindings() {
+
         Publishers.CombineLatest4(
             taskStore.$tasks,
             prefsStore.$meals,
@@ -33,35 +34,30 @@ final class SchedulerViewModel: ObservableObject {
     }
 
     private func buildUserPreferences() -> UserPreferences {
-        // Chronotype from UserDefaults (AppStorage uses these keys)
+
         let chronotypeString = UserDefaults.standard.string(forKey: "selectedChronotype")
         let chronotype = ChronotypePreference(string: chronotypeString)
 
-        // Sleep times from UserDefaults
         let defaultSleep = calendar.date(bySettingHour: 23, minute: 0, second: 0, of: Date())!
         let defaultWake  = calendar.date(bySettingHour: 7, minute: 0, second: 0, of: Date())!
 
-        let sleepTime = (UserDefaults.standard.object(forKey: "sleepTime") as? Date) ?? defaultSleep
-        let wakeTime  = (UserDefaults.standard.object(forKey: "wakeTime")  as? Date) ?? defaultWake
+        let sleepTime = UserDefaults.standard.object(forKey: "sleepTime") as? Date ?? defaultSleep
+        let wakeTime  = UserDefaults.standard.object(forKey: "wakeTime")  as? Date ?? defaultWake
 
         let sleepStartComp = calendar.dateComponents([.hour, .minute], from: sleepTime)
         let sleepEndComp   = calendar.dateComponents([.hour, .minute], from: wakeTime)
 
-        // Meals
-        let mealPrefs: [DailyMealPref] = prefsStore.meals.map { m in
+        let mealPrefs = prefsStore.meals.map { m in
             let comp = calendar.dateComponents([.hour, .minute], from: m.time)
             return DailyMealPref(startTime: comp, durationMinutes: m.duration)
         }
 
-        // Recurring activities (simplified: only "Weekly" and "Daily" used)
-        let recurring: [RecurringBlockPref] = prefsStore.activities.compactMap { act in
+        let recurring = prefsStore.activities.compactMap { act in
             let weekday = weekdayIndex(from: act.day)
             let comp = calendar.dateComponents([.hour, .minute], from: act.time)
-            let durationMinutes = 60  // you can tie this to your AddActivitiesView.duration later
-            return RecurringBlockPref(weekday: weekday, startTime: comp, durationMinutes: durationMinutes)
+            return RecurringBlockPref(weekday: weekday, startTime: comp, durationMinutes: 60)
         }
 
-        // Rest days (convert ranges to individual dates)
         var restDates: Set<Date> = []
         for r in prefsStore.restActivities {
             var d = r.startDate.startOfDay
@@ -83,24 +79,16 @@ final class SchedulerViewModel: ObservableObject {
     }
 
     private func weekdayIndex(from day: String) -> Int {
-        let map = [
-            "Sunday": 1,
-            "Monday": 2,
-            "Tuesday": 3,
-            "Wednesday": 4,
-            "Thursday": 5,
-            "Friday": 6,
-            "Saturday": 7
-        ]
-        return map[day] ?? 2
+        [
+            "Sunday": 1, "Monday": 2, "Tuesday": 3,
+            "Wednesday": 4, "Thursday": 5,
+            "Friday": 6, "Saturday": 7
+        ][day] ?? 2
     }
 
     func refreshSchedule() {
         let prefs = buildUserPreferences()
-        scheduledBlocks = service.schedule(
-            tasks: taskStore.tasks,
-            prefs: prefs
-        )
+        scheduledBlocks = service.schedule(tasks: taskStore.tasks, prefs: prefs)
     }
 
     func blocks(for day: Date) -> [ScheduledBlock] {
@@ -109,3 +97,4 @@ final class SchedulerViewModel: ObservableObject {
         return scheduledBlocks.filter { $0.start >= start && $0.start < end }
     }
 }
+

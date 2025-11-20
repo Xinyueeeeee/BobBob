@@ -11,15 +11,21 @@ struct CalendarView: View {
     @State private var days: [CalendarDay] = []
     @State private var path: [Date] = []
 
-    @StateObject var schedulerVM = SchedulerViewModel()
-
+    // These now come correctly from BobBobApp
+    @EnvironmentObject var scheduleVM: SchedulerViewModel
+    @EnvironmentObject var taskStore: TaskStore
+    @EnvironmentObject var preferenceStore: PreferencesStore
+    
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
 
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
+                    gradient: Gradient(colors: [
+                        Color.blue.opacity(0.2),
+                        Color.blue.opacity(0.6)
+                    ]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -53,8 +59,10 @@ struct CalendarView: View {
                     }
                     .padding(.horizontal)
 
-                    // MARK: Calendar Grid
+                    // MARK: Weekday symbols + grid
                     VStack(spacing: 12) {
+
+                        // WEEKDAY HEADERS
                         HStack {
                             ForEach(weekdaySymbols(), id: \.self) { day in
                                 Text(day)
@@ -64,19 +72,24 @@ struct CalendarView: View {
                             }
                         }
 
+                        // CALENDAR GRID
                         LazyVGrid(columns: columns, spacing: 18) {
                             ForEach(days) { day in
+
+                                // Only show current month dates
                                 if monthInt(for: day.date) != monthInt(for: currentDate) {
                                     Text("").frame(height: 45)
                                 } else {
                                     NavigationLink(value: day.date) {
                                         VStack(spacing: 4) {
+
+                                            // DATE NUMBER
                                             Text("\(dayInt(for: day.date))")
                                                 .font(.system(size: 20))
                                                 .foregroundColor(.black)
 
-                                            // Indicator dot
-                                            if schedulerVM.blocks(for: day.date).count > 0 {
+                                            // BLUE DOT IF TASKS EXIST
+                                            if scheduleVM.blocks(for: day.date).count > 0 {
                                                 Circle()
                                                     .fill(Color.blue)
                                                     .frame(width: 6, height: 6)
@@ -98,17 +111,21 @@ struct CalendarView: View {
                 }
             }
             .onAppear { rebuildDays() }
-            .navigationDestination(for: Date.self) { day in
-                DayDetailView(day: day, blocks: schedulerVM.blocks(for: day))
+            .navigationDestination(for: Date.self) { date in
+                DayDetailView(day: date)
+                    .environmentObject(scheduleVM)
+                    .environmentObject(taskStore)
+                    .environmentObject(preferenceStore)
             }
         }
     }
 
+    //////////////////////////////////////////////////////
     // MARK: - Helper functions
+    //////////////////////////////////////////////////////
 
     private func weekdaySymbols() -> [String] {
-        let symbols = Calendar.current.shortWeekdaySymbols
-        return symbols.map { $0.capitalized }
+        Calendar.current.shortWeekdaySymbols.map { $0.capitalized }
     }
 
     private func monthTitle(_ date: Date) -> String {
@@ -137,8 +154,6 @@ struct CalendarView: View {
         days = start.map { CalendarDay(date: $0) }
     }
 
-    // MARK: - Calendar math (from your previous version)
-
     private func startOfMonth(_ date: Date) -> Date {
         Calendar.current.dateInterval(of: .month, for: date)!.start
     }
@@ -156,8 +171,10 @@ struct CalendarView: View {
         let start = startOfMonth(date)
         let weekday = Calendar.current.component(.weekday, from: start)
         let firstWeekday = Calendar.current.firstWeekday
+
         var diff = weekday - firstWeekday
         if diff < 0 { diff += 7 }
+
         return Calendar.current.date(byAdding: .day, value: -diff, to: start)!
     }
 
@@ -182,52 +199,66 @@ struct CalendarView: View {
     }
 }
 
+
 import SwiftUI
 
 struct DayDetailView: View {
+
+    @EnvironmentObject var scheduleVM: SchedulerViewModel
+    @EnvironmentObject var taskStore: TaskStore
+    @EnvironmentObject var preferenceStore: PreferencesStore
+
     let day: Date
-    let blocks: [ScheduledBlock]
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+        let blocks = scheduleVM.blocks(for: day)
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    Text(formattedDay(day))
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
-                        .padding(.top)
+        ScrollView {
+            VStack(spacing: 20) {
 
+                // DATE HEADER
+                Text(formattedDay(day))
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+                    .padding(.top, 20)
+
+                // TASK BLOCKS
+                if blocks.isEmpty {
+                    VStack(spacing: 10) {
+                        Text("No tasks scheduled")
+                            .foregroundColor(.black.opacity(0.6))
+                            .font(.headline)
+                        Text("Add tasks and your algorithm will schedule them here.")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.top, 40)
+                } else {
                     ForEach(blocks) { block in
-                        TaskBlockView(block: block)
+                        NavigationLink {
+                            TaskDetailView(item: block.task)
+                        } label: {
+                            TaskBlockView(block: block)
+                        }
+                        .buttonStyle(.plain)
                     }
-
-                    // if no tasks
-                    if blocks.isEmpty {
-                        Text("No tasks scheduled for this day.")
-                            .foregroundColor(.black.opacity(0.5))
-                            .padding(.top, 40)
-                    }
-
-                    Spacer()
                 }
+
+                Spacer()
             }
+            .padding(.horizontal)
         }
+        .navigationTitle("Schedule")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
+    // MARK: - Helpers
     private func formattedDay(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.dateFormat = "MMMM d"
-        return f.string(from: date)
+        date.formatted(.dateTime.weekday(.wide).day().month().year())
     }
 }
+
 
 struct TaskBlockView: View {
     let block: ScheduledBlock
