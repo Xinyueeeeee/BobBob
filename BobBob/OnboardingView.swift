@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct OnboardingView: View {
@@ -272,7 +271,7 @@ struct MealTime: Identifiable, Codable {
         self.id = id
         self.mealType = mealType
         self.time = time
-        self.duration = duration   
+        self.duration = duration
     }
 }
 
@@ -908,4 +907,3 @@ struct AddRestActivityView: View {
             OnboardingView(hasSeenOnboarding: .constant(false))
         }
     }
-
