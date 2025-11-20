@@ -267,7 +267,6 @@ struct MealTime: Identifiable, Codable {
 
 
 struct MealTimeView: View {
-
     @EnvironmentObject var mealStore: MealTimeStore
     @Binding var hasSeenOnboarding: Bool
 
