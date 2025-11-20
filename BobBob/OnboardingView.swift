@@ -644,6 +644,9 @@ struct RestDaysView: View {
 struct AddMealTimeView: View {
     @Environment(\.dismiss) var dismiss
     
+    let meal: MealTime?
+    let onSave: (MealTime) -> Void
+    
     @State private var selectedMeal = "Breakfast"
     @State private var mealTime = Date()
     @State private var durationHours: Int = 0
@@ -651,7 +654,16 @@ struct AddMealTimeView: View {
     
     let mealOptions = ["Breakfast", "Lunch", "Dinner", "Snack"]
     
-    var onSave: (MealTime) -> Void
+    init(meal: MealTime? = nil, onSave: @escaping (MealTime) -> Void) {
+        self.meal = meal
+        self.onSave = onSave
+        
+        _selectedMeal = State(initialValue: meal?.mealType ?? "Breakfast")
+        _mealTime = State(initialValue: meal?.time ?? Date())
+        let totalMinutes = meal?.duration ?? 15
+        _durationHours = State(initialValue: totalMinutes / 60)
+        _durationMinutes = State(initialValue: totalMinutes % 60)
+    }
     
     var body: some View {
         NavigationStack {
@@ -688,14 +700,11 @@ struct AddMealTimeView: View {
                 }
                 
                 Section {
-                    Button("Save") {
+                    Button(meal == nil ? "Save" : "Save Changes") {
                         let totalMinutes = durationHours * 60 + durationMinutes
-                        
-                        onSave(
-                            MealTime(mealType: selectedMeal,
-                                     time: mealTime,
-                                     duration: totalMinutes)
-                        )
+                        let idToUse = meal?.id ?? UUID()
+                        let saved = MealTime(id: idToUse, mealType: selectedMeal, time: mealTime, duration: totalMinutes)
+                        onSave(saved)
                         dismiss()
                     }
                     .frame(maxWidth: .infinity)
