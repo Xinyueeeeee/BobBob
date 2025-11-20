@@ -15,7 +15,9 @@ enum MealSheet: Identifiable {
 
 struct MealTimeView2: View {
     @Binding var hasSeenOnboarding: Bool
-    @ObservedObject var mealStore: MealTimeStore
+    @EnvironmentObject var mealStore: MealTimeStore
+
+
 
     @State private var activeSheet: MealSheet? = nil   // <-- one sheet controller
 
@@ -29,6 +31,8 @@ struct MealTimeView2: View {
                         .font(.headline)
                         .foregroundColor(.black.opacity(0.5))
                         .padding(.top)
+                        .padding(.horizontal, 20)
+
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -66,6 +70,7 @@ struct MealTimeView2: View {
                 }
 
                 // ADD BUTTON — bottom-left
+
                 Button {
                     activeSheet = .add
                 } label: {
@@ -77,10 +82,10 @@ struct MealTimeView2: View {
                         .clipShape(Circle())
                         .shadow(radius: 3)
                 }
-                .padding(.leading, 25)
-                .padding(.bottom, 30)
+                .padding([.leading, .bottom], 25)
             }
-            .navigationTitle("Meals")
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+
 
             // MARK: - ONE SHEET ONLY
             .sheet(item: $activeSheet) { sheet in
@@ -104,20 +109,17 @@ struct MealTimeView2: View {
                     )
                 }
             }
+
         }
     }
 }
 
-#Preview {
-    MealTimeView2(
-        hasSeenOnboarding: .constant(false),
-        mealStore: MealTimeStore()
-    )
-}
 
 #Preview {
-    MealTimeView2(hasSeenOnboarding: .constant(false), mealStore: MealTimeStore() )
+    MealTimeView2(hasSeenOnboarding: .constant(false))
+        .environmentObject(MealTimeStore())
 }
+
 //
 //  MealTimeStore.swift
 //  BobBob
