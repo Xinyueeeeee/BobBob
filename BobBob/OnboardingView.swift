@@ -565,28 +565,35 @@ struct ActivitiesView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
                             ForEach(activities) { activity in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(activity.name)
-                                        .font(.headline)
-                                        .foregroundColor(.black)
-                                    HStack {
-                                        Label(activity.day, systemImage: "calendar")
-                                        Label(activity.regularity, systemImage: "repeat")
-                                        Label(activity.timeFormatted, systemImage: "clock")
+                                SwipeableCard(onDelete: {
+                                    deleteActivity(activity)
+                                }) {
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(activity.name)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+
+                                        HStack {
+                                            Label(activity.day, systemImage: "calendar")
+                                            Label(activity.regularity, systemImage: "repeat")
+                                            Label(activity.timeFormatted, systemImage: "clock")
+                                        }
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
                                     }
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .shadow(color: .black.opacity(0.05),
+                                            radius: 6, x: 0, y: 4)
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white)
-                                .cornerRadius(14)
-                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
+
                     Spacer()
                     HStack(spacing: 20) {
                         Button {
@@ -622,6 +629,12 @@ struct ActivitiesView: View {
             .sheet(isPresented: $showingAddActivity) {
                 AddActivitiesView(activities: $activities)
             }
+        }
+    }
+    
+    private func deleteActivity(_ activity: Activity) {
+        withAnimation {
+            activities.removeAll { $0.id == activity.id }
         }
     }
 }
@@ -918,7 +931,7 @@ struct AddRestActivityView: View {
     @Binding var restActivities: [RestActivity]
     
     @State private var name: String = ""
-    
+
     @State private var startDate: Date = Calendar.current.startOfDay(for: Date())
     @State private var endDate: Date = Calendar.current.startOfDay(for: Date())
     
