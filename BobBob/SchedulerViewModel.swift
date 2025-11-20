@@ -28,7 +28,7 @@ final class SchedulerViewModel: ObservableObject {
             )
 
             combo1234
-                .combineLatest(prefsStore.$chronotype)   // <-- 5th publisher added here
+                .combineLatest(prefsStore.$chronotype)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _, _ in
                     guard let self = self else { return }
