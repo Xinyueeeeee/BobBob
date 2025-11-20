@@ -5,10 +5,6 @@
 
 import Foundation
 
-// ======================================================
-// MARK: INTERNAL PREFS MODELS
-// ======================================================
-
 enum ChronotypePreference {
     case earlyBird
     case nightOwl
@@ -143,26 +139,39 @@ final class SchedulerService {
     ) -> ScheduledBlock? {
 //refresh
         var windows = buildDayWindows(for: day, prefs: prefs)
-        if windows.isEmpty { return nil }
+            if windows.isEmpty { return nil }
+            let now = Date()
+            if calendar.isDate(day, inSameDayAs: now) {
+                let cutoff = now
+                var adjusted: [TimeWindow] = []
+                for w in windows {
+                    if w.end <= cutoff { continue }
+                    if w.start < cutoff {
+                        adjusted.append(TimeWindow(start: cutoff, end: w.end))
+                    } else {
+                        adjusted.append(w)
+                    }
+                }
+                windows = adjusted
+                if windows.isEmpty { return nil }
+            }
+            let requiredMinutes = max(1, task.durationSeconds / 60)
 
-        let requiredMinutes = max(1, task.durationSeconds / 60)
+            for (i, window) in windows.enumerated() where window.duration >= requiredMinutes {
 
-        for (i, window) in windows.enumerated() where window.duration >= requiredMinutes {
+                let start = window.start
+                let end = start.adding(minutes: requiredMinutes)
+                let remaining = TimeWindow(start: end, end: window.end)
+                if remaining.duration > 0 {
+                    windows[i] = remaining
+                } else {
+                    windows.remove(at: i)
+                }
 
-            let start = window.start
-            let end = start.adding(minutes: requiredMinutes)
-
-            let remaining = TimeWindow(start: end, end: window.end)
-            if remaining.duration > 0 {
-                windows[i] = remaining
-            } else {
-                windows.remove(at: i)
+                return ScheduledBlock(task: task, start: start, end: end, isOverdue: overdue)
             }
 
-            return ScheduledBlock(task: task, start: start, end: end, isOverdue: overdue)
-        }
-
-        return nil
+            return nil
     }
 
 //build daily windows

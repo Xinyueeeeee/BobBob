@@ -44,4 +44,8 @@ final class PreferencesStore: ObservableObject {
     @Published var activities: [Activity] = []
     @Published var restActivities: [RestActivity] = []
     private init() { }
+    @Published var chronotype: String = UserDefaults.standard.string(forKey: "selectedChronotype") ?? "Early Bird" {
+        didSet { UserDefaults.standard.set(chronotype, forKey: "selectedChronotype") }
+    }
+
 }

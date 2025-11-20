@@ -20,20 +20,24 @@ final class SchedulerViewModel: ObservableObject {
     }
     private func setupBindings() {
 
-        Publishers.CombineLatest4(
-            taskStore.$tasks,
-            prefsStore.$meals,
-            prefsStore.$activities,
-            prefsStore.$restActivities
-        )
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] _, _, _, _ in
-            guard let self = self else { return }
-            self.refreshSchedule()
-            self.refreshNotifications()     // ← auto update notifications
+        let combo1234 = Publishers.CombineLatest4(
+                taskStore.$tasks,
+                prefsStore.$meals,
+                prefsStore.$activities,
+                prefsStore.$restActivities
+            )
+
+            combo1234
+                .combineLatest(prefsStore.$chronotype)   // <-- 5th publisher added here
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _, _ in
+                    guard let self = self else { return }
+                    self.refreshSchedule()
+                    self.refreshNotifications()
+                }
+                .store(in: &cancellables)
         }
-        .store(in: &cancellables)
-    }
+
     private func buildUserPreferences() -> UserPreferences {
 
         let chronotypeString = UserDefaults.standard.string(forKey: "selectedChronotype")
