@@ -1,17 +1,19 @@
 //
-//  RestActivityStore.swift
+//  ActivityStore.swift
 //  BobBob
 //
 //  Created by Hanyi on 20/11/25.
 //
+
+
 import SwiftUI
 
-class RestActivityStore: ObservableObject {
-    @Published var activities: [RestActivity] = [] {
+class ActivityStore: ObservableObject {
+    @Published var activities: [Activity] = [] {
         didSet { saveActivities() }
     }
 
-    private let storageKey = "savedRestActivities"
+    private let storageKey = "savedActivities"
 
     init() {
         loadActivities()
@@ -19,7 +21,7 @@ class RestActivityStore: ObservableObject {
 
     private func loadActivities() {
         guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
-        if let decoded = try? JSONDecoder().decode([RestActivity].self, from: data) {
+        if let decoded = try? JSONDecoder().decode([Activity].self, from: data) {
             self.activities = decoded
         }
     }
