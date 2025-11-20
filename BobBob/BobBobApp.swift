@@ -6,6 +6,7 @@ struct BobBobApp: App {
     @StateObject var mealStore = MealTimeStore()
     @StateObject var restActivityStore = RestActivityStore()
     @StateObject var activityStore = ActivityStore()
+    @StateObject var taskStore = TaskStore.shared
     
     var body: some Scene {
         WindowGroup {
@@ -24,3 +25,4 @@ struct BobBobApp: App {
         }
     }
 }
+
