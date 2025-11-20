@@ -665,13 +665,13 @@ struct RestDaysView: View {
             .navigationTitle("Rest Days")
 
             .sheet(isPresented: $showingAddSheet) {
-                AddRestActivityView(activity: nil) { newActivity in
+                AddRestDaysPickerView(existing: nil) { newActivity in
                     restStore.activities.append(newActivity)
                 }
             }
 
             .sheet(item: $editingActivity) { activity in
-                AddRestActivityView(activity: activity) { updated in
+                AddRestDaysPickerView(existing: activity) { updated in
                     if let i = restStore.activities.firstIndex(where: { $0.id == updated.id }) {
                         restStore.activities[i] = updated
                     }
