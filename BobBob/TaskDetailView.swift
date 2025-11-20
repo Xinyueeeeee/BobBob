@@ -3,7 +3,7 @@
 //  BobBob
 //
 //  Created by Hanyi on 20/11/25.
-
+//
 
 import SwiftUI
 
@@ -16,42 +16,56 @@ struct TaskDetailView: View {
     @State private var showEdit = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+        VStack(spacing: 0) {
 
-                // TITLE
-                Text(item.name)
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.black)
-                    .padding(.top, 10)
+            // ===========================
+            // SCROLL CONTENT
+            // ===========================
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
 
-                // DEADLINE
-                detailRow(
-                    icon: "calendar",
-                    title: "Deadline",
-                    value: item.deadline.formatted(date: .abbreviated, time: .shortened)
-                )
+                    // TITLE
+                    Text(item.name)
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(.top, 10)
 
-                // DURATION
-                detailRow(
-                    icon: "timer",
-                    title: "Duration",
-                    value: durationLabel(item.durationSeconds)
-                )
-
-                // PREFERRED TIME (optional)
-                if let start = item.startDate, let end = item.endDate {
+                    // DEADLINE
                     detailRow(
-                        icon: "clock",
-                        title: "Preferred Time",
-                        value: "\(start.formatted(date: .abbreviated, time: .shortened)) → \(end.formatted(date: .abbreviated, time: .shortened))"
+                        icon: "calendar",
+                        title: "Deadline",
+                        value: item.deadline.formatted(date: .abbreviated, time: .shortened)
                     )
+
+                    // DURATION
+                    detailRow(
+                        icon: "timer",
+                        title: "Duration",
+                        value: durationLabel(item.durationSeconds)
+                    )
+
+                    // PREFERRED TIME
+                    if let start = item.startDate, let end = item.endDate {
+                        detailRow(
+                            icon: "clock",
+                            title: "Preferred Time",
+                            value: "\(start.formatted(date: .abbreviated, time: .shortened)) → \(end.formatted(date: .abbreviated, time: .shortened))"
+                        )
+                    }
+
+                    Spacer().frame(height: 120) // space for bottom bar
                 }
+                .padding(.horizontal)
+            }
 
-                Spacer().frame(height: 40)
+            // ===========================
+            // FIXED BOTTOM BUTTONS
+            // ===========================
+            VStack(spacing: 12) {
 
-                // EDIT BUTTON
-                Button(action: { showEdit = true }) {
+                Button {
+                    showEdit = true
+                } label: {
                     HStack {
                         Image(systemName: "pencil")
                         Text("Edit Task")
@@ -63,7 +77,6 @@ struct TaskDetailView: View {
                     .cornerRadius(12)
                 }
 
-                // DELETE BUTTON
                 Button(role: .destructive) {
                     deleteItem()
                 } label: {
@@ -76,22 +89,18 @@ struct TaskDetailView: View {
                     .background(Color.red.opacity(0.15))
                     .cornerRadius(12)
                 }
+
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom, 16)
+            .background(Color(.systemGray6)) // slightly floating look
         }
         .navigationTitle("Task Details")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showEdit) {
-            addTasksView(
-                totalSeconds: Binding(
-                    get: { item.durationSeconds },
-                    set: { item.durationSeconds = $0 }
-                ),
-                onSave: { updated in
-                    updateItem(updated)
-                },
-                existingTask: item
-            )
+            TaskEditSheet(task: item) { updated in
+                updateItem(updated)
+            }
         }
     }
 
@@ -111,47 +120,57 @@ struct TaskDetailView: View {
         }
     }
 
-    // MARK: - HELPER UI ROW
+    // MARK: - ROW UI
     private func detailRow(icon: String, title: String, value: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: 14) {
             Image(systemName: icon)
                 .foregroundColor(.blue)
                 .font(.system(size: 20))
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.headline)
                 Text(value)
                     .foregroundColor(.gray)
             }
-
             Spacer()
         }
     }
 
-    // MARK: - DURATION HELPER
+    // MARK: - DURATION FORMATTER
     private func durationLabel(_ seconds: Int) -> String {
         let h = seconds / 3600
         let m = (seconds % 3600) / 60
-        if h == 0 { return "\(m)m" }
-        if m == 0 { return "\(h)h" }
-        return "\(h)h \(m)m"
+
+        switch (h, m) {
+        case (0, _): return "\(m)m"
+        case (_, 0): return "\(h)h"
+        default: return "\(h)h \(m)m"
+        }
     }
 }
+
+
+
+/////////////////////////////////////////////////////////////
+// MARK: - TASK EDIT SHEET (CLEANED UP + FIXED)
+/////////////////////////////////////////////////////////////
 
 struct TaskEditSheet: View {
 
     @Environment(\.dismiss) var dismiss
 
-    @State var name: String
-    @State var deadline: Date
-    @State var durationSeconds: Int
-    @State var startDate: Date?
-    @State var endDate: Date?
-
     let task: Task
     var onSave: (Task) -> Void
 
+    // Editable fields
+    @State private var name: String
+    @State private var deadline: Date
+    @State private var durationSeconds: Int
+    @State private var startDate: Date?
+    @State private var endDate: Date?
+
+    // UI states
     @State private var selectedHours = 0
     @State private var selectedMinutes = 0
     @State private var prefersTime = false
@@ -159,24 +178,30 @@ struct TaskEditSheet: View {
     init(task: Task, onSave: @escaping (Task) -> Void) {
         self.task = task
         self.onSave = onSave
+
         _name = State(initialValue: task.name)
         _deadline = State(initialValue: task.deadline)
         _durationSeconds = State(initialValue: task.durationSeconds)
         _startDate = State(initialValue: task.startDate)
         _endDate = State(initialValue: task.endDate)
+        _prefersTime = State(initialValue: task.startDate != nil)
     }
 
     var body: some View {
         NavigationStack {
             Form {
+
+                // NAME
                 Section("Task Name") {
                     TextField("Name", text: $name)
                 }
 
+                // DEADLINE
                 Section("Deadline") {
                     DatePicker("Deadline", selection: $deadline)
                 }
 
+                // DURATION
                 Section("Duration") {
                     Picker("Hours", selection: $selectedHours) {
                         ForEach(0..<24) { Text("\($0)h") }
@@ -187,38 +212,40 @@ struct TaskEditSheet: View {
                     }
                 }
 
+                // TIME PREFERENCE
                 Toggle("Preferred Working Time", isOn: $prefersTime)
 
                 if prefersTime {
                     DatePicker(
-                        "Start Time",
+                        "Start",
                         selection: Binding(
                             get: { startDate ?? Date() },
-                            set: { newValue in startDate = newValue }
+                            set: { startDate = $0 }
                         ),
                         displayedComponents: [.date, .hourAndMinute]
                     )
 
                     DatePicker(
-                        "End Time",
+                        "End",
                         selection: Binding(
                             get: { endDate ?? Date() },
-                            set: { newValue in endDate = newValue }
+                            set: { endDate = $0 }
                         ),
                         displayedComponents: [.date, .hourAndMinute]
                     )
-
                 }
+
             }
             .navigationTitle("Edit Task")
             .toolbar {
+
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        let updatedTask = Task(
+                        let updated = Task(
                             id: task.id,
                             name: name,
                             deadline: deadline,
@@ -228,7 +255,7 @@ struct TaskEditSheet: View {
                             endDate: prefersTime ? endDate : nil
                         )
 
-                        onSave(updatedTask)
+                        onSave(updated)
                         dismiss()
                     }
                 }
@@ -236,20 +263,7 @@ struct TaskEditSheet: View {
             .onAppear {
                 selectedHours = durationSeconds / 3600
                 selectedMinutes = (durationSeconds % 3600) / 60
-                prefersTime = (startDate != nil)
             }
         }
     }
 }
-
-
-// MARK: - Helper Binding for optional Date
-extension Binding where Value == Date? {
-    init(_ source: Binding<Date?>, replacingNilWith defaultDate: Date) {
-        self.init(
-            get: { source.wrappedValue ?? defaultDate },
-            set: { source.wrappedValue = $0 }
-        )
-    }
-}
-
