@@ -1,6 +1,5 @@
 import SwiftUI
 
-// MARK: - Day Model
 struct CalendarDay: Identifiable {
     let id = UUID()
     let date: Date
@@ -11,7 +10,6 @@ struct CalendarView: View {
     @State private var days: [CalendarDay] = []
     @State private var path: [Date] = []
 
-    // These now come correctly from BobBobApp
     @EnvironmentObject var scheduleVM: SchedulerViewModel
     @EnvironmentObject var taskStore: TaskStore
     @EnvironmentObject var preferenceStore: PreferencesStore
@@ -34,7 +32,6 @@ struct CalendarView: View {
                 VStack(spacing: 16) {
                     Spacer().frame(height: 80)
 
-                    // MARK: Month Title
                     HStack {
                         Text(monthTitle(currentDate))
                             .font(.system(size: 34, weight: .bold))
@@ -43,7 +40,6 @@ struct CalendarView: View {
                     }
                     .padding(.horizontal)
 
-                    // MARK: Month Navigation
                     HStack {
                         Button { changeMonth(-1) } label: {
                             Image(systemName: "chevron.left")
@@ -59,10 +55,7 @@ struct CalendarView: View {
                     }
                     .padding(.horizontal)
 
-                    // MARK: Weekday symbols + grid
                     VStack(spacing: 12) {
-
-                        // WEEKDAY HEADERS
                         HStack {
                             ForEach(weekdaySymbols(), id: \.self) { day in
                                 Text(day)
@@ -72,23 +65,17 @@ struct CalendarView: View {
                             }
                         }
 
-                        // CALENDAR GRID
                         LazyVGrid(columns: columns, spacing: 18) {
                             ForEach(days) { day in
-
-                                // Only show current month dates
                                 if monthInt(for: day.date) != monthInt(for: currentDate) {
                                     Text("").frame(height: 45)
                                 } else {
                                     NavigationLink(value: day.date) {
                                         VStack(spacing: 4) {
-
-                                            // DATE NUMBER
                                             Text("\(dayInt(for: day.date))")
                                                 .font(.system(size: 20))
                                                 .foregroundColor(.black)
 
-                                            // BLUE DOT IF TASKS EXIST
                                             if scheduleVM.blocks(for: day.date).count > 0 {
                                                 Circle()
                                                     .fill(Color.blue)
@@ -119,10 +106,6 @@ struct CalendarView: View {
             }
         }
     }
-
-    //////////////////////////////////////////////////////
-    // MARK: - Helper functions
-    //////////////////////////////////////////////////////
 
     private func weekdaySymbols() -> [String] {
         Calendar.current.shortWeekdaySymbols.map { $0.capitalized }
@@ -200,8 +183,6 @@ struct CalendarView: View {
 }
 
 
-import SwiftUI
-
 struct DayDetailView: View {
 
     @EnvironmentObject var scheduleVM: SchedulerViewModel
@@ -215,15 +196,12 @@ struct DayDetailView: View {
 
         ScrollView {
             VStack(spacing: 20) {
-
-                // DATE HEADER
                 Text(formattedDay(day))
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
                     .padding(.top, 20)
 
-                // TASK BLOCKS
                 if blocks.isEmpty {
                     VStack(spacing: 10) {
                         Text("No tasks scheduled")
@@ -240,6 +218,7 @@ struct DayDetailView: View {
                             TaskDetailView(item: block.task)
                         } label: {
                             TaskBlockView(block: block)
+                                .environmentObject(taskStore)
                         }
                         .buttonStyle(.plain)
                     }
@@ -253,7 +232,6 @@ struct DayDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    // MARK: - Helpers
     private func formattedDay(_ date: Date) -> String {
         date.formatted(.dateTime.weekday(.wide).day().month().year())
     }
@@ -261,30 +239,47 @@ struct DayDetailView: View {
 
 
 struct TaskBlockView: View {
+    @EnvironmentObject var taskStore: TaskStore
     let block: ScheduledBlock
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(block.task.name)
-                .font(.headline)
-                .foregroundColor(.white)
-
-            Text("\(time(block.start)) – \(time(block.end))")
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.8))
-
-            if block.isOverdue {
-                Text("⚠ Overdue placement")
-                    .foregroundColor(.yellow)
-                    .font(.caption)
+        HStack(spacing: 12) {
+            Button {
+                toggleCompletion()
+            } label: {
+                ReminderCircle(isCompleted: block.task.isCompleted)
             }
+            .buttonStyle(.plain)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(block.task.name)
+                    .font(.headline)
+                    .foregroundColor(block.task.isCompleted ? .gray : .white)
+                    .opacity(block.task.isCompleted ? 0.6 : 1)
+
+                Text("\(time(block.start)) – \(time(block.end))")
+                    .font(.subheadline)
+                    .foregroundColor(block.task.isCompleted ? .gray.opacity(0.6) : .white.opacity(0.8))
+
+                if block.isOverdue {
+                    Text("⚠ Overdue placement")
+                        .foregroundColor(.yellow)
+                        .font(.caption)
+                }
+            }
+            Spacer()
         }
         .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.blue.opacity(0.7))
+        .background(block.task.isCompleted ? Color.gray.opacity(0.4) : Color.blue.opacity(0.7))
         .cornerRadius(12)
         .padding(.horizontal)
         .padding(.vertical, 4)
+    }
+
+    private func toggleCompletion() {
+        if let index = taskStore.tasks.firstIndex(where: { $0.id == block.task.id }) {
+            taskStore.tasks[index].isCompleted.toggle()
+        }
     }
 
     private func time(_ date: Date) -> String {
@@ -293,3 +288,4 @@ struct TaskBlockView: View {
         return f.string(from: date)
     }
 }
+
