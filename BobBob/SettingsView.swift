@@ -25,11 +25,6 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: Text("Integrations")) {
-                    NavigationLink { NotifsView() } label: {
-                        Text("Apple Calendar")
-                    }
-                }
 
                 Section(header: Text("Personal Information")) {
                     
