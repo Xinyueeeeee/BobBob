@@ -125,7 +125,8 @@ struct addTasksView: View {
                     }
                 }
             }
-            .navigationTitle("Add tasks")
+            .navigationTitle(existingTask == nil ? "Add Task" : "Edit Task")
+
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
