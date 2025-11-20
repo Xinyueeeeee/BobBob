@@ -296,32 +296,39 @@ struct MealTimeView: View {
                         VStack(spacing: 15) {
 
                             ForEach(mealStore.meals) { meal in
-                                Button {
-                                    editingMeal = meal
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(meal.mealType)
-                                            .font(.headline)
-                                            .foregroundColor(.black)
-
-                                        HStack {
-                                            Label("\(meal.duration) min", systemImage: "timer")
-                                            Label(
-                                                meal.time.formatted(date: .omitted, time: .shortened),
-                                                systemImage: "clock"
-                                            )
-                                        }
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-
+                                SwipeableCard(onDelete: {
+                                    if let i = mealStore.meals.firstIndex(where: { $0.id == meal.id }) {
+                                        mealStore.meals.remove(at: i)
                                     }
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.white)
-                                    .cornerRadius(14)
-                                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                                }) {
+                                    Button {
+                                        editingMeal = meal
+                                    } label: {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            Text(meal.mealType)
+                                                .font(.headline)
+                                                .foregroundColor(.black)
+
+                                            HStack {
+                                                Label("\(meal.duration) min", systemImage: "timer")
+                                                Label(
+                                                    meal.time.formatted(date: .omitted, time: .shortened),
+                                                    systemImage: "clock"
+                                                )
+                                            }
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        }
+                                        .padding()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color.white)
+                                        .cornerRadius(14)
+                                        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
+
 
                         }
                         .padding(.horizontal)
@@ -414,30 +421,38 @@ struct ActivitiesView: View {
                         VStack(spacing: 15) {
 
                             ForEach(activityStore.activities) { activity in
-                                Button {
-                                    editingActivity = activity
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(activity.name)
-                                            .font(.headline)
-                                            .foregroundColor(.black)
-
-                                        HStack {
-                                            Label(activity.day, systemImage: "calendar")
-                                            Label(activity.regularity, systemImage: "repeat")
-                                            Label(activity.timeFormatted, systemImage: "clock")
-                                        }
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
+                                SwipeableCard(onDelete: {
+                                    if let i = activityStore.activities.firstIndex(where: { $0.id == activity.id }) {
+                                        activityStore.activities.remove(at: i)
                                     }
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.white)
-                                    .cornerRadius(14)
-                                    .shadow(color: .black.opacity(0.05),
-                                            radius: 6, x: 0, y: 4)
+                                }) {
+                                    Button {
+                                        editingActivity = activity
+                                    } label: {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            Text(activity.name)
+                                                .font(.headline)
+                                                .foregroundColor(.black)
+
+                                            HStack {
+                                                Label(activity.day, systemImage: "calendar")
+                                                Label(activity.regularity, systemImage: "repeat")
+                                                Label(activity.timeFormatted, systemImage: "clock")
+                                            }
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        }
+                                        .padding()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color.white)
+                                        .cornerRadius(14)
+                                        .shadow(color: .black.opacity(0.05),
+                                                radius: 6, x: 0, y: 4)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
+
 
                         }
                         .padding(.horizontal)
@@ -566,31 +581,39 @@ struct RestDaysView: View {
                         VStack(spacing: 15) {
 
                             ForEach(restStore.activities) { activity in
-
-                                Button {
-                                    editingActivity = activity
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(activity.name)
-                                            .font(.headline)
-                                            .foregroundColor(.black)
-
-                                        HStack {
-                                            Label(activity.startDate.formatted(date: .abbreviated, time: .omitted),
-                                                  systemImage: "sunrise")
-                                            Label(activity.endDate.formatted(date: .abbreviated, time: .omitted),
-                                                  systemImage: "sunset")
-                                        }
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
+                                SwipeableCard(onDelete: {
+                                    if let i = restStore.activities.firstIndex(where: { $0.id == activity.id }) {
+                                        restStore.activities.remove(at: i)
                                     }
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.white)
-                                    .cornerRadius(14)
-                                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                                }) {
+                                    Button {
+                                        editingActivity = activity
+                                    } label: {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            Text(activity.name)
+                                                .font(.headline)
+                                                .foregroundColor(.black)
+
+                                            HStack {
+                                                Label(activity.startDate.formatted(date: .abbreviated, time: .omitted),
+                                                      systemImage: "sunrise")
+                                                Label(activity.endDate.formatted(date: .abbreviated, time: .omitted),
+                                                      systemImage: "sunset")
+                                            }
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        }
+                                        .padding()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color.white)
+                                        .cornerRadius(14)
+                                        .shadow(color: .black.opacity(0.05),
+                                                radius: 6, x: 0, y: 4)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
+
 
                         }
                         .padding(.horizontal)
