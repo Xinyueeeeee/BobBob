@@ -1,3 +1,11 @@
+//
+//  SwipeableCard.swift
+//  BobBob
+//
+//  Created by Hanyi on 20/11/25.
+//
+
+
 import SwiftUI
 
 struct SwipeableCard<Content: View>: View {

@@ -5,88 +5,60 @@
 //  Created by minyi on 14/11/25.
 //
 
-
 import SwiftUI
-
 struct SettingsView: View {
     @Binding var hasSeenOnboarding: Bool
 
-    // Shared persistent stores
     @EnvironmentObject var mealStore: MealTimeStore
-    @StateObject var scheduleVM = SchedulerViewModel()
-
-    @StateObject private var restActivityStore = RestActivityStore()
+    @EnvironmentObject var restActivityStore: RestActivityStore   // ← FIXED
+    @EnvironmentObject var taskStore: TaskStore
+    @EnvironmentObject var scheduleVM: SchedulerViewModel
+    @EnvironmentObject var prefs: PreferencesStore
 
     var body: some View {
         NavigationStack {
             Form {
 
-                // --------------------
-                // General
-                // --------------------
                 Section(header: Text("General")) {
-                    NavigationLink {
-                        NotifsView()
-                    } label: {
+                    NavigationLink { NotifsView() } label: {
                         Text("Notifications")
                     }
                 }
 
-                // --------------------
-                // Integrations
-                // --------------------
                 Section(header: Text("Integrations")) {
-                    NavigationLink {
-                        NotifsView()
-                    } label: {
+                    NavigationLink { NotifsView() } label: {
                         Text("Apple Calendar")
                     }
                 }
 
-                // --------------------
-                // Personal Info
-                // --------------------
                 Section(header: Text("Personal Information")) {
                     
                     NavigationLink {
                         ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                    } label: {
-                        Text("Chronotype")
-                    }
-                    
+                    } label: { Text("Chronotype") }
+
                     NavigationLink {
                         MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                            .environmentObject(mealStore)   // ← ADD THIS
-                    } label: {
-                        Text("Meal Time")
-                    }
-                    
-                    
+                    } label: { Text("Meal Time") }
+
                     NavigationLink {
                         NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                            .environmentObject(scheduleVM)
-                    } label: {
-                        Text("Sleep Schedule")
-                    }
-                    
+                    } label: { Text("Sleep Schedule") }
+
                     NavigationLink {
                         ActivitiesView2(hasSeenOnboarding: $hasSeenOnboarding)
-                    } label: {
-                        Text("Activity")
-                    }
-                    
+                    } label: { Text("Activity") }
+
                     NavigationLink {
                         RestDaysView2(hasSeenOnboarding: $hasSeenOnboarding)
-                            .environmentObject(restActivityStore)
-                    } label: {
-                        Text("Rest Day")
-                    }
+                    } label: { Text("Rest Day") }
                 }
             }
             .navigationTitle("Settings")
         }
     }
 }
+
 
 #Preview {
     SettingsView(hasSeenOnboarding: .constant(false))

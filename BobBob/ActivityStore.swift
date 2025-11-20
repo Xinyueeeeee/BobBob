@@ -1,3 +1,11 @@
+//
+//  ActivityStore.swift
+//  BobBob
+//
+//  Created by Hanyi on 20/11/25.
+//
+
+
 import SwiftUI
 
 class ActivityStore: ObservableObject {

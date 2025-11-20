@@ -1,3 +1,11 @@
+//
+//  RestActivityStore.swift
+//  BobBob
+//
+//  Created by Hanyi on 20/11/25.
+//
+import SwiftUI
+
 class RestActivityStore: ObservableObject {
     @Published var activities: [RestActivity] = [] {
         didSet { saveActivities() }

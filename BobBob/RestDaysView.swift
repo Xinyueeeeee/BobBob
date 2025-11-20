@@ -4,7 +4,9 @@
 //
 //  Created by Hanyi on 17/11/25.
 //
+
 import SwiftUI
+
 struct RestDaysView2: View {
     @Binding var hasSeenOnboarding: Bool
     @EnvironmentObject var restStore: RestActivityStore
@@ -27,36 +29,12 @@ struct RestDaysView2: View {
                         .padding(.top)
 
                     ScrollView(showsIndicators: false) {
-                        VStack(spacing: 15) {
+                        LazyVStack(spacing: 15) {
                             ForEach(restStore.activities) { activity in
-
-                                Button {
-                                    editingActivity = activity
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 6) {
-
-                                        Text(activity.name)
-                                            .font(.headline)
-                                            .foregroundColor(.black)
-
-                                        HStack {
-                                            Label(activity.startDate.formatted(date: .abbreviated, time: .omitted),
-                                                  systemImage: "sunrise")
-                                            Label(activity.endDate.formatted(date: .abbreviated, time: .omitted),
-                                                  systemImage: "sunset")
-                                        }
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    }
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.white)
-                                    .cornerRadius(14)
-                                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
-                                }
+                                restRow(activity: activity)
+                                    .padding(.horizontal)
                             }
                         }
-                        .padding(.horizontal)
                         .padding(.top, 10)
                     }
 
@@ -93,7 +71,7 @@ struct RestDaysView2: View {
             .sheet(item: $editingActivity) { activity in
                 AddRestActivityView(activity: activity) { updated in
                     if let i = restStore.activities.firstIndex(where: { $0.id == updated.id }) {
-                        restStore.activities[i] = updated      // ← EDIT SUPPORT
+                        restStore.activities[i] = updated
                     }
                 }
             }
@@ -101,28 +79,51 @@ struct RestDaysView2: View {
     }
 }
 
+private extension RestDaysView2 {
 
-class RestActivityStore: ObservableObject {
-    @Published var activities: [RestActivity] = [] {
-        didSet { saveActivities() }
-    }
+    
+    func restRow(activity: RestActivity) -> some View {
 
-    private let storageKey = "savedRestActivities"
+        SwipeableCard(onDelete: {
+            deleteActivity(activity)
+        }) {
 
-    init() {
-        loadActivities()
-    }
+            Button {
+                editingActivity = activity
+            } label: {
 
-    private func loadActivities() {
-        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
-        if let decoded = try? JSONDecoder().decode([RestActivity].self, from: data) {
-            self.activities = decoded
+                VStack(alignment: .leading, spacing: 6) {
+
+                    Text(activity.name)
+                        .font(.headline)
+                        .foregroundColor(.black)
+
+                    HStack {
+                        Label(
+                            activity.startDate.formatted(date: .abbreviated, time: .omitted),
+                            systemImage: "sunrise"
+                        )
+                        Label(
+                            activity.endDate.formatted(date: .abbreviated, time: .omitted),
+                            systemImage: "sunset"
+                        )
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.white)
+                .cornerRadius(14)
+                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
         }
     }
 
-    private func saveActivities() {
-        if let encoded = try? JSONEncoder().encode(activities) {
-            UserDefaults.standard.set(encoded, forKey: storageKey)
+    func deleteActivity(_ activity: RestActivity) {
+        if let i = restStore.activities.firstIndex(where: { $0.id == activity.id }) {
+            restStore.activities.remove(at: i)
         }
     }
 }
