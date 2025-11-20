@@ -2,15 +2,13 @@ import SwiftUI
 
 @main
 struct BobBobApp: App {
-    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     
-    // These must be StateObject — the source of truth
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @StateObject var mealStore = MealTimeStore()
     @StateObject var restActivityStore = RestActivityStore()
     @StateObject var activityStore = ActivityStore()
     @StateObject var taskStore = TaskStore.shared
     @StateObject var scheduleVM = SchedulerViewModel()
-  
     
     var body: some Scene {
         WindowGroup {
@@ -23,9 +21,6 @@ struct BobBobApp: App {
                     .environmentObject(taskStore)
                     .environmentObject(scheduleVM)
                     .environmentObject(prefs)
-                   
-                
-                    
             } else {
                 OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
                     .environmentObject(mealStore)
@@ -34,7 +29,6 @@ struct BobBobApp: App {
                     .environmentObject(taskStore)
                     .environmentObject(scheduleVM)
                     .environmentObject(prefs)
-                    
             }
         }
     }

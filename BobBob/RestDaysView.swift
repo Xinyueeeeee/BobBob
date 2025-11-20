@@ -40,8 +40,6 @@ struct RestDaysView2: View {
 
                     Spacer(minLength: 80)
                 }
-
-                // Bottom-left ADD
                 VStack {
                     Spacer()
                     HStack {

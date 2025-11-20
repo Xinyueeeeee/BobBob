@@ -48,9 +48,6 @@ extension Date {
         Calendar.current.component(.day, from: endOfMonth)
     }
     
-
-
-
    var firstWeekDayBeforeStart: Date {
        let startOfMonthWeekday = Calendar.current.component(.weekday, from: startOfMonth)
        var numberFromPreviousMonth = startOfMonthWeekday - Self.firstDayOfWeek
@@ -59,9 +56,6 @@ extension Date {
        }
        return Calendar.current.date(byAdding: .day, value: -numberFromPreviousMonth, to: startOfMonth)!
    }
-
-
-
 
     var calendarDisplayDays: [Date] {
        var days: [Date] = []

@@ -17,34 +17,22 @@ struct TaskDetailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
-            // ===========================
-            // SCROLL CONTENT
-            // ===========================
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-
-                    // TITLE
                     Text(item.name)
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.black)
                         .padding(.top, 10)
-
-                    // DEADLINE
                     detailRow(
                         icon: "calendar",
                         title: "Deadline",
                         value: item.deadline.formatted(date: .abbreviated, time: .shortened)
                     )
-
-                    // DURATION
                     detailRow(
                         icon: "timer",
                         title: "Duration",
                         value: durationLabel(item.durationSeconds)
                     )
-
-                    // PREFERRED TIME
                     if let start = item.startDate, let end = item.endDate {
                         detailRow(
                             icon: "clock",
@@ -57,10 +45,6 @@ struct TaskDetailView: View {
                 }
                 .padding(.horizontal)
             }
-
-            // ===========================
-            // FIXED BOTTOM BUTTONS
-            // ===========================
             VStack(spacing: 12) {
 
                 Button {
@@ -93,7 +77,7 @@ struct TaskDetailView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 16)
-            .background(Color(.systemGray6)) // slightly floating look
+            .background(Color(.systemGray6))
         }
         .navigationTitle("Task Details")
         .navigationBarTitleDisplayMode(.inline)
@@ -103,24 +87,18 @@ struct TaskDetailView: View {
             }
         }
     }
-
-    // MARK: - UPDATE TASK
     private func updateItem(_ updated: Task) {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == updated.id }) {
             taskStore.tasks[index] = updated
             item = updated
         }
     }
-
-    // MARK: - DELETE TASK
     private func deleteItem() {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == item.id }) {
             taskStore.tasks.remove(at: index)
             dismiss()
         }
     }
-
-    // MARK: - ROW UI
     private func detailRow(icon: String, title: String, value: String) -> some View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: icon)
@@ -136,8 +114,6 @@ struct TaskDetailView: View {
             Spacer()
         }
     }
-
-    // MARK: - DURATION FORMATTER
     private func durationLabel(_ seconds: Int) -> String {
         let h = seconds / 3600
         let m = (seconds % 3600) / 60
@@ -149,13 +125,6 @@ struct TaskDetailView: View {
         }
     }
 }
-
-
-
-/////////////////////////////////////////////////////////////
-// MARK: - TASK EDIT SHEET (CLEANED UP + FIXED)
-/////////////////////////////////////////////////////////////
-
 struct TaskEditSheet: View {
 
     @Environment(\.dismiss) var dismiss
@@ -163,14 +132,11 @@ struct TaskEditSheet: View {
     let task: Task
     var onSave: (Task) -> Void
 
-    // Editable fields
     @State private var name: String
     @State private var deadline: Date
     @State private var durationSeconds: Int
     @State private var startDate: Date?
     @State private var endDate: Date?
-
-    // UI states
     @State private var selectedHours = 0
     @State private var selectedMinutes = 0
     @State private var prefersTime = false
@@ -190,18 +156,12 @@ struct TaskEditSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-
-                // NAME
                 Section("Task Name") {
                     TextField("Name", text: $name)
                 }
-
-                // DEADLINE
                 Section("Deadline") {
                     DatePicker("Deadline", selection: $deadline)
                 }
-
-                // DURATION
                 Section("Duration") {
                     Picker("Hours", selection: $selectedHours) {
                         ForEach(0..<24) { Text("\($0)h") }
@@ -212,7 +172,6 @@ struct TaskEditSheet: View {
                     }
                 }
 
-                // TIME PREFERENCE
                 Toggle("Preferred Working Time", isOn: $prefersTime)
 
                 if prefersTime {

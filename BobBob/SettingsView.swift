@@ -10,7 +10,7 @@ struct SettingsView: View {
     @Binding var hasSeenOnboarding: Bool
 
     @EnvironmentObject var mealStore: MealTimeStore
-    @EnvironmentObject var restActivityStore: RestActivityStore   // ← FIXED
+    @EnvironmentObject var restActivityStore: RestActivityStore  
     @EnvironmentObject var taskStore: TaskStore
     @EnvironmentObject var scheduleVM: SchedulerViewModel
     @EnvironmentObject var prefs: PreferencesStore

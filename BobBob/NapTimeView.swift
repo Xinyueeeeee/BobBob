@@ -19,7 +19,7 @@ struct NapTimeView2: View {
     @AppStorage("wakeTime") private var wakeTime = Calendar.current.date(
         bySettingHour: 6, minute: 0, second: 0, of: Date()
     )!
-
+    
     var body: some View {
         VStack {
             
@@ -40,8 +40,8 @@ struct NapTimeView2: View {
             .onChange(of: sleepTime) {
                 scheduleVM.refreshSchedule()
             }
-
-
+            
+            
             
             Text("What time do you wake up?")
                 .font(.headline)
@@ -60,7 +60,7 @@ struct NapTimeView2: View {
             .onChange(of: wakeTime) {
                 scheduleVM.refreshSchedule()
             }
-
+            
             
             Spacer()
             

@@ -10,8 +10,6 @@ struct ActivitiesView2: View {
     var body: some View {
         NavigationStack {
             ZStack {
-
-                // SAME BACKGROUND AS REST DAYS
                 Color(.systemGroupedBackground)
                     .ignoresSafeArea()
 
@@ -34,8 +32,6 @@ struct ActivitiesView2: View {
 
                     Spacer(minLength: 80)
                 }
-
-                // SAME BOTTOM-LEFT BUTTON
                 VStack {
                     Spacer()
                     HStack {
@@ -71,8 +67,6 @@ struct ActivitiesView2: View {
             }
         }
     }
-
-    // MARK: - Swipeable Row (same style as RestDaysView2)
     func activityRow(_ activity: Activity) -> some View {
         SwipeableCard(onDelete: {
             deleteActivity(activity)
