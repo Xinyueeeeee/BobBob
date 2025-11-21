@@ -41,7 +41,7 @@ struct TaskDetailView: View {
                         )
                     }
 
-                    Spacer().frame(height: 120) // space for bottom bar
+                    Spacer().frame(height: 120) 
                 }
                 .padding(.horizontal)
             }

@@ -81,15 +81,10 @@ private extension RestDaysView2 {
 
     
     func restRow(activity: RestActivity) -> some View {
-
-        SwipeableCard(onDelete: {
-            deleteActivity(activity)
-        }) {
-
+        HStack {
             Button {
                 editingActivity = activity
             } label: {
-
                 VStack(alignment: .leading, spacing: 6) {
 
                     Text(activity.name)
@@ -109,15 +104,26 @@ private extension RestDaysView2 {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 }
-                .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.white)
-                .cornerRadius(14)
-                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
+            
+            Button {
+                deleteActivity(activity)
+            } label: {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+                    .padding(8)
             }
             .buttonStyle(.plain)
         }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(14)
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+
     }
+
 
     func deleteActivity(_ activity: RestActivity) {
         if let i = restStore.activities.firstIndex(where: { $0.id == activity.id }) {

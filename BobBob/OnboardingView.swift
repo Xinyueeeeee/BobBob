@@ -16,17 +16,15 @@ struct IntroductionCarouselView: View {
     var body: some View {
 
         ZStack {
-                LinearGradient(
-                                colors: [
-                                    Color(red: 10/255, green: 25/255, blue: 47/255),
-                                    Color(red: 25/255, green: 60/255, blue: 120/255)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .ignoresSafeArea()
-
-
+            LinearGradient(
+                colors: [
+                    Color(red: 10/255, green: 25/255, blue: 47/255),
+                    Color(red: 25/255, green: 60/255, blue: 120/255)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             TabView(selection: $index) {
                 IntroductionScreenView1(hasSeenOnboarding: $hasSeenOnboarding)
@@ -177,18 +175,16 @@ struct ChronotypeView: View {
     }
 }
 
-
 struct NapTimeView: View {
-   
+
     @Binding var hasSeenOnboarding: Bool
     @AppStorage("sleepTime") private var sleepTime = Calendar.current.date(
         bySettingHour: 22, minute: 0, second: 0, of: Date()
     )!
-    
+
     @AppStorage("wakeTime") private var wakeTime = Calendar.current.date(
         bySettingHour: 6, minute: 0, second: 0, of: Date()
     )!
-
 
     var body: some View {
         ZStack {
@@ -201,7 +197,6 @@ struct NapTimeView: View {
             VStack {
                 Text("What time do you go to sleep?")
                     .font(.headline)
-
                     .foregroundColor(.gray.opacity(0.8))
 
                 Spacer()
@@ -229,7 +224,6 @@ struct NapTimeView: View {
                 Spacer()
                 Text("Different people sleep at different hours.")
                     .font(.footnote)
-
                     .foregroundColor(.gray.opacity(0.8))
 
                 NavigationLink {
@@ -256,7 +250,7 @@ struct MealTime: Identifiable, Codable {
     var mealType: String
     var time: Date
     var duration: Int
-    
+
     init(id: UUID = UUID(), mealType: String, time: Date, duration: Int) {
         self.id = id
         self.mealType = mealType
@@ -265,6 +259,7 @@ struct MealTime: Identifiable, Codable {
     }
 }
 
+import SwiftUI
 
 struct MealTimeView: View {
     @EnvironmentObject var mealStore: MealTimeStore
@@ -274,7 +269,7 @@ struct MealTimeView: View {
     @State private var editingMeal: MealTime? = nil
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomLeading) {
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color.blue.opacity(0.2),
@@ -291,16 +286,13 @@ struct MealTimeView: View {
                     Text("When do you have your meals?")
                         .font(.headline)
                         .foregroundColor(.gray.opacity(0.8))
+                        .frame(maxWidth: .infinity, alignment: .center)
+
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
-
                             ForEach(mealStore.meals) { meal in
-                                SwipeableCard(onDelete: {
-                                    if let i = mealStore.meals.firstIndex(where: { $0.id == meal.id }) {
-                                        mealStore.meals.remove(at: i)
-                                    }
-                                }) {
+                                HStack {
                                     Button {
                                         editingMeal = meal
                                     } label: {
@@ -311,63 +303,38 @@ struct MealTimeView: View {
 
                                             HStack {
                                                 Label("\(meal.duration) min", systemImage: "timer")
-                                                Label(
-                                                    meal.time.formatted(date: .omitted, time: .shortened),
-                                                    systemImage: "clock"
-                                                )
+                                                Label(meal.time.formatted(date: .omitted, time: .shortened),
+                                                      systemImage: "clock")
                                             }
                                             .font(.subheadline)
                                             .foregroundColor(.gray)
                                         }
-                                        .padding()
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(Color.white)
-                                        .cornerRadius(14)
-                                        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                                    }
+                                    .buttonStyle(.plain)
+
+                                    Button {
+                                        if let i = mealStore.meals.firstIndex(where: { $0.id == meal.id }) {
+                                            mealStore.meals.remove(at: i)
+                                        }
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                            .padding(8)
                                     }
                                     .buttonStyle(.plain)
                                 }
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                             }
-
-
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
 
                     Spacer()
-
-                    HStack(spacing: 20) {
-                        Button {
-                            showingAddMeal = true
-                        } label: {
-                            Image(systemName: "plus")
-                                .font(.title)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                                .shadow(radius: 3)
-                        }
-                        .padding(.leading, 25)
-                        .padding(.bottom, 25)
-
-                        Spacer()
-
-                        NavigationLink {
-                            ActivitiesView(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: {
-                            Text("Next")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 20)
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
                 }
                 .navigationTitle("Meals")
                 .navigationBarTitleDisplayMode(.inline)
@@ -384,12 +351,43 @@ struct MealTimeView: View {
                     }
                 }
             }
+
+            Button {
+                showingAddMeal = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.blue)
+                    .clipShape(Circle())
+                    .shadow(radius: 3)
+            }
+            .padding(.leading, 25)
+            .padding(.bottom, 25)
+            
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    NavigationLink {
+                        ActivitiesView(hasSeenOnboarding: $hasSeenOnboarding)
+                    } label: {
+                        Text("Next")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    .padding(.trailing, 25)
+                    .padding(.bottom, 25)
+                }
+            }
         }
     }
 }
-
-
-import SwiftUI
 
 struct ActivitiesView: View {
     @EnvironmentObject var activityStore: ActivityStore
@@ -421,11 +419,7 @@ struct ActivitiesView: View {
                         VStack(spacing: 15) {
 
                             ForEach(activityStore.activities) { activity in
-                                SwipeableCard(onDelete: {
-                                    if let i = activityStore.activities.firstIndex(where: { $0.id == activity.id }) {
-                                        activityStore.activities.remove(at: i)
-                                    }
-                                }) {
+                                HStack {
                                     Button {
                                         editingActivity = activity
                                     } label: {
@@ -442,17 +436,27 @@ struct ActivitiesView: View {
                                             .font(.subheadline)
                                             .foregroundColor(.gray)
                                         }
-                                        .padding()
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(Color.white)
-                                        .cornerRadius(14)
-                                        .shadow(color: .black.opacity(0.05),
-                                                radius: 6, x: 0, y: 4)
+                                    }
+                                    .buttonStyle(.plain)
+
+                                    Button {
+                                        if let i = activityStore.activities.firstIndex(where: { $0.id == activity.id }) {
+                                            activityStore.activities.remove(at: i)
+                                        }
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                            .padding(8)
                                     }
                                     .buttonStyle(.plain)
                                 }
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05),
+                                        radius: 6, x: 0, y: 4)
                             }
-
 
                         }
                         .padding(.horizontal)
@@ -531,8 +535,6 @@ struct Activity: Identifiable, Codable, Equatable {
     }
 }
 
-
-
 struct RestActivity: Identifiable, Codable, Equatable {
     let id: UUID
     var name: String
@@ -547,19 +549,17 @@ struct RestActivity: Identifiable, Codable, Equatable {
     }
 }
 
-
 struct RestDaysView: View {
 
     @EnvironmentObject var restStore: RestActivityStore
     @Binding var hasSeenOnboarding: Bool
 
     @State private var showingAddSheet = false
-    @State private var editingActivity: RestActivity? = nil   // EDIT MODE
+    @State private var editingActivity: RestActivity? = nil
 
     var body: some View {
         NavigationStack {
             ZStack {
-
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.blue.opacity(0.2),
@@ -581,11 +581,7 @@ struct RestDaysView: View {
                         VStack(spacing: 15) {
 
                             ForEach(restStore.activities) { activity in
-                                SwipeableCard(onDelete: {
-                                    if let i = restStore.activities.firstIndex(where: { $0.id == activity.id }) {
-                                        restStore.activities.remove(at: i)
-                                    }
-                                }) {
+                                HStack {
                                     Button {
                                         editingActivity = activity
                                     } label: {
@@ -595,25 +591,39 @@ struct RestDaysView: View {
                                                 .foregroundColor(.black)
 
                                             HStack {
-                                                Label(activity.startDate.formatted(date: .abbreviated, time: .omitted),
-                                                      systemImage: "sunrise")
-                                                Label(activity.endDate.formatted(date: .abbreviated, time: .omitted),
-                                                      systemImage: "sunset")
+                                                Label(
+                                                    activity.startDate.formatted(date: .abbreviated, time: .omitted),
+                                                    systemImage: "sunrise"
+                                                )
+                                                Label(
+                                                    activity.endDate.formatted(date: .abbreviated, time: .omitted),
+                                                    systemImage: "sunset"
+                                                )
                                             }
                                             .font(.subheadline)
                                             .foregroundColor(.gray)
                                         }
-                                        .padding()
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(Color.white)
-                                        .cornerRadius(14)
-                                        .shadow(color: .black.opacity(0.05),
-                                                radius: 6, x: 0, y: 4)
+                                    }
+                                    .buttonStyle(.plain)
+                                    
+                                    Button {
+                                        if let i = restStore.activities.firstIndex(where: { $0.id == activity.id }) {
+                                            restStore.activities.remove(at: i)
+                                        }
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                            .padding(8)
                                     }
                                     .buttonStyle(.plain)
                                 }
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(14)
+                                .shadow(color: .black.opacity(0.05),
+                                        radius: 6, x: 0, y: 4)
                             }
-
 
                         }
                         .padding(.horizontal)
@@ -691,10 +701,19 @@ struct AddMealTimeView: View {
     @State private var selectedHours: Int = 0
     @State private var selectedMinutes: Int = 30
 
+    private let maxHours = 5
+    private let maxMinutes = 59
+
+    var onSave: (MealTime) -> Void
+    
+    private var formIsValid: Bool {
+        !mealType.trimmingCharacters(in: .whitespaces).isEmpty &&
+        (selectedHours > 0 || selectedMinutes > 0)
+    }
+
     private func totalDuration() -> Int {
         (selectedHours * 60) + selectedMinutes
     }
-
 
     private func setInitialSelections() {
         guard let meal = meal else { return }
@@ -703,20 +722,17 @@ struct AddMealTimeView: View {
         mealType = meal.mealType
         time = meal.time
     }
-    private let maxHours = 5
-    private let maxMinutes = 59
-
-    var onSave: (MealTime) -> Void
 
     var body: some View {
         NavigationStack {
             Form {
-                
+
                 TextField("Meal Type", text: $mealType)
 
                 DatePicker("Time",
                            selection: $time,
                            displayedComponents: .hourAndMinute)
+
                 VStack(alignment: .leading) {
                     Text("Duration")
                         .font(.headline)
@@ -744,6 +760,7 @@ struct AddMealTimeView: View {
             .navigationTitle(meal == nil ? "Add Meal" : "Edit Meal")
             .onAppear(perform: setInitialSelections)
             .toolbar {
+
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         let updatedMeal = MealTime(
@@ -755,7 +772,10 @@ struct AddMealTimeView: View {
                         onSave(updatedMeal)
                         dismiss()
                     }
+                    .disabled(!formIsValid)
+                    .foregroundColor(formIsValid ? .blue : .gray)
                 }
+
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
@@ -764,8 +784,6 @@ struct AddMealTimeView: View {
     }
 }
 
-
-import SwiftUI
 
 struct AddActivitiesView: View {
     @Environment(\.dismiss) var dismiss
@@ -780,6 +798,10 @@ struct AddActivitiesView: View {
 
     let days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     let regularOptions = ["Daily","Weekly","Monthly"]
+
+    private var formIsValid: Bool {
+        !name.trimmingCharacters(in: .whitespaces).isEmpty
+    }
 
     var body: some View {
         NavigationStack {
@@ -812,6 +834,7 @@ struct AddActivitiesView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         let updated = Activity(
@@ -824,6 +847,8 @@ struct AddActivitiesView: View {
                         onSave(updated)
                         dismiss()
                     }
+                    .disabled(!formIsValid)
+                    .foregroundColor(formIsValid ? .blue : .gray)
                 }
             }
             .onAppear {
@@ -849,7 +874,7 @@ struct RestActivityy: Identifiable {
 struct AddRestActivityView: View {
     @Environment(\.dismiss) private var dismiss
 
-    var activity: RestActivity? = nil   // nil = add mode
+    var activity: RestActivity? = nil  
     var onSave: (RestActivity) -> Void
 
     @State private var name: String = ""
@@ -898,8 +923,8 @@ struct AddRestActivityView: View {
     }
 }
 
-    struct OnboardingView_Previews: PreviewProvider {
-        static var previews: some View {
-            OnboardingView(hasSeenOnboarding: .constant(false))
-        }
+struct OnboardingView_Previews: PreviewProvider {
+    static var previews: some View {
+        OnboardingView(hasSeenOnboarding: .constant(false))
     }
+}

@@ -78,10 +78,8 @@ struct MealTimeView2: View {
             .navigationTitle("Meal Time")
         }
     }
-    func mealRow(_ meal: MealTime) -> some View {
-        SwipeableCard(onDelete: {
-            mealStore.deleteMeal(meal)
-        }) {
+     func mealRow(_ meal: MealTime) -> some View {
+        HStack {
             Button {
                 activeSheet = .edit(meal)
             } label: {
@@ -101,15 +99,25 @@ struct MealTimeView2: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 }
-                .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.white)
-                .cornerRadius(14)
-                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                mealStore.deleteMeal(meal)
+            } label: {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+                    .padding(8)
             }
             .buttonStyle(.plain)
         }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(14)
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
     }
+
 }
 
 #Preview {
