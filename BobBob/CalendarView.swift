@@ -6,6 +6,7 @@ struct CalendarDay: Identifiable {
 }
 
 struct CalendarView: View {
+
     @State private var currentDate = Date()
     @State private var days: [CalendarDay] = []
     @State private var path: [Date] = []
@@ -13,7 +14,7 @@ struct CalendarView: View {
     @EnvironmentObject var scheduleVM: SchedulerViewModel
     @EnvironmentObject var taskStore: TaskStore
     @EnvironmentObject var preferenceStore: PreferencesStore
-    
+
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
 
     var body: some View {
@@ -33,7 +34,7 @@ struct CalendarView: View {
                     Spacer().frame(height: 80)
 
                     HStack {
-                        Text((monthTitle)(currentDate))
+                        Text(monthTitle(currentDate))
                             .font(.system(size: 34, weight: .bold))
                             .foregroundColor(.black)
                         Spacer()
@@ -104,34 +105,33 @@ struct CalendarView: View {
                     .environmentObject(taskStore)
                     .environmentObject(preferenceStore)
             }
-            .alert("This task could not be scheduled", isPresented: $scheduleVM.showFailedAlert) {
+            .alert("Some tasks could not be scheduled", isPresented: $scheduleVM.showFailedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                VStack(alignment: .leading) {
-                    ForEach(scheduleVM.failedTasks) { t in
-                        Text(" \(t.name)")
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(scheduleVM.failedReasonMessages, id: \.self) { msg in
+                        Text(msg)
+                            .foregroundColor(.black)
                     }
                 }
-                .alert("Some tasks overlap with your schedule", isPresented: $scheduleVM.showConflictAlert) {
-                    Button("OK", role: .cancel) {}
-                } message: {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("These tasks overlap with:")
-                        Text("Meals")
-                        Text("Recurring activities")
-                        Text("Rest days")
-                        Text("Sleep schedule")
-                            .padding(.bottom, 8)
-
-                        ForEach(scheduleVM.conflictBlocks) { block in
-                            Text(" \(block.task.name)")
-                                .fontWeight(.semibold)
-                        }
-                    }
-                }
-
             }
+            .alert("Some tasks overlap with your schedule", isPresented: $scheduleVM.showConflictAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("These tasks overlap with:")
+                    Text("Meals")
+                    Text("Recurring activities")
+                    Text("Rest days")
+                    Text("Sleep schedule")
+                        .padding(.bottom, 8)
 
+                    ForEach(scheduleVM.conflictBlocks) { block in
+                        Text(" \(block.task.name)")
+                            .fontWeight(.semibold)
+                    }
+                }
+            }
         }
     }
 
@@ -210,7 +210,6 @@ struct CalendarView: View {
     }
 }
 
-
 struct DayDetailView: View {
 
     @EnvironmentObject var scheduleVM: SchedulerViewModel
@@ -220,6 +219,7 @@ struct DayDetailView: View {
     let day: Date
 
     var body: some View {
+
         let blocks = scheduleVM.blocks(for: day)
 
         ScrollView {
@@ -229,16 +229,18 @@ struct DayDetailView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.black)
                     .padding(.top, 20)
+
                 Text(day, format: .dateTime.day().month().year())
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
-            
+
                 if blocks.isEmpty {
                     VStack(spacing: 10) {
                         Text("No tasks scheduled")
                             .foregroundColor(.black.opacity(0.6))
                             .font(.headline)
+
                         Text("Add tasks and your algorithm will schedule them here.")
                             .font(.subheadline)
                             .foregroundColor(.gray)
@@ -263,12 +265,7 @@ struct DayDetailView: View {
         .navigationTitle("Schedule")
         .navigationBarTitleDisplayMode(.inline)
     }
-
-    private func formattedDay(_ date: Date) -> String {
-        date.formatted(.dateTime.weekday(.wide).day().month().year())
-    }
 }
-
 
 struct TaskBlockView: View {
     @EnvironmentObject var taskStore: TaskStore
@@ -276,9 +273,7 @@ struct TaskBlockView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Button {
-                toggleCompletion()
-            } label: {
+            Button { toggleCompletion() } label: {
                 ReminderCircle(isCompleted: block.task.isCompleted)
             }
             .buttonStyle(.plain)
@@ -293,7 +288,6 @@ struct TaskBlockView: View {
                     .font(.subheadline)
                     .foregroundColor(.black.opacity(0.7))
 
-
                 if block.isOverdue {
                     Text("⚠ Overdue placement")
                         .foregroundColor(.yellow)
@@ -303,7 +297,7 @@ struct TaskBlockView: View {
             Spacer()
         }
         .padding()
-        .background(block.task.isCompleted ? Color.gray.opacity(0.2) :Color.blue.opacity(0.4))
+        .background(block.task.isCompleted ? Color.gray.opacity(0.2) : Color.blue.opacity(0.4))
         .cornerRadius(12)
         .padding(.horizontal)
         .padding(.vertical, 4)
@@ -321,4 +315,3 @@ struct TaskBlockView: View {
         return f.string(from: date)
     }
 }
-

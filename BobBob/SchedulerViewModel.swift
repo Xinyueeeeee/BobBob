@@ -7,6 +7,7 @@ final class SchedulerViewModel: ObservableObject {
 
     @Published var failedTasks: [Task] = []
     @Published var showFailedAlert: Bool = false
+    @Published var failedReasonMessages: [String] = []
 
     @Published var conflictBlocks: [ScheduledBlock] = []
     @Published var showConflictAlert: Bool = false
@@ -117,13 +118,56 @@ final class SchedulerViewModel: ObservableObject {
         let scheduledIDs = Set(blocks.map { $0.task.id })
         let unscheduled = taskStore.tasks.filter { !scheduledIDs.contains($0.id) }
 
-        if !unscheduled.isEmpty {
-            self.failedTasks = unscheduled
+        var messages: [String] = []
+
+        for task in unscheduled {
+            
+            let earliest = max(
+                Calendar.current.startOfDay(for: Date()),
+                task.startDate?.startOfDay ?? Calendar.current.startOfDay(for: Date())
+            )
+            let deadlineDay = task.deadline.startOfDay
+            let lastAllowed = min(deadlineDay, task.endDate?.startOfDay ?? deadlineDay)
+
+            var foundSpace = false
+            var foundFreeDayButTooSmall = false
+            
+            var day = earliest
+            while day <= lastAllowed {
+                let windows = service.debugWindows(for: day, prefs: buildUserPreferences())
+                
+                if windows.isEmpty {
+                    // fully blocked day
+                } else {
+                    // Check if ANY window big enough exists
+                    let requiredMinutes = max(1, task.durationSeconds / 60)
+                    if windows.contains(where: { $0.duration >= requiredMinutes }) {
+                        foundSpace = true
+                        break
+                    } else {
+                        foundFreeDayButTooSmall = true
+                    }
+                }
+                day = day.addingDays(1)
+            }
+            
+            if foundSpace == false {
+                if foundFreeDayButTooSmall {
+                    messages.append("“\(task.name)” is too long — no available time block is long enough.")
+                } else {
+                    messages.append("“\(task.name)” cannot be scheduled — all days are fully blocked.")
+                }
+            }
+        }
+
+        if !messages.isEmpty {
+            self.failedReasonMessages = messages
             self.showFailedAlert = true
         } else {
-            self.failedTasks = []
+            self.failedReasonMessages = []
             self.showFailedAlert = false
         }
+
 
         let conflicts = service.findViolations(blocks: blocks, prefs: prefs)
 
