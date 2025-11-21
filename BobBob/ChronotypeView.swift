@@ -81,9 +81,7 @@ struct ChronotypeView2: View {
                     
                     Spacer()
                     
-                    Text("Different people prefer working at different time periods.")
-                        .font(.footnote)
-                        .foregroundColor(.black.opacity(0.5))
+                   
                 }
                 .navigationTitle("Chronotype")
             }
