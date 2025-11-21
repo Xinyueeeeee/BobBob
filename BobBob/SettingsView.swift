@@ -1,10 +1,3 @@
-//
-//  settingsView.swift
-//  BobBob
-//
-//  Created by minyi on 14/11/25.
-//
-
 import SwiftUI
 struct SettingsView: View {
     @Binding var hasSeenOnboarding: Bool
@@ -73,7 +66,7 @@ struct NotifsView: View {
                 Toggle(isOn: $startOfTasks) {
                     Text("At the start of the task")
                 }
-                .onChange(of: startOfTasks) { _ in
+                .onChange(of: startOfTasks) {
                     NotificationManager.shared.requestPermission()
                     scheduleVM.refreshNotifications()
                 }
@@ -81,7 +74,7 @@ struct NotifsView: View {
                 Toggle(isOn: $endOfTasks) {
                     Text("At the end of the tasks")
                 }
-                .onChange(of: endOfTasks) { _ in
+                .onChange(of: endOfTasks) {
                     NotificationManager.shared.requestPermission()
                     scheduleVM.refreshNotifications()
                 }
@@ -89,7 +82,7 @@ struct NotifsView: View {
                 Toggle(isOn: $fiveMinBefTask) {
                     Text("5 minutes before task")
                 }
-                .onChange(of: fiveMinBefTask) { _ in
+                .onChange(of: fiveMinBefTask) {
                     NotificationManager.shared.requestPermission()
                     scheduleVM.refreshNotifications()
                 }
