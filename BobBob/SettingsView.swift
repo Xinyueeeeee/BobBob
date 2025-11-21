@@ -4,56 +4,63 @@
 //
 //  Created by minyi on 14/11/25.
 //
-
 import SwiftUI
 struct SettingsView: View {
     @Binding var hasSeenOnboarding: Bool
 
     @EnvironmentObject var mealStore: MealTimeStore
-    @EnvironmentObject var restActivityStore: RestActivityStore  
+    @EnvironmentObject var restActivityStore: RestActivityStore
     @EnvironmentObject var taskStore: TaskStore
     @EnvironmentObject var scheduleVM: SchedulerViewModel
     @EnvironmentObject var prefs: PreferencesStore
 
     var body: some View {
         NavigationStack {
-            Form {
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.blue.opacity(0.2),
+                        Color.blue.opacity(0.6)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                Form {
+                    Section(header: Text("General")) {
+                        NavigationLink { NotifsView() } label: {
+                            Text("Notifications")
+                        }
+                    }
 
-                Section(header: Text("General")) {
-                    NavigationLink { NotifsView() } label: {
-                        Text("Notifications")
+                    Section(header: Text("Personal Information")) {
+                        NavigationLink {
+                            ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding)
+                        } label: { Text("Chronotype") }
+
+                        NavigationLink {
+                            MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
+                        } label: { Text("Meal Time") }
+
+                        NavigationLink {
+                            NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
+                        } label: { Text("Sleep Schedule") }
+
+                        NavigationLink {
+                            ActivitiesView2(hasSeenOnboarding: $hasSeenOnboarding)
+                        } label: { Text("Activity") }
+
+                        NavigationLink {
+                            RestDaysView2(hasSeenOnboarding: $hasSeenOnboarding)
+                        } label: { Text("Rest Day") }
                     }
                 }
-
-
-                Section(header: Text("Personal Information")) {
-                    
-                    NavigationLink {
-                        ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                    } label: { Text("Chronotype") }
-
-                    NavigationLink {
-                        MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                    } label: { Text("Meal Time") }
-
-                    NavigationLink {
-                        NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                    } label: { Text("Sleep Schedule") }
-
-                    NavigationLink {
-                        ActivitiesView2(hasSeenOnboarding: $hasSeenOnboarding)
-                    } label: { Text("Activity") }
-
-                    NavigationLink {
-                        RestDaysView2(hasSeenOnboarding: $hasSeenOnboarding)
-                    } label: { Text("Rest Day") }
-                }
+                .scrollContentBackground(.hidden) // 👈 makes Form transparent over gradient
             }
             .navigationTitle("Settings")
         }
     }
 }
-
 
 #Preview {
     SettingsView(hasSeenOnboarding: .constant(false))

@@ -15,11 +15,7 @@ struct AddRestDaysPickerView: View {
     
     @State private var mode: RestMode = .single
     @State private var name: String = ""
-    
-    // Single-day
     @State private var singleDate: Date = Date()
-    
-    // Multi-day range
     @State private var startDate: Date = Date()
     @State private var endDate: Date = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
     
