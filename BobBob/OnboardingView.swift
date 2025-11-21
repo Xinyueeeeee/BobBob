@@ -898,7 +898,6 @@ struct AddRestActivityView: View {
     @State private var startDate: Date = Date()
     @State private var endDate: Date = Date()
 
-    // 🔥 Save button logic
     private var canSave: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty &&
         endDate >= startDate

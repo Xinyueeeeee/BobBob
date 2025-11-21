@@ -86,7 +86,7 @@ struct AddRestDaysPickerView: View {
                         let calendar = Calendar.current
                         let normalizedStart = calendar.startOfDay(for: mode == .single ? singleDate : startDate)
                         
-                        // Add one day and subtract 1 second for end-of-day
+                       
                         let normalizedEnd: Date
                         if mode == .single {
                             normalizedEnd = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: singleDate)!
