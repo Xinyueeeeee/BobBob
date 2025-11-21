@@ -88,26 +88,27 @@ struct NotifsView: View {
                 .ignoresSafeArea()
 
                 List {
-                    Toggle("At the start of the task", isOn: $startOfTasks)
-                        .onChange(of: startOfTasks) {
-                            NotificationManager.shared.requestPermission()
-                            scheduleVM.refreshNotifications()
-                        }
-
-                    Toggle("At the end of the tasks", isOn: $endOfTasks)
-                        .onChange(of: endOfTasks) {
-                            NotificationManager.shared.requestPermission()
-                            scheduleVM.refreshNotifications()
-                        }
-
+                    
                     Toggle("5 minutes before task", isOn: $fiveMinBefTask)
                         .onChange(of: fiveMinBefTask) {
                             NotificationManager.shared.requestPermission()
                             scheduleVM.refreshNotifications()
                         }
+                    
+                    Toggle("At the start of the task", isOn: $startOfTasks)
+                        .onChange(of: startOfTasks) {
+                            NotificationManager.shared.requestPermission()
+                            scheduleVM.refreshNotifications()
+                        }
+                    
+                    Toggle("At the end of the tasks", isOn: $endOfTasks)
+                        .onChange(of: endOfTasks) {
+                            NotificationManager.shared.requestPermission()
+                            scheduleVM.refreshNotifications()
+                        }
                 }
-                .scrollContentBackground(.hidden)     // <-- remove default List background
-                .listRowBackground(Color.clear)       // <-- remove row background
+                .scrollContentBackground(.hidden)
+                .listRowBackground(Color.clear)
                 .navigationTitle("Notifications")
             }
         }

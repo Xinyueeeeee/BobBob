@@ -146,20 +146,23 @@ private extension TasksView {
 }
 
 
-
 struct ReminderCircle: View {
     var isCompleted: Bool
 
     var body: some View {
         ZStack {
             Circle()
-                .stroke(isCompleted ? Color.gray : Color.gray.opacity(0.9), lineWidth: 2)
+                .stroke(Color.gray.opacity(0.9), lineWidth: 2)
                 .frame(width: 22, height: 22)
 
             if isCompleted {
                 Circle()
-                    .fill(Color.gray)
-                    .frame(width: 15, height: 15)
+                    .fill(Color.blue)
+                    .frame(width: 22, height: 22)
+
+                Image(systemName: "checkmark")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.white)
             }
         }
     }
