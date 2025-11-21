@@ -281,3 +281,7 @@ final class SchedulerService {
     }
 }
 
+struct ScheduleResult {
+    var blocks: [ScheduledBlock]
+    var failedTasks: [Task]
+}

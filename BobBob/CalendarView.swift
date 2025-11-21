@@ -104,6 +104,16 @@ struct CalendarView: View {
                     .environmentObject(taskStore)
                     .environmentObject(preferenceStore)
             }
+            .alert("This task could not be scheduled", isPresented: $scheduleVM.showFailedAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                VStack(alignment: .leading) {
+                    ForEach(scheduleVM.failedTasks) { t in
+                        Text(" \(t.name)")
+                    }
+                }
+            }
+
         }
     }
 

@@ -12,6 +12,9 @@ final class SchedulerViewModel: ObservableObject {
 
     private let taskStore = TaskStore.shared
     private let prefsStore = PreferencesStore.shared
+    
+    @Published var failedTasks: [Task] = []
+    @Published var showFailedAlert = false
 
     private var cancellables = Set<AnyCancellable>()
     init() {
@@ -95,7 +98,21 @@ final class SchedulerViewModel: ObservableObject {
    
     func refreshSchedule() {
         let prefs = buildUserPreferences()
-        scheduledBlocks = service.schedule(tasks: taskStore.tasks, prefs: prefs)
+        let blocks = service.schedule(tasks: taskStore.tasks, prefs: prefs)
+
+        self.scheduledBlocks = blocks
+
+        // detect unscheduled tasks
+        let scheduledIDs = Set(blocks.map { $0.task.id })
+        let unscheduled = taskStore.tasks.filter { !scheduledIDs.contains($0.id) }
+
+        if !unscheduled.isEmpty {
+            self.failedTasks = unscheduled
+            self.showFailedAlert = true
+        } else {
+            self.failedTasks = []
+            self.showFailedAlert = false
+        }
     }
     func blocks(for day: Date) -> [ScheduledBlock] {
         let start = day.startOfDay
