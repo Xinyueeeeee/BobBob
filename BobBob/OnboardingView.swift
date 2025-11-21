@@ -196,8 +196,8 @@ struct NapTimeView: View {
             .ignoresSafeArea()
             VStack {
                 Text("What time do you go to sleep?")
-                    .font(.headline)
-                    .foregroundColor(.gray.opacity(0.8))
+                    .font(.footnote)
+                    .foregroundColor(.black.opacity(0.5))
 
                 Spacer()
                 DatePicker(
@@ -209,8 +209,8 @@ struct NapTimeView: View {
                 .labelsHidden()
 
                 Text("What time do you wake up?")
-                    .font(.headline)
-                    .foregroundColor(.gray.opacity(0.8))
+                    .font(.footnote)
+                    .foregroundColor(.black.opacity(0.5))
 
                 Spacer()
                 DatePicker(
@@ -220,11 +220,12 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-
+                
                 Spacer()
+                
                 Text("Different people sleep at different hours.")
                     .font(.footnote)
-                    .foregroundColor(.gray.opacity(0.8))
+                    .foregroundColor(.black.opacity(0.5))
 
                 NavigationLink {
                     MealTimeView(hasSeenOnboarding: $hasSeenOnboarding)
@@ -285,7 +286,7 @@ struct MealTimeView: View {
 
                     Text("When do you have your meals?")
                         .font(.headline)
-                        .foregroundColor(.gray.opacity(0.8))
+                        .foregroundColor(.black.opacity(0.5))
                         .frame(maxWidth: .infinity, alignment: .center)
 
 
@@ -413,7 +414,7 @@ struct ActivitiesView: View {
 
                     Text("Do you have any recurring activities?")
                         .font(.headline)
-                        .foregroundColor(.gray.opacity(0.5))
+                        .foregroundColor(.black.opacity(0.5))
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -574,7 +575,7 @@ struct RestDaysView: View {
 
                     Text("When do you rest?")
                         .font(.headline)
-                        .foregroundColor(.gray.opacity(0.5))
+                        .foregroundColor(.black.opacity(0.5))
                         .padding(.top)
 
                     ScrollView(showsIndicators: false) {
