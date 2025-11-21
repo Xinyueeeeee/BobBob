@@ -1,10 +1,3 @@
-//
-//  AddRestDaysPickerView.swift
-//  Timely
-//
-//  Created by Huang Qing on 20/11/25.
-//
-
 import SwiftUI
 
 struct AddRestDaysPickerView: View {
@@ -27,7 +20,6 @@ struct AddRestDaysPickerView: View {
     var body: some View {
         NavigationStack {
             Form {
-                
                 Section(header: Text("Rest Type")) {
                     Picker("Mode", selection: $mode) {
                         ForEach(RestMode.allCases, id: \.self) { mode in
@@ -46,24 +38,24 @@ struct AddRestDaysPickerView: View {
                         DatePicker(
                             "Select Day",
                             selection: $singleDate,
-                            displayedComponents: .date
+                            displayedComponents: [.date, .hourAndMinute]
                         )
                     }
                 } else {
-                    Section(header: Text("Start Date")) {
+                    Section(header: Text("Start Date & Time")) {
                         DatePicker(
                             "Start",
                             selection: $startDate,
-                            displayedComponents: .date
+                            displayedComponents: [.date, .hourAndMinute]
                         )
                     }
                     
-                    Section(header: Text("End Date")) {
+                    Section(header: Text("End Date & Time")) {
                         DatePicker(
                             "End",
                             selection: $endDate,
                             in: startDate...,
-                            displayedComponents: .date
+                            displayedComponents: [.date, .hourAndMinute]
                         )
                     }
                 }
@@ -99,3 +91,4 @@ struct AddRestDaysPickerView: View {
         }
     }
 }
+
