@@ -596,7 +596,6 @@ struct RestDaysView: View {
                     Text("When do you rest?")
                         .font(.headline)
                         .foregroundColor(.black.opacity(0.5))
-                        .padding(.top)
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
