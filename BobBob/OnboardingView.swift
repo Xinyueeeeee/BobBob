@@ -895,12 +895,18 @@ struct RestActivityy: Identifiable {
 struct AddRestActivityView: View {
     @Environment(\.dismiss) private var dismiss
 
-    var activity: RestActivity? = nil  
+    var activity: RestActivity? = nil
     var onSave: (RestActivity) -> Void
 
     @State private var name: String = ""
     @State private var startDate: Date = Date()
     @State private var endDate: Date = Date()
+
+    // 🔥 Save button logic
+    private var canSave: Bool {
+        !name.trimmingCharacters(in: .whitespaces).isEmpty &&
+        endDate >= startDate
+    }
 
     var body: some View {
         NavigationStack {
@@ -913,6 +919,7 @@ struct AddRestActivityView: View {
 
                 DatePicker("End Date",
                            selection: $endDate,
+                           in: startDate...,
                            displayedComponents: .date)
             }
             .navigationTitle(activity == nil ? "Add Rest Day" : "Edit Rest Day")
@@ -928,7 +935,10 @@ struct AddRestActivityView: View {
                         onSave(updated)
                         dismiss()
                     }
+                    .disabled(!canSave)
+                    .opacity(canSave ? 1 : 0.4) // same visual style as your other sheets
                 }
+
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
@@ -943,6 +953,7 @@ struct AddRestActivityView: View {
         }
     }
 }
+
 
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
