@@ -1,10 +1,3 @@
-//
-//  AddRestDaysPickerView.swift
-//  Timely
-//
-//  Created by Huang Qing on 20/11/25.
-//
-
 import SwiftUI
 
 struct AddRestDaysPickerView: View {
@@ -17,17 +10,23 @@ struct AddRestDaysPickerView: View {
     @State private var name: String = ""
     @State private var singleDate: Date = Date()
     @State private var startDate: Date = Date()
-    @State private var endDate: Date = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+    @State private var endDate: Date = Date()
     
     enum RestMode: String, CaseIterable {
         case single = "One Day"
         case range = "Consecutive Days"
     }
     
+    private let displayFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .long
+        f.timeStyle = .none
+        return f
+    }()
+    
     var body: some View {
         NavigationStack {
             Form {
-                
                 Section(header: Text("Rest Type")) {
                     Picker("Mode", selection: $mode) {
                         ForEach(RestMode.allCases, id: \.self) { mode in
@@ -48,6 +47,9 @@ struct AddRestDaysPickerView: View {
                             selection: $singleDate,
                             displayedComponents: .date
                         )
+                        Text("Selected: \(displayFormatter.string(from: singleDate))")
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
                 } else {
                     Section(header: Text("Start Date")) {
@@ -56,6 +58,9 @@ struct AddRestDaysPickerView: View {
                             selection: $startDate,
                             displayedComponents: .date
                         )
+                        Text("Start: \(displayFormatter.string(from: startDate))")
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
                     
                     Section(header: Text("End Date")) {
@@ -65,6 +70,9 @@ struct AddRestDaysPickerView: View {
                             in: startDate...,
                             displayedComponents: .date
                         )
+                        Text("End: \(displayFormatter.string(from: endDate))")
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
                 }
             }
@@ -75,11 +83,22 @@ struct AddRestDaysPickerView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        let calendar = Calendar.current
+                        let normalizedStart = calendar.startOfDay(for: mode == .single ? singleDate : startDate)
+                        
+                        // Add one day and subtract 1 second for end-of-day
+                        let normalizedEnd: Date
+                        if mode == .single {
+                            normalizedEnd = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: singleDate)!
+                        } else {
+                            normalizedEnd = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: endDate)!
+                        }
+                        
                         let newActivity = RestActivity(
                             id: existing?.id ?? UUID(),
                             name: name,
-                            startDate: mode == .single ? singleDate : startDate,
-                            endDate: mode == .single ? singleDate : endDate
+                            startDate: normalizedStart,
+                            endDate: normalizedEnd
                         )
                         onSave(newActivity)
                         dismiss()
@@ -93,9 +112,10 @@ struct AddRestDaysPickerView: View {
                     startDate = e.startDate
                     endDate = e.endDate
                     singleDate = e.startDate
-                    mode = (e.startDate == e.endDate ? .single : .range)
+                    mode = Calendar.current.isDate(e.startDate, inSameDayAs: e.endDate) ? .single : .range
                 }
             }
         }
     }
 }
+
