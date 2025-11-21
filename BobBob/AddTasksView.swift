@@ -115,7 +115,7 @@ struct addTasksView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         let newTask = Task(
-                            id: existingTask?.id ?? UUID(),   // 👈 keep same ID when editing
+                            id: existingTask?.id ?? UUID(), 
                             name: name,
                             deadline: deadline,
                             durationSeconds: totalSeconds,

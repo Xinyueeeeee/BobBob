@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 enum ChronotypePreference {
@@ -5,8 +6,11 @@ enum ChronotypePreference {
     case nightOwl
 
     init(string: String?) {
-        if string == "Night Owl" { self = .nightOwl }
-        else { self = .earlyBird }
+        if string == "Night Owl" {
+            self = .nightOwl
+        } else {
+            self = .earlyBird
+        }
     }
 }
 
@@ -27,7 +31,7 @@ struct UserPreferences {
     var sleepEnd: DateComponents
     var meals: [DailyMealPref]
     var recurring: [RecurringBlockPref]
-    var restDates: Set<Date>
+    var restDates: Set<Date>      // all normalized to startOfDay
 }
 
 struct ScheduledBlock: Identifiable {
@@ -38,11 +42,43 @@ struct ScheduledBlock: Identifiable {
     let isOverdue: Bool
 }
 
+extension Date {
+
+    var normalized: Date {
+        Calendar.current.startOfDay(for: self)
+    }
+
+    var startOfDay: Date {
+        Calendar.current.startOfDay(for: self)
+    }
+
+    func addingDays(_ days: Int) -> Date {
+        Calendar.current.date(byAdding: .day, value: days, to: self)!
+    }
+
+    func adding(minutes: Int) -> Date {
+        self.addingTimeInterval(TimeInterval(minutes * 60))
+    }
+
+    func at(_ hour: Int, _ minute: Int) -> Date {
+        let cal = Calendar.current
+        var comps = cal.dateComponents([.year, .month, .day], from: self)
+        comps.hour = hour
+        comps.minute = minute
+        return cal.date(from: comps)!
+    }
+}
+
+
 final class SchedulerService {
 
     private let calendar = Calendar.current
 
-    func schedule(tasks: [Task], prefs: UserPreferences, today: Date = Date()) -> [ScheduledBlock] {
+    func schedule(
+        tasks: [Task],
+        prefs: UserPreferences,
+        today: Date = Date()
+    ) -> [ScheduledBlock] {
 
         var blocks: [ScheduledBlock] = []
         let sortedTasks = sortTasks(tasks, today: today)
@@ -54,10 +90,11 @@ final class SchedulerService {
                 task.startDate?.startOfDay ?? calendar.startOfDay(for: today)
             )
 
-            let deadline = task.deadline.startOfDay
-            let latestAllowed = min(deadline, task.endDate?.startOfDay ?? deadline)
+            let deadlineDay = task.deadline.startOfDay
+            let latestAllowed = min(deadlineDay, task.endDate?.startOfDay ?? deadlineDay)
 
             var placed: ScheduledBlock?
+
             var day = earliest
             while day <= latestAllowed {
                 if let block = place(task, on: day, prefs: prefs, scheduledBlocks: blocks, overdue: false) {
@@ -79,10 +116,77 @@ final class SchedulerService {
                 }
             }
 
-            if let b = placed { blocks.append(b) }
+            if let b = placed {
+                blocks.append(b)
+            }
         }
 
         return blocks
+    }
+
+    func findViolations(
+        blocks: [ScheduledBlock],
+        prefs: UserPreferences
+    ) -> [ScheduledBlock] {
+
+        blocks.filter { block in
+            let day = block.start.startOfDay
+
+          
+            if prefs.restDates.contains(day.normalized) {
+                return true
+            }
+
+            if let sleepStartOnDay = timeOfDay(prefs.sleepStart, on: day),
+               let sleepEndOnDay = timeOfDay(prefs.sleepEnd, on: day) {
+
+                if crossesMidnight(start: prefs.sleepStart, end: prefs.sleepEnd) {
+                   
+                    let earlyStart = day.startOfDay
+                    let earlyEnd = sleepEndOnDay
+
+                    let lateStart = sleepStartOnDay
+                    let lateEnd = day.addingDays(1).startOfDay
+
+                    if intervalsOverlap(start1: block.start, end1: block.end,
+                                        start2: earlyStart, end2: earlyEnd) ||
+                       intervalsOverlap(start1: block.start, end1: block.end,
+                                        start2: lateStart, end2: lateEnd) {
+                        return true
+                    }
+
+                } else {
+                 
+                    if intervalsOverlap(start1: block.start, end1: block.end,
+                                        start2: sleepStartOnDay, end2: sleepEndOnDay) {
+                        return true
+                    }
+                }
+            }
+
+          
+            for m in prefs.meals {
+                if let s = timeOfDay(m.startTime, on: day) {
+                    let e = s.adding(minutes: m.durationMinutes)
+                    if intervalsOverlap(start1: block.start, end1: block.end, start2: s, end2: e) {
+                        return true
+                    }
+                }
+            }
+
+         
+            let weekday = calendar.component(.weekday, from: day)
+            for r in prefs.recurring where r.weekday == weekday {
+                if let s = timeOfDay(r.startTime, on: day) {
+                    let e = s.adding(minutes: r.durationMinutes)
+                    if intervalsOverlap(start1: block.start, end1: block.end, start2: s, end2: e) {
+                        return true
+                    }
+                }
+            }
+
+            return false
+        }
     }
 
     private func sortTasks(_ tasks: [Task], today: Date) -> [Task] {
@@ -116,13 +220,13 @@ final class SchedulerService {
         let urgent = isUrgent(task.deadline, today: today)
 
         switch (imp, urgent) {
-        case (2, true): return 0
-        case (1, true): return 1
-        case (0, true): return 2
+        case (2, true):  return 0
+        case (1, true):  return 1
+        case (0, true):  return 2
         case (2, false): return 3
         case (1, false): return 4
         case (0, false): return 5
-        default: return 5
+        default:         return 5
         }
     }
 
@@ -158,42 +262,68 @@ final class SchedulerService {
             let start = window.start
             let end = start.adding(minutes: requiredMinutes)
             let remaining = TimeWindow(start: end, end: window.end)
+
             if remaining.duration > 0 {
                 windows[i] = remaining
             } else {
                 windows.remove(at: i)
             }
+
             return ScheduledBlock(task: task, start: start, end: end, isOverdue: overdue)
         }
 
         return nil
     }
 
+
     private func buildDayWindows(for day: Date, prefs: UserPreferences) -> [TimeWindow] {
-        let start = day.startOfDay
-        let end = start.addingDays(1)
-        var windows = [TimeWindow(start: start, end: end)]
-        if prefs.restDates.contains(day.startOfDay) {
+
+      
+        if prefs.restDates.contains(day.normalized) {
             return []
         }
 
-        if let s = timeOfDay(prefs.sleepStart, on: day),
-           let eRaw = timeOfDay(prefs.sleepEnd, on: day) {
-            var e = eRaw
-            if e <= s { e = e.addingDays(1) }
-            subtract(TimeWindow(start: s, end: e), from: &windows)
-        }
+        let startOfDay = day.startOfDay
+        let endOfDay = startOfDay.addingDays(1)
+        var windows = [TimeWindow(start: startOfDay, end: endOfDay)]
 
-        for m in prefs.meals {
-            if let s = timeOfDay(m.startTime, on: day) {
-                subtract(TimeWindow(start: s, end: s.adding(minutes: m.durationMinutes)), from: &windows)
+        if let sleepStartOnDay = timeOfDay(prefs.sleepStart, on: day),
+           let sleepEndOnDay = timeOfDay(prefs.sleepEnd, on: day) {
+
+            if crossesMidnight(start: prefs.sleepStart, end: prefs.sleepEnd) {
+               
+                let earlyStart = startOfDay
+                let earlyEnd = sleepEndOnDay
+                subtract(TimeWindow(start: earlyStart, end: earlyEnd), from: &windows)
+
+                let lateStart = sleepStartOnDay
+                let lateEnd = endOfDay
+                subtract(TimeWindow(start: lateStart, end: lateEnd), from: &windows)
+
+            } else {
+               
+                subtract(TimeWindow(start: sleepStartOnDay, end: sleepEndOnDay), from: &windows)
             }
         }
 
+
+        for m in prefs.meals {
+            if let s = timeOfDay(m.startTime, on: day) {
+                subtract(
+                    TimeWindow(start: s, end: s.adding(minutes: m.durationMinutes)),
+                    from: &windows
+                )
+            }
+        }
+
+       
         let weekday = calendar.component(.weekday, from: day)
         for r in prefs.recurring where r.weekday == weekday {
             if let s = timeOfDay(r.startTime, on: day) {
-                subtract(TimeWindow(start: s, end: s.adding(minutes: r.durationMinutes)), from: &windows)
+                subtract(
+                    TimeWindow(start: s, end: s.adding(minutes: r.durationMinutes)),
+                    from: &windows
+                )
             }
         }
 
@@ -228,19 +358,21 @@ final class SchedulerService {
         var result: [TimeWindow] = []
 
         for w in windows {
+          
             if block.end <= w.start || block.start >= w.end {
                 result.append(w)
                 continue
             }
 
-            if block.start <= w.start && block.end >= w.end { continue }
+            if block.start <= w.start && block.end >= w.end {
+                continue
+            }
 
             if block.start > w.start && block.end >= w.end {
                 let left = TimeWindow(start: w.start, end: block.start)
                 if left.duration > 0 { result.append(left) }
                 continue
             }
-
             if block.start <= w.start && block.end < w.end {
                 let right = TimeWindow(start: block.end, end: w.end)
                 if right.duration > 0 { result.append(right) }
@@ -266,7 +398,9 @@ final class SchedulerService {
             for f in focus {
                 let s = max(w.start, f.start)
                 let e = min(w.end, f.end)
-                if e > s { result.append(TimeWindow(start: s, end: e)) }
+                if e > s {
+                    result.append(TimeWindow(start: s, end: e))
+                }
             }
         }
 
@@ -279,9 +413,23 @@ final class SchedulerService {
         c.minute = comp.minute
         return calendar.date(from: c)
     }
-}
 
-struct ScheduleResult {
-    var blocks: [ScheduledBlock]
-    var failedTasks: [Task]
+    private func intervalsOverlap(
+        start1: Date, end1: Date,
+        start2: Date, end2: Date
+    ) -> Bool {
+        return max(start1, start2) < min(end1, end2)
+    }
+
+    private func crossesMidnight(start: DateComponents, end: DateComponents) -> Bool {
+        let sh = start.hour ?? 0
+        let sm = start.minute ?? 0
+        let eh = end.hour ?? 0
+        let em = end.minute ?? 0
+
+        if eh > sh { return false }
+        if eh < sh { return true }
+     
+        return em <= sm
+    }
 }

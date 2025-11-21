@@ -130,34 +130,45 @@ struct MealTimeView2: View {
     MealTimeView2(hasSeenOnboarding: .constant(false))
         .environmentObject(MealTimeStore())
 }
+
 class MealTimeStore: ObservableObject {
+
     @Published var meals: [MealTime] = [] {
         didSet { saveMeals() }
     }
-    
+
     private let storageKey = "savedMealTimes"
-    
-    init() { loadMeals() }
-    
-    func loadMeals() {
+
+    init() {
+        loadMeals()
+    }
+
+    private func loadMeals() {
         guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
         if let decoded = try? JSONDecoder().decode([MealTime].self, from: data) {
             self.meals = decoded
         }
     }
-    func saveMeals() {
+
+    private func saveMeals() {
         if let encoded = try? JSONEncoder().encode(meals) {
             UserDefaults.standard.set(encoded, forKey: storageKey)
         }
     }
-    func deleteMeal(_ meal: MealTime) {
-        if let index = meals.firstIndex(where: { $0.id == meal.id }) {
-            meals.remove(at: index)
-        }
+    func addMeal(_ meal: MealTime) {
+        meals.append(meal)
     }
+
     func updateMeal(_ updated: MealTime) {
-        if let index = meals.firstIndex(where: { $0.id == updated.id }) {
-            meals[index] = updated
+        if let i = meals.firstIndex(where: { $0.id == updated.id }) {
+            meals[i] = updated
         }
     }
+
+    func deleteMeal(_ meal: MealTime) {
+        if let i = meals.firstIndex(where: { $0.id == meal.id }) {
+            meals.remove(at: i)
+        }
+    }
+
 }

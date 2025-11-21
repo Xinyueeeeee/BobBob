@@ -87,23 +87,7 @@ extension Date {
         Calendar.current.component(.day, from: self)
     }
     
-    var startOfDay: Date {
-        Calendar.current.startOfDay(for: self)
-    }
-    func addingDays(_ days: Int) -> Date {
-        Calendar.current.date(byAdding: .day, value: days, to: self)!
-    }
-
-    func adding(minutes: Int) -> Date {
-        addingTimeInterval(TimeInterval(minutes * 60))
-    }
-    func at(_ hour: Int, _ minute: Int) -> Date {
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: self)
-        comps.hour = hour
-        comps.minute = minute
-        comps.second = 0
-        return Calendar.current.date(from: comps)!
-    }
+   
 
   
     var randomDateWithinLastThreeMonths: Date {

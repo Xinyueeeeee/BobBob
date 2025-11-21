@@ -97,8 +97,9 @@ struct AddRestDaysPickerView: View {
                         let newActivity = RestActivity(
                             id: existing?.id ?? UUID(),
                             name: name,
-                            startDate: normalizedStart,
-                            endDate: normalizedEnd
+                            startDate: startDate.normalized,
+                            endDate: endDate.normalized
+
                         )
                         onSave(newActivity)
                         dismiss()

@@ -37,14 +37,33 @@ final class TaskStore: ObservableObject {
         }
     }
 }
+
 final class PreferencesStore: ObservableObject {
+
     static let shared = PreferencesStore()
+
     @Published var meals: [MealTime] = []
     @Published var activities: [Activity] = []
     @Published var restActivities: [RestActivity] = []
-    private init() { }
-    @Published var chronotype: String = UserDefaults.standard.string(forKey: "selectedChronotype") ?? "Early Bird" {
-        didSet { UserDefaults.standard.set(chronotype, forKey: "selectedChronotype") }
-    }
+    @Published var chronotype: String = ""
 
+    private var cancellables = Set<AnyCancellable>()
+
+    private init() { }
+
+    func bind(
+        mealStore: MealTimeStore,
+        activityStore: ActivityStore,
+        restStore: RestActivityStore
+    ) {
+        mealStore.$meals
+            .assign(to: &$meals)
+        
+        activityStore.$activities
+            .assign(to: &$activities)
+        
+        restStore.$activities
+            .assign(to: &$restActivities)
+    }
 }
+

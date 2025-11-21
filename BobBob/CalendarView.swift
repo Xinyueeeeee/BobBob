@@ -112,6 +112,24 @@ struct CalendarView: View {
                         Text(" \(t.name)")
                     }
                 }
+                .alert("Some tasks overlap with your schedule", isPresented: $scheduleVM.showConflictAlert) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("These tasks overlap with:")
+                        Text("Meals")
+                        Text("Recurring activities")
+                        Text("Rest days")
+                        Text("Sleep schedule")
+                            .padding(.bottom, 8)
+
+                        ForEach(scheduleVM.conflictBlocks) { block in
+                            Text(" \(block.task.name)")
+                                .fontWeight(.semibold)
+                        }
+                    }
+                }
+
             }
 
         }

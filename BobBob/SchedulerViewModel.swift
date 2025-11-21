@@ -1,45 +1,49 @@
-
-
 import Foundation
 import Combine
 
 final class SchedulerViewModel: ObservableObject {
 
-  
     @Published var scheduledBlocks: [ScheduledBlock] = []
+
+    @Published var failedTasks: [Task] = []
+    @Published var showFailedAlert: Bool = false
+
+    @Published var conflictBlocks: [ScheduledBlock] = []
+    @Published var showConflictAlert: Bool = false
+
     private let service = SchedulerService()
     private let calendar = Calendar.current
 
     private let taskStore = TaskStore.shared
     private let prefsStore = PreferencesStore.shared
-    
-    @Published var failedTasks: [Task] = []
-    @Published var showFailedAlert = false
 
     private var cancellables = Set<AnyCancellable>()
+
     init() {
         setupBindings()
         refreshSchedule()
     }
+
     private func setupBindings() {
 
         let combo1234 = Publishers.CombineLatest4(
-                taskStore.$tasks,
-                prefsStore.$meals,
-                prefsStore.$activities,
-                prefsStore.$restActivities
-            )
+            taskStore.$tasks,
+            prefsStore.$meals,
+            prefsStore.$activities,
+            prefsStore.$restActivities
+        )
 
-            combo1234
-                .combineLatest(prefsStore.$chronotype)
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _, _ in
-                    guard let self = self else { return }
-                    self.refreshSchedule()
-                    self.refreshNotifications()
-                }
-                .store(in: &cancellables)
-        }
+        combo1234
+            .combineLatest(prefsStore.$chronotype)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _, _ in
+                guard let self = self else { return }
+                self.refreshSchedule()
+                self.refreshNotifications()
+            }
+            .store(in: &cancellables)
+    }
+
 
     private func buildUserPreferences() -> UserPreferences {
 
@@ -54,22 +58,31 @@ final class SchedulerViewModel: ObservableObject {
 
         let sleepStartComp = calendar.dateComponents([.hour, .minute], from: sleepTime)
         let sleepEndComp   = calendar.dateComponents([.hour, .minute], from: wakeTime)
+
         let mealPrefs = prefsStore.meals.map { m in
             let comp = calendar.dateComponents([.hour, .minute], from: m.time)
             return DailyMealPref(startTime: comp, durationMinutes: m.duration)
         }
+
         let recurring = prefsStore.activities.compactMap { act in
             let weekday = weekdayIndex(from: act.day)
             let comp = calendar.dateComponents([.hour, .minute], from: act.time)
-            return RecurringBlockPref(weekday: weekday, startTime: comp, durationMinutes: 60)
+            return RecurringBlockPref(
+                weekday: weekday,
+                startTime: comp,
+                durationMinutes: act.durationSeconds > 0
+                    ? act.durationSeconds / 60
+                    : 60
+            )
         }
+
         var restDates: Set<Date> = []
         for r in prefsStore.restActivities {
-            var d = r.startDate.startOfDay
-            let end = r.endDate.startOfDay
+            var d = r.startDate.normalized
+            let end = r.endDate.normalized
             while d <= end {
                 restDates.insert(d)
-                d = d.addingDays(1)
+                d = calendar.date(byAdding: .day, value: 1, to: d)!.normalized
             }
         }
 
@@ -95,14 +108,12 @@ final class SchedulerViewModel: ObservableObject {
         ][day] ?? 2
     }
 
-   
     func refreshSchedule() {
         let prefs = buildUserPreferences()
-        let blocks = service.schedule(tasks: taskStore.tasks, prefs: prefs)
 
+        let blocks = service.schedule(tasks: taskStore.tasks, prefs: prefs)
         self.scheduledBlocks = blocks
 
-        // detect unscheduled tasks
         let scheduledIDs = Set(blocks.map { $0.task.id })
         let unscheduled = taskStore.tasks.filter { !scheduledIDs.contains($0.id) }
 
@@ -113,12 +124,26 @@ final class SchedulerViewModel: ObservableObject {
             self.failedTasks = []
             self.showFailedAlert = false
         }
+
+        let conflicts = service.findViolations(blocks: blocks, prefs: prefs)
+
+        if !conflicts.isEmpty {
+            self.conflictBlocks = conflicts
+            self.showConflictAlert = true
+        } else {
+            self.conflictBlocks = []
+            self.showConflictAlert = false
+        }
     }
+
     func blocks(for day: Date) -> [ScheduledBlock] {
-        let start = day.startOfDay
-        let end = start.addingDays(1)
+        let start = Calendar.current.startOfDay(for: day)
+        let end   = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+
         return scheduledBlocks.filter { $0.start >= start && $0.start < end }
     }
+
+
     func refreshNotifications() {
 
         NotificationManager.shared.clearAll()
