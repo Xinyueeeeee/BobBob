@@ -68,10 +68,7 @@ struct ActivitiesView2: View {
         }
     }
     func activityRow(_ activity: Activity) -> some View {
-        SwipeableCard(onDelete: {
-            deleteActivity(activity)
-        }) {
-
+        HStack {
             Button {
                 editingActivity = activity
             } label: {
@@ -89,14 +86,23 @@ struct ActivitiesView2: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 }
-                .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.white)
-                .cornerRadius(14)
-                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                deleteActivity(activity)
+            } label: {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+                    .padding(8)
             }
             .buttonStyle(.plain)
         }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(14)
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
     }
 
     func deleteActivity(_ activity: Activity) {

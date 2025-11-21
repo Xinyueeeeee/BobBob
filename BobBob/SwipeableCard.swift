@@ -1,30 +1,21 @@
-//
-//  SwipeableCard.swift
-//  BobBob
-//
-//  Created by Hanyi on 20/11/25.
-//
-
 import SwiftUI
 
 struct SwipeableCard<Content: View>: View {
     let content: Content
     let onDelete: () -> Void
-
+    
     @GestureState private var dragOffset: CGFloat = 0
     @State private var revealDelete: Bool = false
     @State private var removed: Bool = false
     @State private var cardHeight: CGFloat = 0
-
+    
     init(onDelete: @escaping () -> Void, @ViewBuilder content: () -> Content) {
         self.onDelete = onDelete
         self.content = content()
     }
-
+    
     var body: some View {
         ZStack(alignment: .trailing) {
-
-            // DELETE BACKGROUND
             if revealDelete || dragOffset < 0 {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(Color.red)
@@ -36,8 +27,6 @@ struct SwipeableCard<Content: View>: View {
                     )
                     .transition(.opacity)
             }
-
-            // CARD CONTENT
             content
                 .background(
                     GeometryReader { geo in
@@ -54,7 +43,6 @@ struct SwipeableCard<Content: View>: View {
                 .gesture(
                     DragGesture()
                         .updating($dragOffset) { value, state, _ in
-                            // Only allow left drag
                             if value.translation.width < 0 {
                                 state = value.translation.width
                             }
@@ -62,10 +50,8 @@ struct SwipeableCard<Content: View>: View {
                         .onEnded { value in
                             withAnimation(.spring()) {
                                 if value.translation.width < -40 {
-                                    // SWIPE LEFT → reveal delete
                                     revealDelete = true
                                 } else {
-                                    // SWIPE RIGHT or insufficient left → close delete
                                     revealDelete = false
                                 }
                             }
@@ -80,15 +66,14 @@ struct SwipeableCard<Content: View>: View {
             TapGesture()
                 .onEnded {
                     if revealDelete {
-                        // Perform delete animation
                         withAnimation(.easeInOut(duration: 0.25)) {
                             removed = true
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                             onDelete()
-                        }
                     }
                 }
+            }
         )
     }
 }

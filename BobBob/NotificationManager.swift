@@ -14,17 +14,17 @@ final class NotificationManager {
     static let shared = NotificationManager()
     private init() {}
 
-    // Request notification permission
+    // request notif perm
     func requestPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
 
-    // Clear all notifications
+    // clear all notifs
     func clearAll() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 
-    // Schedule single notification
+    //schedule single notifss
     func schedule(id: String, title: String, body: String, date: Date) {
         let content = UNMutableNotificationContent()
         content.title = title

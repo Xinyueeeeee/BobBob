@@ -5,8 +5,7 @@ struct ChronotypeView2: View {
     @Binding var hasSeenOnboarding: Bool
     
     @EnvironmentObject var prefsStore: PreferencesStore
-    @EnvironmentObject var scheduleVM: SchedulerViewModel    // 🔥 needed to force refresh
-    
+    @EnvironmentObject var scheduleVM: SchedulerViewModel
     var body: some View {
         NavigationStack {
             VStack(spacing: 30) {
@@ -17,11 +16,10 @@ struct ChronotypeView2: View {
                     .bold()
                     .padding(.top)
                 
-                // EARLY BIRD BUTTON
                 Button {
                     selectedChronotype = "Early Bird"
                     prefsStore.chronotype = "Early Bird"
-                    scheduleVM.refreshSchedule()       // 🔥 instant reschedule
+                    scheduleVM.refreshSchedule()
                     scheduleVM.refreshNotifications()
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {
@@ -44,11 +42,10 @@ struct ChronotypeView2: View {
                 }
                 .padding(.horizontal)
                 
-                // NIGHT OWL BUTTON
                 Button {
                     selectedChronotype = "Night Owl"
                     prefsStore.chronotype = "Night Owl"
-                    scheduleVM.refreshSchedule()       // 🔥 instant reschedule
+                    scheduleVM.refreshSchedule()    
                     scheduleVM.refreshNotifications()
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {

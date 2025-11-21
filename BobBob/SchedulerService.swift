@@ -29,7 +29,7 @@ struct UserPreferences {
     var sleepEnd: DateComponents
     var meals: [DailyMealPref]
     var recurring: [RecurringBlockPref]
-    var restDates: Set<Date>          // absolute full rest days
+    var restDates: Set<Date>
 }
 
 struct ScheduledBlock: Identifiable {
@@ -84,8 +84,6 @@ final class SchedulerService {
         return blocks
     }
 
-  //sorting
-
     private func sortTasks(_ tasks: [Task], today: Date) -> [Task] {
         tasks.sorted {
             let p1 = priorityLevel($0, today: today)
@@ -134,7 +132,7 @@ final class SchedulerService {
         prefs: UserPreferences,
         overdue: Bool
     ) -> ScheduledBlock? {
-//refresh
+
         var windows = buildDayWindows(for: day, prefs: prefs)
             if windows.isEmpty { return nil }
             let now = Date()
@@ -229,9 +227,6 @@ final class SchedulerService {
             ]
         }
     }
-
-//window math
-
     private struct TimeWindow {
         var start: Date
         var end: Date
@@ -288,8 +283,6 @@ final class SchedulerService {
 
         return result
     }
-//utilities
-
     private func timeOfDay(_ comp: DateComponents, on day: Date) -> Date? {
         var c = calendar.dateComponents([.year, .month, .day], from: day)
         c.hour = comp.hour

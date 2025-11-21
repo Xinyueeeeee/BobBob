@@ -1,10 +1,3 @@
-//
-//  TasksView 2.swift
-//  BobBob
-//
-//  Created by minyi on 14/11/25.
-//
-
 import SwiftUI
 
 struct addTasksView: View {
@@ -30,6 +23,14 @@ struct addTasksView: View {
     @State private var endDate: Date = Date()
     @State private var importance: Double = 0.5
     
+    private var canSave: Bool {
+        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
+
+        guard totalSeconds > 0 else { return false }
+
+        return true
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -130,14 +131,19 @@ struct addTasksView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
-                        let newTask = Task(name: name,
-                                           deadline: deadline,
-                                           durationSeconds: totalSeconds,
-                                           importance: importance,
-                                           startDate: prefersWorkingTime ? startDate : nil, endDate: prefersWorkingTime ? endDate : nil)
+                        let newTask = Task(
+                            name: name,
+                            deadline: deadline,
+                            durationSeconds: totalSeconds,
+                            importance: importance,
+                            startDate: prefersWorkingTime ? startDate : nil,
+                            endDate: prefersWorkingTime ? endDate : nil
+                        )
                         onSave(newTask)
                         dismiss()
                     }
+                    .disabled(!canSave)
+                    .opacity(canSave ? 1 : 0.4)    
                 }
             }
         }
@@ -198,6 +204,7 @@ struct addTasksView: View {
         totalSeconds = selectedHours * 3600 + selectedMinutes * 60
     }
 }
+
 #Preview {
     addTasksView(totalSeconds: .constant(0),
                  onSave: { _ in })

@@ -50,47 +50,49 @@ private extension TasksView {
 
 private extension TasksView {
     func taskRow(task: Binding<Task>) -> some View {
-        SwipeableCard(onDelete: {
-            deleteTask(task.wrappedValue)
-        }) {
-
-            HStack(spacing: 14) {
-                Button {
-                    task.isCompleted.wrappedValue.toggle()
-                } label: {
-                    ReminderCircle(isCompleted: task.wrappedValue.isCompleted)
-                }
-                .buttonStyle(.plain)
-                NavigationLink {
-                    addTasksView(
-                        totalSeconds: task.durationSeconds,
-                        onSave: { updated in task.wrappedValue = updated },
-                        existingTask: task.wrappedValue
-                    )
-                } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(task.wrappedValue.name)
-                            .font(.headline)
-                            .foregroundColor(task.wrappedValue.isCompleted ? .gray : .black)
-                            .opacity(task.wrappedValue.isCompleted ? 0.5 : 1)
-
-                        Text("Due: \(task.wrappedValue.deadline.formatted(date: .abbreviated, time: .shortened))")
-
-                            .font(.caption)
-                            .foregroundColor(task.wrappedValue.isCompleted
-                                             ? .gray.opacity(0.6)
-                                             : .gray)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .buttonStyle(.plain)
+        HStack(spacing: 14) {
+            Button {
+                task.isCompleted.wrappedValue.toggle()
+            } label: {
+                ReminderCircle(isCompleted: task.wrappedValue.isCompleted)
             }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(14)
-            .shadow(color: .black.opacity(0.05),
-                    radius: 6, x: 0, y: 4)
+            .buttonStyle(.plain)
+            NavigationLink {
+                addTasksView(
+                    totalSeconds: task.durationSeconds,
+                    onSave: { updated in task.wrappedValue = updated },
+                    existingTask: task.wrappedValue
+                )
+            } label: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(task.wrappedValue.name)
+                        .font(.headline)
+                        .foregroundColor(task.wrappedValue.isCompleted ? .gray : .black)
+                        .opacity(task.wrappedValue.isCompleted ? 0.5 : 1)
+
+                    Text("Due: \(task.wrappedValue.deadline.formatted(date: .abbreviated, time: .shortened))")
+                        .font(.caption)
+                        .foregroundColor(task.wrappedValue.isCompleted
+                                         ? .gray.opacity(0.6)
+                                         : .gray)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                deleteTask(task.wrappedValue)
+            } label: {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+                    .padding(8)
+            }
+            .buttonStyle(.plain)
         }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(14)
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
     }
 }
 
@@ -137,12 +139,12 @@ struct ReminderCircle: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(isCompleted ? Color.blue : Color.gray.opacity(0.9), lineWidth: 2)
+                .stroke(isCompleted ? Color.gray : Color.gray.opacity(0.9), lineWidth: 2)
                 .frame(width: 22, height: 22)
 
             if isCompleted {
                 Circle()
-                    .fill(Color.blue)
+                    .fill(Color.gray)
                     .frame(width: 15, height: 15)
             }
         }
