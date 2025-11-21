@@ -16,6 +16,8 @@ struct TasksView: View {
             }
             .navigationTitle("Tasks")
         }
+
+        // ADD TASK SHEET
         .sheet(isPresented: $showingAddSheet) {
             addTasksView(
                 totalSeconds: $newTaskSeconds,
@@ -28,10 +30,26 @@ struct TasksView: View {
             .presentationDragIndicator(.visible)
         }
 
-
+        // EDIT TASK SHEET
+        .sheet(item: $editingTask) { taskToEdit in
+            addTasksView(
+                totalSeconds: $editingTaskSeconds,
+                onSave: { updatedTask in
+                    if let index = taskStore.tasks.firstIndex(where: { $0.id == updatedTask.id }) {
+                        taskStore.tasks[index] = updatedTask
+                    }
+                },
+                existingTask: taskToEdit
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
     }
 }
 
+// ------------------------------------------------
+// BACKGROUND
+// ------------------------------------------------
 private extension TasksView {
     var background: some View {
         LinearGradient(
@@ -46,6 +64,9 @@ private extension TasksView {
     }
 }
 
+// ------------------------------------------------
+// LIST CONTENT
+// ------------------------------------------------
 private extension TasksView {
     var content: some View {
         VStack(spacing: 20) {
@@ -65,9 +86,14 @@ private extension TasksView {
     }
 }
 
+// ------------------------------------------------
+// ROW CONTENT
+// ------------------------------------------------
 private extension TasksView {
     func taskRow(task: Binding<Task>) -> some View {
         HStack(spacing: 14) {
+
+            // COMPLETE BUTTON
             Button {
                 task.isCompleted.wrappedValue.toggle()
             } label: {
@@ -75,6 +101,7 @@ private extension TasksView {
             }
             .buttonStyle(.plain)
 
+            // TASK INFO
             VStack(alignment: .leading, spacing: 4) {
                 Text(task.wrappedValue.name)
                     .font(.headline)
@@ -88,12 +115,13 @@ private extension TasksView {
                                      : .gray)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())   // makes whole row tappable
+            .contentShape(Rectangle())        // makes full row tappable
             .onTapGesture {
                 editingTask = task.wrappedValue
                 editingTaskSeconds = task.wrappedValue.durationSeconds
             }
 
+            // DELETE BUTTON
             Button {
                 deleteTask(task.wrappedValue)
             } label: {
@@ -104,13 +132,16 @@ private extension TasksView {
             .buttonStyle(.plain)
         }
         .padding()
-        .frame(maxWidth: .infinity)       // FULL WIDTH
+        .frame(maxWidth: .infinity)
         .background(Color.white)
         .cornerRadius(14)
         .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
     }
 }
 
+// ------------------------------------------------
+// DELETE
+// ------------------------------------------------
 private extension TasksView {
     func deleteTask(_ task: Task) {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == task.id }) {
@@ -119,7 +150,9 @@ private extension TasksView {
     }
 }
 
-
+// ------------------------------------------------
+// ADD BUTTON
+// ------------------------------------------------
 private extension TasksView {
     var addButton: some View {
         Button {
@@ -129,21 +162,17 @@ private extension TasksView {
                 .font(.title)
                 .foregroundColor(.white)
                 .padding()
-                .background(
-                    Circle().fill(Color.blue)
-                )
-                .frame(width: 60, height: 60)   // ← Ensures proper size
+                .background(Circle().fill(Color.blue))
+                .frame(width: 60, height: 60)
                 .shadow(radius: 4)
         }
-        .frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity,
-            alignment: .bottomLeading
-        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
         .padding(.leading, 20)
         .padding(.bottom, 20)
     }
 }
+
+
 
 
 struct ReminderCircle: View {
