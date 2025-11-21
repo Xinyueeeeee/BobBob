@@ -15,16 +15,26 @@ struct RestDaysView2: View {
     @State private var editingActivity: RestActivity? = nil
 
     var body: some View {
-        NavigationStack {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color.blue.opacity(0.2),
+                    Color.blue.opacity(0.6)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            NavigationStack {
                 VStack(spacing: 20) {
-
+                    
                     Text("When do you rest?")
                         .font(.headline)
                         .foregroundColor(.black.opacity(0.5))
-
+                    
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
-
+                            
                             ForEach(restStore.activities) { activity in
                                 HStack {
                                     Button {
@@ -34,7 +44,7 @@ struct RestDaysView2: View {
                                             Text(activity.name)
                                                 .font(.headline)
                                                 .foregroundColor(.black)
-
+                                            
                                             HStack {
                                                 Label(
                                                     activity.startDate.formatted(date: .abbreviated, time: .omitted),
@@ -69,12 +79,12 @@ struct RestDaysView2: View {
                                 .shadow(color: .black.opacity(0.05),
                                         radius: 6, x: 0, y: 4)
                             }
-
+                            
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
-
+                    
                     Spacer(minLength: 40)
                 }
                 VStack {
@@ -96,18 +106,19 @@ struct RestDaysView2: View {
                         Spacer()
                     }
                 }
-            .navigationTitle("Rest Days")
-
-            .sheet(isPresented: $showingAddSheet) {
-                AddRestDaysPickerView(existing: nil) { newActivity in
-                    restStore.activities.append(newActivity)
+                .navigationTitle("Rest Days")
+                
+                .sheet(isPresented: $showingAddSheet) {
+                    AddRestDaysPickerView(existing: nil) { newActivity in
+                        restStore.activities.append(newActivity)
+                    }
                 }
-            }
-
-            .sheet(item: $editingActivity) { activity in
-                AddRestDaysPickerView(existing: activity) { updated in
-                    if let i = restStore.activities.firstIndex(where: { $0.id == updated.id }) {
-                        restStore.activities[i] = updated
+                
+                .sheet(item: $editingActivity) { activity in
+                    AddRestDaysPickerView(existing: activity) { updated in
+                        if let i = restStore.activities.firstIndex(where: { $0.id == updated.id }) {
+                            restStore.activities[i] = updated
+                        }
                     }
                 }
             }
