@@ -732,7 +732,7 @@ struct AddMealTimeView: View {
         NavigationStack {
             Form {
 
-                TextField("Meal Type", text: $mealType)
+                TextField("E.g. Breakfast", text: $mealType)
 
                 DatePicker("Time",
                            selection: $time,
