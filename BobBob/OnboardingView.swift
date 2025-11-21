@@ -120,8 +120,7 @@ struct ChronotypeView: View {
                         Text("You prefer starting your day earlier and feel most productive in the morning.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
+                            .multilineTextAlignment(.leading)
 
                     }
                     .padding()
@@ -142,8 +141,7 @@ struct ChronotypeView: View {
                         Text("You focus better later in the day and prefer working at night.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Night Owl" ? .white.opacity(0.9) : .black.opacity(0.7))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
+                            .multilineTextAlignment(.leading)
 
                     }
                     .padding()
@@ -193,19 +191,23 @@ struct NapTimeView: View {
     )!
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomTrailing) {
+            // Background
             LinearGradient(
                 gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-            VStack {
+
+            // Main content: stacked vertically and takes available space
+            VStack(spacing: 16) {
                 Text("What time do you go to sleep?")
                     .font(.footnote)
                     .foregroundColor(.black.opacity(0.5))
 
-                Spacer()
+                Spacer(minLength: 8)
+
                 DatePicker(
                     "Select Time",
                     selection: $sleepTime,
@@ -213,12 +215,14 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+                .frame(maxWidth: .infinity)
 
                 Text("What time do you wake up?")
                     .font(.footnote)
                     .foregroundColor(.black.opacity(0.5))
 
-                Spacer()
+                Spacer(minLength: 8)
+
                 DatePicker(
                     "Select Time",
                     selection: $wakeTime,
@@ -226,12 +230,22 @@ struct NapTimeView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-                
-                Spacer()
-                
+                .frame(maxWidth: .infinity)
+
+
+                Spacer(minLength: 120)
+            }
+            .padding()
+
+            .navigationTitle("Sleep Time")
+
+
+            // Bottom overlay: centered text + button
+            VStack(spacing: 10) {
                 Text("Different people sleep at different hours.")
                     .font(.footnote)
                     .foregroundColor(.black.opacity(0.5))
+                    .frame(maxWidth: .infinity, alignment: .center)
 
                 NavigationLink {
                     MealTimeView(hasSeenOnboarding: $hasSeenOnboarding)
@@ -241,15 +255,16 @@ struct NapTimeView: View {
                         .foregroundColor(.white)
                         .padding(.vertical, 10)
                         .padding(.horizontal, 20)
-                        .background(Color.blue)
+                        .background(selectedButtonColor)
                         .cornerRadius(10)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
-            .padding()
-            .navigationTitle("Sleep Time")
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
         }
     }
+    private var selectedButtonColor: Color { Color.blue }
 }
 
 struct MealTime: Identifiable, Codable {
@@ -734,7 +749,7 @@ struct AddMealTimeView: View {
         NavigationStack {
             Form {
 
-                TextField("Meal Type", text: $mealType)
+                TextField("E.g. Breakfast", text: $mealType)
 
                 DatePicker("Time",
                            selection: $time,

@@ -21,9 +21,15 @@ struct MealTimeView2: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomLeading) {
-                
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.blue.opacity(0.2),
+                        Color.blue.opacity(0.6)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
                     
@@ -78,7 +84,7 @@ struct MealTimeView2: View {
             .navigationTitle("Meal Time")
         }
     }
-     func mealRow(_ meal: MealTime) -> some View {
+    func mealRow(_ meal: MealTime) -> some View {
         HStack {
             Button {
                 activeSheet = .edit(meal)
@@ -102,7 +108,7 @@ struct MealTimeView2: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.plain)
-
+            
             Button {
                 mealStore.deleteMeal(meal)
             } label: {
@@ -117,8 +123,8 @@ struct MealTimeView2: View {
         .cornerRadius(14)
         .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
     }
-
 }
+
 
 #Preview {
     MealTimeView2(hasSeenOnboarding: .constant(false))

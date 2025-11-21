@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct TasksView: View {
+    @State private var showingAddSheet = false
+    @State private var editingTask: Task? = nil
+    @State private var editingTaskSeconds: Int = 0
     @ObservedObject private var taskStore = TaskStore.shared
     @State private var newTaskSeconds: Int = 0
 
@@ -13,6 +16,19 @@ struct TasksView: View {
             }
             .navigationTitle("Tasks")
         }
+        .sheet(isPresented: $showingAddSheet) {
+            addTasksView(
+                totalSeconds: $newTaskSeconds,
+                onSave: { task in
+                    taskStore.tasks.append(task)
+                    newTaskSeconds = 0
+                }
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
+
+
     }
 }
 
@@ -38,6 +54,7 @@ private extension TasksView {
                     ForEach($taskStore.tasks) { $task in
                         taskRow(task: $task)
                             .padding(.horizontal, 20)
+                            .frame(maxWidth: .infinity)
                     }
                 }
                 .padding(.top, 10)
@@ -57,28 +74,25 @@ private extension TasksView {
                 ReminderCircle(isCompleted: task.wrappedValue.isCompleted)
             }
             .buttonStyle(.plain)
-            NavigationLink {
-                addTasksView(
-                    totalSeconds: task.durationSeconds,
-                    onSave: { updated in task.wrappedValue = updated },
-                    existingTask: task.wrappedValue
-                )
-            } label: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(task.wrappedValue.name)
-                        .font(.headline)
-                        .foregroundColor(task.wrappedValue.isCompleted ? .gray : .black)
-                        .opacity(task.wrappedValue.isCompleted ? 0.5 : 1)
 
-                    Text("Due: \(task.wrappedValue.deadline.formatted(date: .abbreviated, time: .shortened))")
-                        .font(.caption)
-                        .foregroundColor(task.wrappedValue.isCompleted
-                                         ? .gray.opacity(0.6)
-                                         : .gray)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(task.wrappedValue.name)
+                    .font(.headline)
+                    .foregroundColor(task.wrappedValue.isCompleted ? .gray : .black)
+                    .opacity(task.wrappedValue.isCompleted ? 0.5 : 1)
+
+                Text("Due: \(task.wrappedValue.deadline.formatted(date: .abbreviated, time: .shortened))")
+                    .font(.caption)
+                    .foregroundColor(task.wrappedValue.isCompleted
+                                     ? .gray.opacity(0.6)
+                                     : .gray)
             }
-            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())   // makes whole row tappable
+            .onTapGesture {
+                editingTask = task.wrappedValue
+                editingTaskSeconds = task.wrappedValue.durationSeconds
+            }
 
             Button {
                 deleteTask(task.wrappedValue)
@@ -90,6 +104,7 @@ private extension TasksView {
             .buttonStyle(.plain)
         }
         .padding()
+        .frame(maxWidth: .infinity)       // FULL WIDTH
         .background(Color.white)
         .cornerRadius(14)
         .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
@@ -104,33 +119,32 @@ private extension TasksView {
     }
 }
 
+
 private extension TasksView {
     var addButton: some View {
-        NavigationLink(
-            destination: addTasksView(
-                totalSeconds: $newTaskSeconds,
-                onSave: { task in
-                    taskStore.tasks.append(task)
-                    newTaskSeconds = 0
-                },
-                existingTask: nil
-            )
-        ) {
+        Button {
+            showingAddSheet = true
+        } label: {
             Image(systemName: "plus")
                 .font(.title)
                 .foregroundColor(.white)
                 .padding()
-                .background(Circle().fill(Color.blue))
-                .frame(width: 60, height: 60)
+                .background(
+                    Circle().fill(Color.blue)
+                )
+                .frame(width: 60, height: 60)   // ← Ensures proper size
                 .shadow(radius: 4)
         }
-        .frame(maxWidth: .infinity,
-               maxHeight: .infinity,
-               alignment: .bottomLeading)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .bottomLeading
+        )
         .padding(.leading, 20)
         .padding(.bottom, 20)
     }
 }
+
 
 
 struct ReminderCircle: View {

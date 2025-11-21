@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 enum ChronotypePreference {
@@ -38,9 +37,11 @@ struct ScheduledBlock: Identifiable {
     let end: Date
     let isOverdue: Bool
 }
+
 final class SchedulerService {
 
     private let calendar = Calendar.current
+
     func schedule(tasks: [Task], prefs: UserPreferences, today: Date = Date()) -> [ScheduledBlock] {
 
         var blocks: [ScheduledBlock] = []
@@ -59,17 +60,18 @@ final class SchedulerService {
             var placed: ScheduledBlock?
             var day = earliest
             while day <= latestAllowed {
-                if let block = place(task, on: day, prefs: prefs, overdue: false) {
+                if let block = place(task, on: day, prefs: prefs, scheduledBlocks: blocks, overdue: false) {
                     placed = block
                     break
                 }
                 day = day.addingDays(1)
             }
+
             if placed == nil {
                 var od = latestAllowed.addingDays(1)
                 let limit = od.addingDays(30)
                 while od <= limit {
-                    if let block = place(task, on: od, prefs: prefs, overdue: true) {
+                    if let block = place(task, on: od, prefs: prefs, scheduledBlocks: blocks, overdue: true) {
                         placed = block
                         break
                     }
@@ -124,51 +126,48 @@ final class SchedulerService {
         }
     }
 
-
     private func place(
         _ task: Task,
         on day: Date,
         prefs: UserPreferences,
+        scheduledBlocks: [ScheduledBlock],
         overdue: Bool
     ) -> ScheduledBlock? {
 
         var windows = buildDayWindows(for: day, prefs: prefs)
+
+        for b in scheduledBlocks where calendar.isDate(b.start, inSameDayAs: day) {
+            subtract(TimeWindow(start: b.start, end: b.end), from: &windows)
+        }
+
+        if windows.isEmpty { return nil }
+
+        let now = Date()
+        if calendar.isDate(day, inSameDayAs: now) {
+            let cutoff = now
+            windows = windows.compactMap { w in
+                if w.end <= cutoff { return nil }
+                return TimeWindow(start: max(w.start, cutoff), end: w.end)
+            }
             if windows.isEmpty { return nil }
-            let now = Date()
-            if calendar.isDate(day, inSameDayAs: now) {
-                let cutoff = now
-                var adjusted: [TimeWindow] = []
-                for w in windows {
-                    if w.end <= cutoff { continue }
-                    if w.start < cutoff {
-                        adjusted.append(TimeWindow(start: cutoff, end: w.end))
-                    } else {
-                        adjusted.append(w)
-                    }
-                }
-                windows = adjusted
-                if windows.isEmpty { return nil }
+        }
+
+        let requiredMinutes = max(1, task.durationSeconds / 60)
+
+        for (i, window) in windows.enumerated() where window.duration >= requiredMinutes {
+            let start = window.start
+            let end = start.adding(minutes: requiredMinutes)
+            let remaining = TimeWindow(start: end, end: window.end)
+            if remaining.duration > 0 {
+                windows[i] = remaining
+            } else {
+                windows.remove(at: i)
             }
-            let requiredMinutes = max(1, task.durationSeconds / 60)
+            return ScheduledBlock(task: task, start: start, end: end, isOverdue: overdue)
+        }
 
-            for (i, window) in windows.enumerated() where window.duration >= requiredMinutes {
-
-                let start = window.start
-                let end = start.adding(minutes: requiredMinutes)
-                let remaining = TimeWindow(start: end, end: window.end)
-                if remaining.duration > 0 {
-                    windows[i] = remaining
-                } else {
-                    windows.remove(at: i)
-                }
-
-                return ScheduledBlock(task: task, start: start, end: end, isOverdue: overdue)
-            }
-
-            return nil
+        return nil
     }
-
-//build daily windows
 
     private func buildDayWindows(for day: Date, prefs: UserPreferences) -> [TimeWindow] {
         let start = day.startOfDay
@@ -178,24 +177,19 @@ final class SchedulerService {
             return []
         }
 
-        //sleep
         if let s = timeOfDay(prefs.sleepStart, on: day),
            let eRaw = timeOfDay(prefs.sleepEnd, on: day) {
-
             var e = eRaw
             if e <= s { e = e.addingDays(1) }
-
             subtract(TimeWindow(start: s, end: e), from: &windows)
         }
 
-        // meals
         for m in prefs.meals {
             if let s = timeOfDay(m.startTime, on: day) {
                 subtract(TimeWindow(start: s, end: s.adding(minutes: m.durationMinutes)), from: &windows)
             }
         }
 
-        //recurring
         let weekday = calendar.component(.weekday, from: day)
         for r in prefs.recurring where r.weekday == weekday {
             if let s = timeOfDay(r.startTime, on: day) {
@@ -203,14 +197,11 @@ final class SchedulerService {
             }
         }
 
-            //chronotype
         let focusBlocks = chronotypeWindows(for: day, prefs: prefs)
         let result = intersect(windows, focusBlocks)
 
         return result.filter { $0.duration > 0 }
     }
-
-//chronotype windows
 
     private func chronotypeWindows(for day: Date, prefs: UserPreferences) -> [TimeWindow] {
         switch prefs.chronotype {
@@ -226,6 +217,7 @@ final class SchedulerService {
             ]
         }
     }
+
     private struct TimeWindow {
         var start: Date
         var end: Date
@@ -241,9 +233,7 @@ final class SchedulerService {
                 continue
             }
 
-            if block.start <= w.start && block.end >= w.end {
-                continue
-            }
+            if block.start <= w.start && block.end >= w.end { continue }
 
             if block.start > w.start && block.end >= w.end {
                 let left = TimeWindow(start: w.start, end: block.start)
@@ -282,6 +272,7 @@ final class SchedulerService {
 
         return result
     }
+
     private func timeOfDay(_ comp: DateComponents, on day: Date) -> Date? {
         var c = calendar.dateComponents([.year, .month, .day], from: day)
         c.hour = comp.hour
@@ -289,3 +280,4 @@ final class SchedulerService {
         return calendar.date(from: c)
     }
 }
+
