@@ -4,7 +4,6 @@ struct TasksView: View {
     @State private var showingAddSheet = false
     @State private var editingTask: Task? = nil
     @State private var editingTaskSeconds: Int = 0
-
     @ObservedObject private var taskStore = TaskStore.shared
     @State private var newTaskSeconds: Int = 0
 
@@ -182,13 +181,17 @@ struct ReminderCircle: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(isCompleted ? Color.gray : Color.gray.opacity(0.9), lineWidth: 2)
+                .stroke(Color.gray.opacity(0.9), lineWidth: 2)
                 .frame(width: 22, height: 22)
 
             if isCompleted {
                 Circle()
-                    .fill(Color.gray)
-                    .frame(width: 15, height: 15)
+                    .fill(Color.blue)
+                    .frame(width: 22, height: 22)
+
+                Image(systemName: "checkmark")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.white)
             }
         }
     }

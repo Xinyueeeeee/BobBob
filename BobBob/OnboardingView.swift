@@ -152,10 +152,6 @@ struct ChronotypeView: View {
                 .padding(.horizontal)
 
                 Spacer()
-
-                Text("Different people prefer working at different time periods.")
-                    .font(.footnote)
-                    .foregroundColor(.black.opacity(0.5))
             }
             .padding(.bottom, 80)
             NavigationLink {
@@ -191,7 +187,6 @@ struct NapTimeView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            // Background
             LinearGradient(
                 gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
@@ -199,38 +194,46 @@ struct NapTimeView: View {
             )
             .ignoresSafeArea()
 
-            // Main content: stacked vertically and takes available space
             VStack(spacing: 16) {
-                Text("What time do you go to sleep?")
-                    .font(.footnote)
-                    .foregroundColor(.black.opacity(0.5))
+                VStack {
+                    Text("What time do you go to sleep?")
+                        .font(.footnote)
+                        .foregroundColor(.black.opacity(0.5))
+                    
+                    Spacer(minLength: 8)
+                    
+                    DatePicker(
+                        "Select Time",
+                        selection: $sleepTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+                }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(12)
 
-                Spacer(minLength: 8)
-
-                DatePicker(
-                    "Select Time",
-                    selection: $sleepTime,
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .frame(maxWidth: .infinity)
-
-                Text("What time do you wake up?")
-                    .font(.footnote)
-                    .foregroundColor(.black.opacity(0.5))
-
-                Spacer(minLength: 8)
-
-                DatePicker(
-                    "Select Time",
-                    selection: $wakeTime,
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .frame(maxWidth: .infinity)
-
+                VStack {
+                    Text("What time do you wake up?")
+                        .font(.footnote)
+                        .foregroundColor(.black.opacity(0.5))
+                    
+                    Spacer(minLength: 8)
+                    
+                    DatePicker(
+                        "Select Time",
+                        selection: $wakeTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+                }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(12)
 
                 Spacer(minLength: 120)
             }
@@ -238,13 +241,7 @@ struct NapTimeView: View {
 
             .navigationTitle("Sleep Time")
 
-
-            // Bottom overlay: centered text + button
             VStack(spacing: 10) {
-                Text("Different people sleep at different hours.")
-                    .font(.footnote)
-                    .foregroundColor(.black.opacity(0.5))
-                    .frame(maxWidth: .infinity, alignment: .center)
 
                 NavigationLink {
                     MealTimeView(hasSeenOnboarding: $hasSeenOnboarding)
