@@ -76,32 +76,40 @@ struct NotifsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Toggle(isOn: $startOfTasks) {
-                    Text("At the start of the task")
-                }
-                .onChange(of: startOfTasks) {
-                    NotificationManager.shared.requestPermission()
-                    scheduleVM.refreshNotifications()
-                }
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.blue.opacity(0.2),
+                        Color.blue.opacity(0.6)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-                Toggle(isOn: $endOfTasks) {
-                    Text("At the end of the tasks")
-                }
-                .onChange(of: endOfTasks) {
-                    NotificationManager.shared.requestPermission()
-                    scheduleVM.refreshNotifications()
-                }
+                List {
+                    Toggle("At the start of the task", isOn: $startOfTasks)
+                        .onChange(of: startOfTasks) {
+                            NotificationManager.shared.requestPermission()
+                            scheduleVM.refreshNotifications()
+                        }
 
-                Toggle(isOn: $fiveMinBefTask) {
-                    Text("5 minutes before task")
+                    Toggle("At the end of the tasks", isOn: $endOfTasks)
+                        .onChange(of: endOfTasks) {
+                            NotificationManager.shared.requestPermission()
+                            scheduleVM.refreshNotifications()
+                        }
+
+                    Toggle("5 minutes before task", isOn: $fiveMinBefTask)
+                        .onChange(of: fiveMinBefTask) {
+                            NotificationManager.shared.requestPermission()
+                            scheduleVM.refreshNotifications()
+                        }
                 }
-                .onChange(of: fiveMinBefTask) {
-                    NotificationManager.shared.requestPermission()
-                    scheduleVM.refreshNotifications()
-                }
+                .scrollContentBackground(.hidden)     // <-- remove default List background
+                .listRowBackground(Color.clear)       // <-- remove row background
+                .navigationTitle("Notifications")
             }
-            .navigationTitle("Notifications")
         }
     }
 }
