@@ -10,9 +10,16 @@ struct ActivitiesView2: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
-
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.blue.opacity(0.2),
+                        Color.blue.opacity(0.6)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
                 VStack(spacing: 20) {
 
                     Text("Recurring Activities")
