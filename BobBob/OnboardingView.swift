@@ -537,6 +537,7 @@ struct Activity: Identifiable, Codable, Equatable {
     var day: String
     var regularity: String
     var time: Date
+    var durationSeconds: Int
 
     var timeFormatted: String {
         let formatter = DateFormatter()
@@ -544,12 +545,13 @@ struct Activity: Identifiable, Codable, Equatable {
         return formatter.string(from: time)
     }
 
-    init(id: UUID = UUID(), name: String, day: String, regularity: String, time: Date) {
+    init(id: UUID = UUID(), name: String, day: String, regularity: String, time: Date, durationSeconds: Int = 0) {
         self.id = id
         self.name = name
         self.day = day
         self.regularity = regularity
         self.time = time
+        self.durationSeconds = durationSeconds
     }
 }
 
@@ -817,6 +819,13 @@ struct AddActivitiesView: View {
     @State private var regularity: String = "Weekly"
     @State private var time: Date = Date()
 
+    @State private var selectedHours: Int = 0
+    @State private var selectedMinutes: Int = 0
+    @State private var durationSeconds: Int = 0
+
+    let maxHours = 23
+    let maxMinutes = 59
+
     let days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     let regularOptions = ["Daily","Weekly","Monthly"]
 
@@ -827,6 +836,7 @@ struct AddActivitiesView: View {
     var body: some View {
         NavigationStack {
             Form {
+
                 Section(header: Text("Activity Name")) {
                     TextField("e.g. Gym", text: $name)
                 }
@@ -849,8 +859,32 @@ struct AddActivitiesView: View {
                                displayedComponents: .hourAndMinute)
                         .labelsHidden()
                 }
+
+                Section(header: Text("Duration")) {
+                    HStack {
+                        Picker("Hours", selection: $selectedHours) {
+                            ForEach(0...maxHours, id: \.self) { hour in
+                                Text("\(hour)h").tag(hour)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(maxHeight: 120)
+
+                        Picker("Minutes", selection: $selectedMinutes) {
+                            ForEach(0...maxMinutes, id: \.self) { minute in
+                                Text("\(minute)m").tag(minute)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(maxHeight: 120)
+                    }
+                    .onChange(of: selectedHours) {  updateDuration() }
+                    .onChange(of: selectedMinutes) {  updateDuration() }
+                }
             }
+
             .navigationTitle(activity == nil ? "Add Activity" : "Edit Activity")
+
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -863,7 +897,8 @@ struct AddActivitiesView: View {
                             name: name,
                             day: day,
                             regularity: regularity,
-                            time: time
+                            time: time,
+                            durationSeconds: durationSeconds   // 🔥 SAVED HERE
                         )
                         onSave(updated)
                         dismiss()
@@ -872,15 +907,26 @@ struct AddActivitiesView: View {
                     .foregroundColor(formIsValid ? .blue : .gray)
                 }
             }
+
             .onAppear {
                 if let a = activity {
                     name = a.name
                     day = a.day
                     regularity = a.regularity
                     time = a.time
+                    durationSeconds = a.durationSeconds
+
+                    // Fill pickers when editing
+                    selectedHours = durationSeconds / 3600
+                    selectedMinutes = (durationSeconds % 3600) / 60
                 }
             }
         }
+    }
+
+    // MARK: - Duration calculation
+    private func updateDuration() {
+        durationSeconds = selectedHours * 3600 + selectedMinutes * 60
     }
 }
 
