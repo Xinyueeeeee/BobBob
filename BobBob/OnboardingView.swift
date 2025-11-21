@@ -120,6 +120,9 @@ struct ChronotypeView: View {
                         Text("You prefer starting your day earlier and feel most productive in the morning.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -139,6 +142,9 @@ struct ChronotypeView: View {
                         Text("You focus better later in the day and prefer working at night.")
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Night Owl" ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)

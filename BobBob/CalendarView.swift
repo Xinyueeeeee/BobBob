@@ -254,12 +254,13 @@ struct TaskBlockView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(block.task.name)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .opacity(block.task.isCompleted ? 0.5 : 1)
 
                 Text("\(time(block.start)) – \(time(block.end))")
                     .font(.subheadline)
-                    .foregroundColor(.black.opacity(block.task.isCompleted ? 0.5 : 0.9))
+                    .foregroundColor(.black.opacity(0.7))
+
 
                 if block.isOverdue {
                     Text("⚠ Overdue placement")

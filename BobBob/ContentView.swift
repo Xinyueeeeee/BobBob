@@ -4,8 +4,6 @@
 //
 //  Created by Huang Qing on 14/11/25.
 //
-
-
 import SwiftUI
 
 struct ContentView: View {
@@ -16,6 +14,20 @@ struct ContentView: View {
 }
 
 struct MainTabView: View {
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground() 
+
+        appearance.stackedLayoutAppearance.normal.iconColor = .black
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.black]
+
+        appearance.stackedLayoutAppearance.selected.iconColor = .black
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.black]
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
     var body: some View {
         TabView {
             CalendarView()
@@ -29,6 +41,7 @@ struct MainTabView: View {
         }
     }
 }
+
 
 #Preview {
     ContentView(hasSeenOnboarding:.constant(false))

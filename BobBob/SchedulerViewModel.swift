@@ -51,21 +51,15 @@ final class SchedulerViewModel: ObservableObject {
 
         let sleepStartComp = calendar.dateComponents([.hour, .minute], from: sleepTime)
         let sleepEndComp   = calendar.dateComponents([.hour, .minute], from: wakeTime)
-
-        // Meals
         let mealPrefs = prefsStore.meals.map { m in
             let comp = calendar.dateComponents([.hour, .minute], from: m.time)
             return DailyMealPref(startTime: comp, durationMinutes: m.duration)
         }
-
-        // Recurring Activities
         let recurring = prefsStore.activities.compactMap { act in
             let weekday = weekdayIndex(from: act.day)
             let comp = calendar.dateComponents([.hour, .minute], from: act.time)
             return RecurringBlockPref(weekday: weekday, startTime: comp, durationMinutes: 60)
         }
-
-        // Rest Days
         var restDates: Set<Date> = []
         for r in prefsStore.restActivities {
             var d = r.startDate.startOfDay

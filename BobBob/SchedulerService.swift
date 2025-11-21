@@ -1,6 +1,5 @@
 
-
-import Foundation
+import SwiftUI
 
 enum ChronotypePreference {
     case earlyBird

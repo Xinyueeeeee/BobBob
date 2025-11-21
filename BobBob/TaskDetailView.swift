@@ -4,14 +4,12 @@
 //
 //  Created by Hanyi on 20/11/25.
 //
-
 import SwiftUI
 
 struct TaskDetailView: View {
 
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var taskStore: TaskStore
-
     @State var item: Task
     @State private var showEdit = false
 
