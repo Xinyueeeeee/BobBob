@@ -21,14 +21,13 @@ struct addTasksView: View {
     @State private var importance: Double = 0.5
 
     private var canSave: Bool {
-        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
-        guard totalSeconds > 0 else { return false }
-        return true
+        !name.trimmingCharacters(in: .whitespaces).isEmpty &&
+        totalSeconds > 0
     }
 
     var body: some View {
 
-        NavigationView {
+        NavigationStack {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
@@ -72,9 +71,8 @@ struct addTasksView: View {
                             }
                             .pickerStyle(.wheel)
                         }
-                        .onChange(of: selectedHours) { updateTotalSeconds() }
-                        .onChange(of: selectedMinutes) { updateTotalSeconds() }
-                        .onAppear(perform: setInitialSelections)
+                        .onChange(of: selectedHours) { _ in updateTotalSeconds() }
+                        .onChange(of: selectedMinutes) { _ in updateTotalSeconds() }
                         .background(Color.white)
                         .cornerRadius(12)
                     }
@@ -99,7 +97,8 @@ struct addTasksView: View {
                         totalSeconds = task.durationSeconds
                         importance = task.importance
 
-                        setInitialSelections()
+                        selectedHours = task.durationSeconds / 3600
+                        selectedMinutes = (task.durationSeconds % 3600) / 60
                     }
                 }
             }
@@ -116,28 +115,27 @@ struct addTasksView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         let newTask = Task(
+                            id: existingTask?.id ?? UUID(),   // 👈 keep same ID when editing
                             name: name,
                             deadline: deadline,
                             durationSeconds: totalSeconds,
                             importance: importance,
-                            startDate: nil,
-                            endDate: nil
+                            startDate: existingTask?.startDate,
+                            endDate: existingTask?.endDate,
+                            isCompleted: existingTask?.isCompleted ?? false
                         )
+
                         onSave(newTask)
                         dismiss()
                     }
                     .disabled(!canSave)
                     .opacity(canSave ? 1 : 0.4)
+
                 }
             }
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.hidden)
-    }
-
-    private func setInitialSelections() {
-        selectedHours = totalSeconds / 3600
-        selectedMinutes = (totalSeconds % 3600) / 60
     }
 
     private func updateTotalSeconds() {
@@ -148,4 +146,3 @@ struct addTasksView: View {
 #Preview {
     addTasksView(totalSeconds: .constant(3600), onSave: { _ in })
 }
-
