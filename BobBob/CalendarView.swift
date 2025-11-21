@@ -33,7 +33,7 @@ struct CalendarView: View {
                     Spacer().frame(height: 80)
 
                     HStack {
-                        Text(monthTitle(currentDate))
+                        Text((monthTitle)(currentDate))
                             .font(.system(size: 34, weight: .bold))
                             .foregroundColor(.black)
                         Spacer()
@@ -195,13 +195,17 @@ struct DayDetailView: View {
         let blocks = scheduleVM.blocks(for: day)
 
         ScrollView {
-            VStack(spacing: 20) {
-                Text(formattedDay(day))
+            VStack(alignment: .leading) {
+                Text(day, format: .dateTime.weekday(.wide))
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
                     .padding(.top, 20)
-
+                Text(day, format: .dateTime.day().month().year())
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+            
                 if blocks.isEmpty {
                     VStack(spacing: 10) {
                         Text("No tasks scheduled")

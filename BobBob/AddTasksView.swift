@@ -20,7 +20,6 @@ struct addTasksView: View {
 
     @State private var importance: Double = 0.5
 
-    // Only enable Save when valid
     private var canSave: Bool {
         guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
         guard totalSeconds > 0 else { return false }
@@ -29,12 +28,11 @@ struct addTasksView: View {
 
     var body: some View {
 
-        NavigationView {  // ← ensures proper sheet style
+        NavigationView {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
 
-                    // NAME
                     Group {
                         Text("Name")
                             .font(.headline)
@@ -44,11 +42,10 @@ struct addTasksView: View {
                             .cornerRadius(12)
                     }
 
-                    // DEADLINE
                     Group {
                         Text("Deadline")
                             .font(.headline)
-                        DatePicker("", selection: $deadline, displayedComponents: .date)
+                        DatePicker("", selection: $deadline, displayedComponents: [.date, .hourAndMinute])
                             .datePickerStyle(.compact)
                             .labelsHidden()
                             .padding()
@@ -56,7 +53,6 @@ struct addTasksView: View {
                             .cornerRadius(12)
                     }
 
-                    // DURATION
                     VStack(alignment: .leading) {
                         Text("Duration")
                             .font(.headline)
@@ -83,7 +79,6 @@ struct addTasksView: View {
                         .cornerRadius(12)
                     }
 
-                    // IMPORTANCE
                     VStack(alignment: .leading) {
                         Text("Importance")
                             .font(.headline)
@@ -111,19 +106,15 @@ struct addTasksView: View {
 
             .navigationTitle(existingTask == nil ? "Add Task" : "Edit Task")
             .navigationBarTitleDisplayMode(.large)
-            .navigationBarBackButtonHidden(true)   // ← removes "Tasks" button
+            .navigationBarBackButtonHidden(true)
 
             .toolbar {
-
-                // CANCEL BUTTON
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
                 }
 
-                // SAVE BUTTON
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-
                         let newTask = Task(
                             name: name,
                             deadline: deadline,
@@ -132,7 +123,6 @@ struct addTasksView: View {
                             startDate: nil,
                             endDate: nil
                         )
-
                         onSave(newTask)
                         dismiss()
                     }
@@ -141,11 +131,9 @@ struct addTasksView: View {
                 }
             }
         }
-        .presentationDetents([.large])  // full-height sheet like Apple form
-        .presentationDragIndicator(.hidden) // removes gray bar at top
+        .presentationDetents([.large])
+        .presentationDragIndicator(.hidden)
     }
-
-    // MARK: - Helpers
 
     private func setInitialSelections() {
         selectedHours = totalSeconds / 3600
@@ -160,3 +148,4 @@ struct addTasksView: View {
 #Preview {
     addTasksView(totalSeconds: .constant(3600), onSave: { _ in })
 }
+
