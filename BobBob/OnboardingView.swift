@@ -50,7 +50,6 @@ struct IntroductionScreenView1: View {
                     .foregroundColor(.white)
                 Text("a task organiser that adapts to the way you actually work")
                     .multilineTextAlignment(.center)
-                    .padding()
                     .foregroundColor(.gray)
                 Spacer()
             }
