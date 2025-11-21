@@ -674,7 +674,9 @@ struct RestDaysView: View {
                     HStack {
                         Spacer()
                         Button {
-                            hasSeenOnboarding = true
+                            withAnimation(.easeInOut(duration: 0.45)) {
+                                hasSeenOnboarding = true
+                            }
                         } label: {
                             Text("Get started!")
                                 .font(.headline)
@@ -684,10 +686,12 @@ struct RestDaysView: View {
                                 .background(Color.blue)
                                 .cornerRadius(10)
                         }
+
                         .padding(.trailing, 25)
                         .padding(.bottom, 25)
                     }
                 }
+
             }
             .navigationTitle("Rest Days")
 

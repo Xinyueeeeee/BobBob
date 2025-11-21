@@ -14,6 +14,13 @@ struct BobBobApp: App {
             let prefs = PreferencesStore.shared
             if hasSeenOnboarding {
                 ContentView(hasSeenOnboarding: $hasSeenOnboarding)
+                    .transition(.asymmetric(
+                                    insertion: .move(edge: .trailing)
+                                        .combined(with: .opacity)
+                                        .combined(with: .scale(scale: 0.98)),
+                                    removal: .move(edge: .leading)
+                                        .combined(with: .opacity)
+                                ))
                     .environmentObject(mealStore)
                     .environmentObject(restActivityStore)
                     .environmentObject(activityStore)
@@ -22,6 +29,13 @@ struct BobBobApp: App {
                     .environmentObject(prefs)
             } else {
                 OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
+                    .transition(.asymmetric(
+                                    insertion: .move(edge: .trailing)
+                                        .combined(with: .opacity)
+                                        .combined(with: .scale(scale: 0.98)),
+                                    removal: .move(edge: .leading)
+                                        .combined(with: .opacity)
+                                ))
                     .environmentObject(mealStore)
                     .environmentObject(restActivityStore)
                     .environmentObject(activityStore)
