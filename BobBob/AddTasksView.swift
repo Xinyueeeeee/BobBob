@@ -71,8 +71,8 @@ struct addTasksView: View {
                             }
                             .pickerStyle(.wheel)
                         }
-                        .onChange(of: selectedHours) { _ in updateTotalSeconds() }
-                        .onChange(of: selectedMinutes) { _ in updateTotalSeconds() }
+                        .onChange(of: selectedHours) { updateTotalSeconds() }
+                        .onChange(of: selectedMinutes) { updateTotalSeconds() }
                         .background(Color.white)
                         .cornerRadius(12)
                     }
