@@ -15,7 +15,7 @@ struct addTasksView: View {
     @State private var selectedHours: Int = 0
     @State private var selectedMinutes: Int = 0
 
-    let maxHours = 3
+    let maxHours = 24
     let maxMinutes = 59
     
     @State private var prefersTime: Bool = false
