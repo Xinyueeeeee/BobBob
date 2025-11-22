@@ -126,20 +126,23 @@ final class SchedulerViewModel: ObservableObject {
                 Calendar.current.startOfDay(for: Date()),
                 task.startDate?.startOfDay ?? Calendar.current.startOfDay(for: Date())
             )
-            let deadlineDay = task.deadline.startOfDay
-            let lastAllowed = min(deadlineDay, task.endDate?.startOfDay ?? deadlineDay)
+            let deadlineMoment = task.deadline   // full date + time
+
+            let latestAllowed = min(
+                deadlineMoment,
+                task.endDate ?? deadlineMoment
+            )
 
             var foundSpace = false
             var foundFreeDayButTooSmall = false
             
             var day = earliest
-            while day <= lastAllowed {
+            while day <= latestAllowed {
                 let windows = service.debugWindows(for: day, prefs: buildUserPreferences())
                 
                 if windows.isEmpty {
                     // fully blocked day
                 } else {
-                    // Check if ANY window big enough exists
                     let requiredMinutes = max(1, task.durationSeconds / 60)
                     if windows.contains(where: { $0.duration >= requiredMinutes }) {
                         foundSpace = true
@@ -185,6 +188,9 @@ final class SchedulerViewModel: ObservableObject {
         let end   = Calendar.current.date(byAdding: .day, value: 1, to: start)!
 
         return scheduledBlocks.filter { $0.start >= start && $0.start < end }
+    }
+    var allBlocks: [ScheduledBlock] {
+        scheduledBlocks
     }
 
 

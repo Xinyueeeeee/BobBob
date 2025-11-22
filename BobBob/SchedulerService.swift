@@ -133,8 +133,12 @@ final class SchedulerService {
                 task.startDate?.startOfDay ?? calendar.startOfDay(for: today)
             )
 
-            let deadlineDay = task.deadline.startOfDay
-            let latestAllowed = min(deadlineDay, task.endDate?.startOfDay ?? deadlineDay)
+            let deadlineMoment = task.deadline   // full date + time
+
+            let latestAllowed = min(
+                deadlineMoment,
+                task.endDate ?? deadlineMoment
+            )
 
             var placed: ScheduledBlock? = nil
             var day = earliest
@@ -147,8 +151,8 @@ final class SchedulerService {
                 day = day.addingDays(1)
             }
 
-            if placed == nil {
-                var od = latestAllowed.addingDays(1)
+          if placed == nil {
+                var od = latestAllowed.addingTimeInterval(60)
                 let limit = od.addingDays(30)
                 while od <= limit {
                     if let block = place(task, on: od, prefs: prefs, scheduledBlocks: blocks, overdue: true) {
@@ -158,6 +162,7 @@ final class SchedulerService {
                     od = od.addingDays(1)
                 }
             }
+
 
             if let b = placed { blocks.append(b) }
         }
@@ -259,7 +264,9 @@ final class SchedulerService {
                 windows.remove(at: i)
             }
 
-            return ScheduledBlock(task: task, start: start, end: end, isOverdue: overdue)
+            let overdueFlag = start > task.deadline
+            return ScheduledBlock(task: task, start: start, end: end, isOverdue: overdueFlag)
+
         }
 
         return nil

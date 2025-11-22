@@ -724,7 +724,7 @@ struct AddMealTimeView: View {
     @State private var selectedHours: Int = 0
     @State private var selectedMinutes: Int = 30
 
-    private let maxHours = 5
+    private let maxHours = 24
     private let maxMinutes = 59
 
     var onSave: (MealTime) -> Void

@@ -289,8 +289,7 @@ struct TaskBlockView: View {
                     .foregroundColor(.black.opacity(0.7))
 
                 if block.isOverdue {
-                    Text("⚠ Overdue placement")
-                        .foregroundColor(.yellow)
+                    Text("Task has been scheduled after its deadline")
                         .font(.caption)
                 }
             }
