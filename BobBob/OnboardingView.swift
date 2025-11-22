@@ -120,7 +120,6 @@ struct ChronotypeView: View {
                             .font(.subheadline)
                             .foregroundColor(selectedChronotype == "Early Bird" ? .white.opacity(0.9) : .black.opacity(0.7))
                             .multilineTextAlignment(.leading)
-
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -129,6 +128,7 @@ struct ChronotypeView: View {
                     .shadow(color: .black.opacity(0.1), radius: 4)
                 }
                 .padding(.horizontal)
+                
                 Button {
                     selectedChronotype = "Night Owl"
                 } label: {

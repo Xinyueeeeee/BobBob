@@ -106,12 +106,14 @@ struct TaskDetailView: View {
             item = updated
         }
     }
+
     private func deleteItem() {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == item.id }) {
             taskStore.tasks.remove(at: index)
             dismiss()
         }
     }
+
     private func detailRow(icon: String, title: String, value: String) -> some View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: icon)
