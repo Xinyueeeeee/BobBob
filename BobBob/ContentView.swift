@@ -14,9 +14,11 @@ struct ContentView: View {
 }
 
 struct MainTabView: View {
+    @State private var selectedTab = 1
+
     init() {
         let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground() 
+        appearance.configureWithTransparentBackground()
 
         appearance.stackedLayoutAppearance.normal.iconColor = .black
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.black]
@@ -29,18 +31,23 @@ struct MainTabView: View {
     }
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
+
             CalendarView()
                 .tabItem { Label("Calendar", systemImage: "calendar") }
+                .tag(0)
 
             TasksView()
                 .tabItem { Label("Tasks", systemImage: "list.bullet") }
+                .tag(1)   
 
             SettingsView(hasSeenOnboarding: .constant(false))
                 .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tag(2)
         }
     }
 }
+
 
 
 #Preview {

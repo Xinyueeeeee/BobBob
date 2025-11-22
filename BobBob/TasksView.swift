@@ -44,22 +44,16 @@ struct TasksView: View {
 }
 
 private extension TasksView {
-    var background: some View {
-        LinearGradient(
-            gradient: Gradient(colors: [
-                Color.blue.opacity(0.2),
-                Color.blue.opacity(0.6)
-            ]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .ignoresSafeArea()
-    }
-}
-
-private extension TasksView {
     var content: some View {
         VStack(spacing: 20) {
+
+            if taskStore.tasks.isEmpty {
+                Text("Start by adding your task!")
+                    .foregroundColor(.gray)
+                    .font(.headline)
+                    .padding(.top, 40)
+            }
+
             ScrollView {
                 LazyVStack(spacing: 16) {
                     ForEach($taskStore.tasks) { $task in
@@ -75,6 +69,21 @@ private extension TasksView {
         }
     }
 }
+
+private extension TasksView {
+    var background: some View {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                Color.blue.opacity(0.2),
+                Color.blue.opacity(0.6)
+            ]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea()
+    }
+}
+
 
 private extension TasksView {
     func taskRow(task: Binding<Task>) -> some View {
