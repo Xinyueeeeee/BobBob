@@ -13,13 +13,11 @@ struct TaskDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
-                    // MARK: Task Title
                     Text(item.name)
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.black)
                         .padding(.top, 10)
 
-                    // MARK: Overdue Banner
                     if let block = scheduleVM.allBlocks.first(where: { $0.task.id == item.id }),
                        block.isOverdue {
                         HStack(spacing: 10) {
@@ -34,21 +32,18 @@ struct TaskDetailView: View {
                         .cornerRadius(12)
                     }
 
-                    // MARK: Deadline Row
                     detailRow(
                         icon: "calendar",
                         title: "Deadline",
                         value: item.deadline.formatted(date: .abbreviated, time: .shortened)
                     )
 
-                    // MARK: Duration Row
                     detailRow(
                         icon: "timer",
                         title: "Duration",
                         value: durationLabel(item.durationSeconds)
                     )
 
-                    // MARK: Preferred Time
                     if let start = item.startDate, let end = item.endDate {
                         detailRow(
                             icon: "clock",
@@ -62,7 +57,6 @@ struct TaskDetailView: View {
                 .padding(.horizontal)
             }
 
-            // MARK: Footer Buttons
             VStack(spacing: 12) {
 
                 Button {
@@ -106,23 +100,18 @@ struct TaskDetailView: View {
         }
     }
 
-    // MARK: Update Item
     private func updateItem(_ updated: Task) {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == updated.id }) {
             taskStore.tasks[index] = updated
             item = updated
         }
     }
-
-    // MARK: Delete Item
     private func deleteItem() {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == item.id }) {
             taskStore.tasks.remove(at: index)
             dismiss()
         }
     }
-
-    // MARK: Reusable Detail Row
     private func detailRow(icon: String, title: String, value: String) -> some View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: icon)
@@ -139,7 +128,6 @@ struct TaskDetailView: View {
         }
     }
 
-    // MARK: Duration Formatting
     private func durationLabel(_ seconds: Int) -> String {
         let h = seconds / 3600
         let m = (seconds % 3600) / 60
