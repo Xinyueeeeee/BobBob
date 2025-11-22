@@ -1,4 +1,5 @@
 import SwiftUI
+
 struct NapTimeView2: View {
     @Binding var hasSeenOnboarding: Bool
     @EnvironmentObject var scheduleVM: SchedulerViewModel
@@ -13,59 +14,74 @@ struct NapTimeView2: View {
     )!
     
     var body: some View {
-        ZStack{
+        ZStack(alignment: .bottomTrailing) {
+            
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.blue.opacity(0.2),
-                    Color.blue.opacity(0.6)
-                ]),
+                gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.6)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-            VStack {
-                
-                Text("What time do you go to sleep?")
-                    .font(.headline)
-                    .foregroundColor(.black.opacity(0.5))
-                
-                Spacer()
-                
-                DatePicker(
-                    "Select Time",
-                    selection: $sleepTime,
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .padding(.bottom)
-                .onChange(of: sleepTime) { _, _ in
-                    scheduleVM.refreshSchedule()
+           
+            VStack(spacing: 16) {
+                Spacer().frame(height: 80)
+                VStack {
+                    Text("What time do you go to sleep?")
+                        .font(.footnote)
+                        .foregroundColor(.black.opacity(0.5))
+                    
+                    Spacer(minLength: 8)
+                    
+                    DatePicker(
+                        "",
+                        selection: $sleepTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+                    .onChange(of: sleepTime) { _, _ in
+                        scheduleVM.refreshSchedule()
+                    }
                 }
-                
-                Text("What time do you wake up?")
-                    .font(.headline)
-                    .foregroundColor(.black.opacity(0.5))
-                
-                Spacer()
-                
-                DatePicker(
-                    "Select Time",
-                    selection: $wakeTime,
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
                 .padding()
-                .onChange(of: wakeTime) { _, _ in
-                    scheduleVM.refreshSchedule()
-                }
+                .background(Color.white)
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.05), radius: 4)
                 
-                Spacer()
-
+                
+                VStack {
+                    Text("What time do you wake up?")
+                        .font(.footnote)
+                        .foregroundColor(.black.opacity(0.5))
+                    
+                    Spacer(minLength: 8)
+                    
+                    DatePicker(
+                        "",
+                        selection: $wakeTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+                    .onChange(of: wakeTime) { _, _ in
+                        scheduleVM.refreshSchedule()
+                    }
+                }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.05), radius: 4)
+                
+                Spacer(minLength: 120)
             }
             .padding()
             .navigationTitle("Sleep Time")
+            
+            
+          
+            
         }
     }
 }

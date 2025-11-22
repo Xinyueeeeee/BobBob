@@ -37,14 +37,12 @@ struct SettingsView: View {
                         NavigationLink {
                             ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding)
                         } label: { Text("Chronotype") }
-
-                        NavigationLink {
-                            MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: { Text("Meal Time") }
-
                         NavigationLink {
                             NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
                         } label: { Text("Sleep Schedule") }
+                        NavigationLink {
+                            MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
+                        } label: { Text("Meal Time") }
 
                         NavigationLink {
                             ActivitiesView2(hasSeenOnboarding: $hasSeenOnboarding)
