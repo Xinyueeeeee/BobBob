@@ -34,20 +34,20 @@ struct CalendarView: View {
                     Spacer().frame(height: 80)
 
                     HStack {
-                        Text(monthTitle(currentDate))
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-
-                    HStack {
                         Button { changeMonth(-1) } label: {
                             Image(systemName: "chevron.left")
                                 .font(.title2)
                                 .foregroundColor(.black)
                         }
+
                         Spacer()
+
+                        Text(monthTitle(currentDate))
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.black)
+
+                        Spacer()
+
                         Button { changeMonth(1) } label: {
                             Image(systemName: "chevron.right")
                                 .font(.title2)
@@ -72,18 +72,32 @@ struct CalendarView: View {
                                     Text("").frame(height: 45)
                                 } else {
                                     NavigationLink(value: day.date) {
-                                        VStack(spacing: 4) {
-                                            Text("\(dayInt(for: day.date))")
-                                                .font(.system(size: 20))
-                                                .foregroundColor(.black)
+                                        let isRestDay = preferenceStore.restActivities.contains(where: { activity in
+                                            let start = activity.startDate.normalized
+                                            let end = activity.endDate.normalized
+                                            return day.date.normalized >= start && day.date.normalized <= end
+                                        })
 
-                                            if scheduleVM.blocks(for: day.date).count > 0 {
+                                        ZStack {
+                                            if isRestDay {
                                                 Circle()
-                                                    .fill(Color.blue)
-                                                    .frame(width: 6, height: 6)
+                                                    .stroke(Color.red, lineWidth: 2)
+                                                    .frame(width: 38, height: 38)
+                                            }
+
+                                            VStack(spacing: 4) {
+                                                Text("\(dayInt(for: day.date))")
+                                                    .font(.system(size: 20))
+                                                    .foregroundColor(.black)
+                                                if scheduleVM.blocks(for: day.date).count > 0 {
+                                                    Circle()
+                                                        .fill(Color.blue)
+                                                        .frame(width: 6, height: 6)
+                                                }
                                             }
                                         }
                                         .frame(maxWidth: .infinity, minHeight: 45)
+
                                     }
                                 }
                             }
@@ -218,9 +232,31 @@ struct DayDetailView: View {
 
     let day: Date
 
+    var isRestDay: Bool {
+        preferenceStore.restActivities.contains { activity in
+            let s = activity.startDate.normalized
+            let e = activity.endDate.normalized
+            return day.normalized >= s && day.normalized <= e
+        }
+    }
+    func weekdayIndex(from day: String) -> Int {
+        [
+            "Sunday": 1,
+            "Monday": 2,
+            "Tuesday": 3,
+            "Wednesday": 4,
+            "Thursday": 5,
+            "Friday": 6,
+            "Saturday": 7
+        ][day] ?? 2
+    }
+
+
     var body: some View {
 
-        let blocks = scheduleVM.blocks(for: day)
+        let blocks = (scheduleVM.blocks(for: day) + dailyFixedBlocks(for: day))
+            .sorted { $0.start < $1.start }
+
 
         ScrollView {
             VStack(alignment: .leading) {
@@ -235,11 +271,24 @@ struct DayDetailView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.black)
 
-                if blocks.isEmpty {
+                if isRestDay {
+                    VStack(spacing: 10) {
+                        Text("Rest Day")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.red)
+
+                        Text("You have marked today as a rest day.")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.top, 40)
+                } else if blocks.isEmpty {
                     VStack(spacing: 10) {
                         Text("No tasks scheduled")
                             .foregroundColor(.black.opacity(0.6))
                             .font(.headline)
+
 
                         Text("Add tasks and your algorithm will schedule them here.")
                             .font(.subheadline)
@@ -265,18 +314,103 @@ struct DayDetailView: View {
         .navigationTitle("Schedule")
         .navigationBarTitleDisplayMode(.inline)
     }
+    private func dailyFixedBlocks(for day: Date) -> [ScheduledBlock] {
+        var result: [ScheduledBlock] = []
+        let calendar = Calendar.current
+        for meal in preferenceStore.meals {
+            let comps = calendar.dateComponents([.hour, .minute], from: meal.time)
+
+            if let hour = comps.hour, let minute = comps.minute {
+                let start = calendar.date(bySettingHour: hour,
+                                          minute: minute,
+                                          second: 0,
+                                          of: day)!
+
+                let end = start.addingTimeInterval(TimeInterval(meal.duration * 60))
+
+                let pseudoTask = Task(
+                    id: UUID(),
+                    name: meal.mealType,
+                    deadline: day,
+                    durationSeconds: meal.duration * 60,
+                    importance: 0,
+                    startDate: start,
+                    endDate: end,
+                    isCompleted: false
+                )
+
+                result.append(ScheduledBlock(task: pseudoTask, start: start, end: end, isOverdue: false))
+            }
+        }
+
+        let weekday = calendar.component(.weekday, from: day)
+
+        for act in preferenceStore.activities
+            where weekdayIndex(from: act.day) == weekday {
+
+            let comps = calendar.dateComponents([.hour, .minute], from: act.time)
+
+            if let hour = comps.hour, let minute = comps.minute {
+                let start = calendar.date(bySettingHour: hour,
+                                          minute: minute,
+                                          second: 0,
+                                          of: day)!
+
+                let end = start.addingTimeInterval(TimeInterval(act.durationSeconds))
+
+                let pseudoTask = Task(
+                    id: UUID(),
+                    name: act.name,
+                    deadline: day,
+                    durationSeconds: act.durationSeconds,
+                    importance: 0,
+                    startDate: start,
+                    endDate: end,
+                    isCompleted: false
+                )
+
+                result.append(ScheduledBlock(task: pseudoTask, start: start, end: end, isOverdue: false))
+            }
+        }
+
+
+        return result.sorted { $0.start < $1.start }
+    }
+
+
 }
 
 struct TaskBlockView: View {
     @EnvironmentObject var taskStore: TaskStore
     let block: ScheduledBlock
 
+    var isFixedBlock: Bool {
+        block.task.importance == 0 &&
+        block.task.startDate != nil &&
+        block.task.id != block.task.id
+    }
+
+    var isMealOrActivity: Bool {
+        block.task.importance == 0 &&
+        (block.task.name.lowercased().contains("meal") ||
+         block.task.name.lowercased().contains("lunch") ||
+         block.task.name.lowercased().contains("breakfast") ||
+         block.task.name.lowercased().contains("dinner") ||
+         block.task.name.lowercased().contains("gym") ||
+         block.task.name.lowercased().contains("run") ||
+         block.task.name.lowercased().contains("activity"))
+    }
+
     var body: some View {
+
         HStack(spacing: 12) {
-            Button { toggleCompletion() } label: {
-                ReminderCircle(isCompleted: block.task.isCompleted)
+
+            if !isMealOrActivity {
+                Button { toggleCompletion() } label: {
+                    ReminderCircle(isCompleted: block.task.isCompleted)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(block.task.name)
@@ -288,15 +422,16 @@ struct TaskBlockView: View {
                     .font(.subheadline)
                     .foregroundColor(.black.opacity(0.7))
 
-                if block.isOverdue {
+                if block.isOverdue && !isMealOrActivity {
                     Text("Task has been scheduled after its deadline")
                         .font(.caption)
                 }
             }
+
             Spacer()
         }
         .padding()
-        .background(block.task.isCompleted ? Color.gray.opacity(0.2) : Color.blue.opacity(0.4))
+        .background(isMealOrActivity ? Color.blue.opacity(0.15) : Color.blue.opacity(0.4))
         .cornerRadius(12)
         .padding(.horizontal)
         .padding(.vertical, 4)
@@ -314,3 +449,4 @@ struct TaskBlockView: View {
         return f.string(from: date)
     }
 }
+
