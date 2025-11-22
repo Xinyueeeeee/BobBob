@@ -48,7 +48,7 @@ struct IntroductionScreenView1: View {
                     .font(.largeTitle)
                     .bold()
                     .foregroundColor(.white)
-                Text("a task organiser that adapts to the way you actually work")
+                Text("A task organiser that adapts to the way you work")
                     .multilineTextAlignment(.center)
                     .foregroundColor(.gray)
                 Spacer()
