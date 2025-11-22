@@ -7,6 +7,22 @@ struct TaskDetailView: View {
 
     @State var item: Task
     @State private var showEdit = false
+    private var itemType: String {
+        if item.name.lowercased().contains("meal") ||
+            item.name.lowercased().contains("breakfast") ||
+            item.name.lowercased().contains("lunch") ||
+            item.name.lowercased().contains("dinner") {
+            return "Meal"
+        }
+
+        if item.name.lowercased().contains("activity") ||
+            item.name.lowercased().contains("gym") ||
+            item.name.lowercased().contains("run") {
+            return "Activity"
+        }
+
+        return "Task"
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -64,8 +80,9 @@ struct TaskDetailView: View {
                 } label: {
                     HStack {
                         Image(systemName: "pencil")
-                        Text("Edit Task")
+                        Text("Edit \(itemType)")
                     }
+
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(Color.blue.opacity(0.9))
@@ -78,7 +95,7 @@ struct TaskDetailView: View {
                 } label: {
                     HStack {
                         Image(systemName: "trash")
-                        Text("Delete Task")
+                        Text("Delete \(itemType)")
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
