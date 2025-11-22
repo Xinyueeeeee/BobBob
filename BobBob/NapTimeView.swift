@@ -62,10 +62,7 @@ struct NapTimeView2: View {
                 }
                 
                 Spacer()
-                
-                Text("Different people sleep at different hours.")
-                    .font(.footnote)
-                    .foregroundColor(.black.opacity(0.5))
+
             }
             .padding()
             .navigationTitle("Sleep Time")
