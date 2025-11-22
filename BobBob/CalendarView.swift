@@ -73,9 +73,11 @@ struct CalendarView: View {
                                 } else {
                                     NavigationLink(value: day.date) {
                                         VStack(spacing: 4) {
+                                            let isRest = scheduleVM.restDates.contains(day.date.startOfDay)
+
                                             Text("\(dayInt(for: day.date))")
                                                 .font(.system(size: 20))
-                                                .foregroundColor(.black)
+                                                .foregroundColor(isRest ? .blue : .black)
 
                                             if scheduleVM.blocks(for: day.date).count > 0 {
                                                 Circle()
