@@ -19,6 +19,11 @@ final class SchedulerViewModel: ObservableObject {
     private let prefsStore = PreferencesStore.shared
 
     private var cancellables = Set<AnyCancellable>()
+    
+    var restDates: Set<Date> {
+        let prefs = buildUserPreferences()
+        return prefs.restDates
+    }
 
     init() {
         setupBindings()
