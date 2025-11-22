@@ -55,7 +55,7 @@ struct SettingsView: View {
                         } label: { Text("Rest Day") }
                     }
                 }
-                .scrollContentBackground(.hidden) // 👈 makes Form transparent over gradient
+                .scrollContentBackground(.hidden) 
             }
             .navigationTitle("Settings")
         }

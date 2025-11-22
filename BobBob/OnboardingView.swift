@@ -898,7 +898,7 @@ struct AddActivitiesView: View {
                             day: day,
                             regularity: regularity,
                             time: time,
-                            durationSeconds: durationSeconds   // 🔥 SAVED HERE
+                            durationSeconds: durationSeconds
                         )
                         onSave(updated)
                         dismiss()
@@ -924,7 +924,6 @@ struct AddActivitiesView: View {
         }
     }
 
-    // MARK: - Duration calculation
     private func updateDuration() {
         durationSeconds = selectedHours * 3600 + selectedMinutes * 60
     }

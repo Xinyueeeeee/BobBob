@@ -84,27 +84,27 @@ struct AddRestDaysPickerView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         let calendar = Calendar.current
-                        let normalizedStart = calendar.startOfDay(for: mode == .single ? singleDate : startDate)
                         
-                       
-                        let normalizedEnd: Date
-                        if mode == .single {
-                            normalizedEnd = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: singleDate)!
-                        } else {
-                            normalizedEnd = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: endDate)!
-                        }
+                        let normalizedStart = calendar.startOfDay(for: mode == .single ? singleDate : startDate)
+                        let normalizedEnd = calendar.date(
+                            bySettingHour: 23,
+                            minute: 59,
+                            second: 59,
+                            of: mode == .single ? singleDate : endDate
+                        )!
                         
                         let newActivity = RestActivity(
                             id: existing?.id ?? UUID(),
                             name: name,
-                            startDate: startDate.normalized,
-                            endDate: endDate.normalized
-
+                            startDate: normalizedStart,
+                            endDate: normalizedEnd
                         )
+                        
                         onSave(newActivity)
                         dismiss()
                     }
                     .disabled(name.isEmpty)
+
                 }
             }
             .onAppear {

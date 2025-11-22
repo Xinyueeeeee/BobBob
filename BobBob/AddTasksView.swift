@@ -15,8 +15,12 @@ struct addTasksView: View {
     @State private var selectedHours: Int = 0
     @State private var selectedMinutes: Int = 0
 
-    let maxHours = 23
+    let maxHours = 3
     let maxMinutes = 59
+    
+    @State private var prefersTime: Bool = false
+    @State private var startDate: Date? = nil
+    @State private var endDate: Date? = nil
 
     @State private var importance: Double = 0.5
 
@@ -71,12 +75,39 @@ struct addTasksView: View {
                             }
                             .pickerStyle(.wheel)
                         }
-                        .onChange(of: selectedHours) { _ in updateTotalSeconds() }
-                        .onChange(of: selectedMinutes) { _ in updateTotalSeconds() }
+                        .onChange(of: selectedHours) { updateTotalSeconds() }
+                        .onChange(of: selectedMinutes) { updateTotalSeconds() }
                         .background(Color.white)
                         .cornerRadius(12)
                     }
 
+                    VStack(alignment: .leading, spacing: 16) {
+                        Toggle("Preferred Working Time", isOn: $prefersTime)
+
+                        if prefersTime {
+                            DatePicker(
+                                "Start",
+                                selection: Binding(
+                                    get: { startDate ?? Date() },
+                                    set: { startDate = $0 }
+                                ),
+                                displayedComponents: [.date, .hourAndMinute]
+                            )
+
+                            DatePicker(
+                                "End",
+                                selection: Binding(
+                                    get: { endDate ?? Date() },
+                                    set: { endDate = $0 }
+                                ),
+                                displayedComponents: [.date, .hourAndMinute]
+                            )
+                        }
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
+                    
                     VStack(alignment: .leading) {
                         Text("Importance")
                             .font(.headline)
@@ -96,9 +127,13 @@ struct addTasksView: View {
                         deadline = task.deadline
                         totalSeconds = task.durationSeconds
                         importance = task.importance
-
+                        
                         selectedHours = task.durationSeconds / 3600
                         selectedMinutes = (task.durationSeconds % 3600) / 60
+
+                        prefersTime = task.startDate != nil
+                        startDate = task.startDate
+                        endDate = task.endDate
                     }
                 }
             }
@@ -120,8 +155,8 @@ struct addTasksView: View {
                             deadline: deadline,
                             durationSeconds: totalSeconds,
                             importance: importance,
-                            startDate: existingTask?.startDate,
-                            endDate: existingTask?.endDate,
+                            startDate: prefersTime ? startDate : nil,
+                            endDate: prefersTime ? endDate : nil,
                             isCompleted: existingTask?.isCompleted ?? false
                         )
 
