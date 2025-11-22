@@ -81,7 +81,7 @@ struct CalendarView: View {
                                         ZStack {
                                             if isRestDay {
                                                 Circle()
-                                                    .stroke(Color.red, lineWidth: 2)
+                                                    .stroke(Color.blue, lineWidth: 2)
                                                     .frame(width: 38, height: 38)
                                             }
 
@@ -260,29 +260,33 @@ struct DayDetailView: View {
 
         ScrollView {
             VStack(alignment: .leading) {
-                Text(day, format: .dateTime.weekday(.wide))
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.black)
-                    .padding(.top, 20)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(day, format: .dateTime.weekday(.wide))
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
 
-                Text(day, format: .dateTime.day().month().year())
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.black)
+                    Text(day, format: .dateTime.day().month().year())
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                }
+                .padding(.top, 20)
 
                 if isRestDay {
                     VStack(spacing: 10) {
                         Text("Rest Day")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(.red)
+                            .foregroundColor(.blue)
 
                         Text("You have marked today as a rest day.")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
-                    .padding(.top, 40)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 30)
+
                 } else if blocks.isEmpty {
                     VStack(spacing: 10) {
                         Text("No tasks scheduled")
@@ -310,6 +314,8 @@ struct DayDetailView: View {
                 Spacer()
             }
             .padding(.horizontal)
+            .padding(.top, 20)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .navigationTitle("Schedule")
         .navigationBarTitleDisplayMode(.inline)
