@@ -1,9 +1,3 @@
- //
-//  TaskDetailView.swift
-//  BobBob
-//
-//  Created by Hanyi on 20/11/25.
-//
 import SwiftUI
 
 struct TaskDetailView: View {
@@ -162,7 +156,7 @@ struct TaskEditSheet: View {
                 }
                 Section("Duration") {
                     Picker("Hours", selection: $selectedHours) {
-                        ForEach(0..<24) { Text("\($0)h") }
+                        ForEach(0..<4) { Text("\($0)h") }
                     }
 
                     Picker("Minutes", selection: $selectedMinutes) {
