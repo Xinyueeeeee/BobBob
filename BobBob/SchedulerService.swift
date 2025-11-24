@@ -133,7 +133,7 @@ final class SchedulerService {
                 task.startDate?.startOfDay ?? calendar.startOfDay(for: today)
             )
 
-            let deadlineMoment = task.deadline   // full date + time
+            let deadlineMoment = task.deadline  
 
             let latestAllowed = min(
                 deadlineMoment,

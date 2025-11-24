@@ -12,9 +12,21 @@ struct TasksView: View {
             ZStack {
                 background
                 content
-                addButton
+                
             }
             .navigationTitle("Tasks")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showingAddSheet = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.blue)       
+                    }
+                }
+            }
+
         }
         .sheet(isPresented: $showingAddSheet) {
             addTasksView(
@@ -48,10 +60,11 @@ private extension TasksView {
         VStack(spacing: 20) {
 
             if taskStore.tasks.isEmpty {
-                Text("Start by adding your task!")
-                    .foregroundColor(.gray)
-                    .font(.headline)
-                    .padding(.top, 40)
+                ContentUnavailableView(
+                        "No Tasks",
+                        systemImage: "tray",
+                        description: Text("Start by adding your first task.")
+                    )
             }
 
             ScrollView {
@@ -139,24 +152,7 @@ private extension TasksView {
     }
 }
 
-private extension TasksView {
-    var addButton: some View {
-        Button {
-            showingAddSheet = true
-        } label: {
-            Image(systemName: "plus")
-                .font(.title)
-                .foregroundColor(.white)
-                .padding()
-                .background(Circle().fill(Color.blue))
-                .frame(width: 60, height: 60)
-                .shadow(radius: 4)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-        .padding(.leading, 20)
-        .padding(.bottom, 20)
-    }
-}
+
 
 
 

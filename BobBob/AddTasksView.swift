@@ -89,7 +89,13 @@ struct addTasksView: View {
                                 "Start",
                                 selection: Binding(
                                     get: { startDate ?? Date() },
-                                    set: { startDate = $0 }
+                                    set: { newValue in
+                                        startDate = newValue
+
+                                        if let end = endDate, newValue > end {
+                                            endDate = newValue
+                                        }
+                                    }
                                 ),
                                 displayedComponents: [.date, .hourAndMinute]
                             )
@@ -97,9 +103,17 @@ struct addTasksView: View {
                             DatePicker(
                                 "End",
                                 selection: Binding(
-                                    get: { endDate ?? Date() },
-                                    set: { endDate = $0 }
+                                    get: { endDate ?? (startDate ?? Date()) },
+                                    set: { newValue in
+                                       
+                                        if let start = startDate, newValue < start {
+                                            endDate = start
+                                        } else {
+                                            endDate = newValue
+                                        }
+                                    }
                                 ),
+                                in: (startDate ?? Date())...,
                                 displayedComponents: [.date, .hourAndMinute]
                             )
                         }
@@ -107,6 +121,7 @@ struct addTasksView: View {
                     .padding()
                     .background(Color.white)
                     .cornerRadius(12)
+
                     
                     VStack(alignment: .leading) {
                         Text("Importance")
@@ -138,7 +153,7 @@ struct addTasksView: View {
                 }
             }
 
-            .navigationTitle(existingTask == nil ? "Add Task" : "Edit Task")
+            .navigationTitle(existingTask == nil ? "New Task" : "Edit Task")
             .navigationBarTitleDisplayMode(.large)
             .navigationBarBackButtonHidden(true)
 

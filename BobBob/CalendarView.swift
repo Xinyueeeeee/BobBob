@@ -83,18 +83,17 @@ struct CalendarView: View {
                                                 Circle()
                                                     .stroke(Color.blue, lineWidth: 2)
                                                     .frame(width: 38, height: 38)
+                                                    .offset(y: -5.5) 
                                             }
 
                                             VStack(spacing: 4) {
                                                 Text("\(dayInt(for: day.date))")
                                                     .font(.system(size: 20))
                                                     .foregroundColor(.black)
-                                                if scheduleVM.blocks(for: day.date).count > 0 {
-                                                    Circle()
-                                                        .fill(Color.blue)
-                                                        .frame(width: 6, height: 6)
-                                                }
-                                            }
+                                                Circle()
+                                                    .fill(Color.blue)
+                                                    .frame(width: 6, height: 6)
+                                                    .opacity(scheduleVM.blocks(for: day.date).isEmpty ? 0 : 1)                                            }
                                         }
                                         .frame(maxWidth: .infinity, minHeight: 45)
 
@@ -289,14 +288,14 @@ struct DayDetailView: View {
 
                 } else if blocks.isEmpty {
                     VStack(spacing: 10) {
-                        Text("No tasks scheduled")
-                            .foregroundColor(.black.opacity(0.6))
-                            .font(.headline)
+                        if blocks.isEmpty && isRestDay == false {
+                            ContentUnavailableView(
+                                "Nothing Scheduled",
+                                systemImage: "calendar.badge.exclamationmark",
+                                description: Text("You have no tasks or activities today.")
+                            )
+                        }
 
-
-                        Text("Add tasks and your algorithm will schedule them here.")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
                     }
                     .padding(.top, 40)
                 } else {
@@ -439,7 +438,6 @@ struct TaskBlockView: View {
         .padding()
         .background(isMealOrActivity ? Color.blue.opacity(0.15) : Color.blue.opacity(0.4))
         .cornerRadius(12)
-        .padding(.horizontal)
         .padding(.vertical, 4)
     }
 

@@ -131,7 +131,7 @@ final class SchedulerViewModel: ObservableObject {
                 Calendar.current.startOfDay(for: Date()),
                 task.startDate?.startOfDay ?? Calendar.current.startOfDay(for: Date())
             )
-            let deadlineMoment = task.deadline   // full date + time
+            let deadlineMoment = task.deadline
 
             let latestAllowed = min(
                 deadlineMoment,
@@ -146,7 +146,7 @@ final class SchedulerViewModel: ObservableObject {
                 let windows = service.debugWindows(for: day, prefs: buildUserPreferences())
                 
                 if windows.isEmpty {
-                    // fully blocked day
+                
                 } else {
                     let requiredMinutes = max(1, task.durationSeconds / 60)
                     if windows.contains(where: { $0.duration >= requiredMinutes }) {

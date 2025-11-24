@@ -32,11 +32,14 @@ struct MealTimeView2: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
-                    
-                    Text("When do you have your meals?")
-                        .font(.headline)
-                        .foregroundColor(.black.opacity(0.5))
-                        .padding(.top)
+                    if mealStore.meals.isEmpty {
+                        ContentUnavailableView(
+                            "No Meal Times",
+                            systemImage: "fork.knife",
+                            description: Text("Add your meal schedule to get started.")
+                        )
+                    }
+
                     
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 15) {
@@ -52,19 +55,7 @@ struct MealTimeView2: View {
                     Spacer(minLength: 80)
                 }
                 
-                Button {
-                    activeSheet = .add
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.title)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .clipShape(Circle())
-                        .shadow(radius: 3)
-                }
-                .padding(.leading, 25)
-                .padding(.bottom, 25)
+               
             }
             .sheet(item: $activeSheet) { sheet in
                 switch sheet {
@@ -82,6 +73,19 @@ struct MealTimeView2: View {
                 }
             }
             .navigationTitle("Meal Time")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        activeSheet = .add
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
+
+
         }
     }
     func mealRow(_ meal: MealTime) -> some View {

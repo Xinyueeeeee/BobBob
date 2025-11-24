@@ -3,7 +3,7 @@ import SwiftUI
 struct ActivitiesView2: View {
     @EnvironmentObject var activityStore: ActivityStore
     @Binding var hasSeenOnboarding: Bool
-
+    @EnvironmentObject var preferenceStore: PreferencesStore
     @State private var showingAdd = false
     @State private var editingActivity: Activity? = nil
 
@@ -21,11 +21,15 @@ struct ActivitiesView2: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
+                    if preferenceStore.activities.isEmpty {
+                        ContentUnavailableView(
+                            "No Activities",
+                            systemImage: "figure.walk",
+                            description: Text("Add your recurring activities to schedule them.")
+                        )
+                    }
 
-                    Text("Recurring Activities")
-                        .font(.headline)
-                        .foregroundColor(.black.opacity(0.5))
-                        .padding(.top)
+                    
 
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 15) {
@@ -41,25 +45,23 @@ struct ActivitiesView2: View {
                 }
                 VStack {
                     Spacer()
-                    HStack {
-                        Button {
-                            showingAdd = true
-                        } label: {
-                            Image(systemName: "plus")
-                                .font(.title)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                                .shadow(radius: 3)
-                        }
-                        .padding(.leading, 25)
-                        .padding(.bottom, 25)
-                        Spacer()
-                    }
+                    
                 }
             }
             .navigationTitle("Activities")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showingAdd = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.blue)       
+                    }
+                }
+            }
+
+
             .sheet(isPresented: $showingAdd) {
                 AddActivitiesView(activity: nil) { new in
                     activityStore.activities.append(new)

@@ -28,9 +28,15 @@ struct RestDaysView2: View {
             NavigationStack {
                 VStack(spacing: 20) {
                     
-                    Text("When do you rest?")
-                        .font(.headline)
-                        .foregroundColor(.black.opacity(0.5))
+                    if restStore.activities.isEmpty {
+                        ContentUnavailableView(
+                            "No Rest Days",
+                            systemImage: "bed.double",
+                            description: Text("Add your rest dates to block off your schedule.")
+                        )
+                    }
+
+
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -89,25 +95,21 @@ struct RestDaysView2: View {
                 }
                 VStack {
                     Spacer()
-                    HStack {
+                    
+                }
+                .navigationTitle("Rest Days")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             showingAddSheet = true
                         } label: {
-                            Image(systemName: "plus")
-                                .font(.title)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                                .shadow(radius: 3)
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.blue)       
                         }
-                        .padding(.leading, 25)
-                        .padding(.bottom, 25)
-                        Spacer()
                     }
                 }
-                .navigationTitle("Rest Days")
-                
+
                 .sheet(isPresented: $showingAddSheet) {
                     AddRestDaysPickerView(existing: nil) { newActivity in
                         restStore.activities.append(newActivity)

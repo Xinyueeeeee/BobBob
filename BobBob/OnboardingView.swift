@@ -300,11 +300,15 @@ struct MealTimeView: View {
 
             NavigationStack {
                 VStack(spacing: 20) {
+                    if mealStore.meals.isEmpty {
+                        ContentUnavailableView(
+                            "No Meal Times",
+                            systemImage: "fork.knife",
+                            description: Text("Add your meal schedule to get started.")
+                        )
+                    }
 
-                    Text("When do you have your meals?")
-                        .font(.headline)
-                        .foregroundColor(.black.opacity(0.5))
-                        .frame(maxWidth: .infinity, alignment: .center)
+                
 
 
                     ScrollView(showsIndicators: false) {
@@ -355,6 +359,18 @@ struct MealTimeView: View {
                     Spacer()
                 }
                 .navigationTitle("Meals")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            showingAddMeal = true
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                }
+
                 .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showingAddMeal) {
                     AddMealTimeView(meal: nil) { newMeal in
@@ -370,19 +386,7 @@ struct MealTimeView: View {
                 }
             }
 
-            Button {
-                showingAddMeal = true
-            } label: {
-                Image(systemName: "plus")
-                    .font(.title)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .clipShape(Circle())
-                    .shadow(radius: 3)
-            }
-            .padding(.leading, 25)
-            .padding(.bottom, 25)
+            
             
             VStack {
                 Spacer()
@@ -410,6 +414,7 @@ struct MealTimeView: View {
 struct ActivitiesView: View {
     @EnvironmentObject var activityStore: ActivityStore
     @Binding var hasSeenOnboarding: Bool
+    @EnvironmentObject var preferenceStore: PreferencesStore
 
     @State private var showingAdd = false
     @State private var editingActivity: Activity? = nil
@@ -429,9 +434,14 @@ struct ActivitiesView: View {
             NavigationStack {
                 VStack(spacing: 20) {
 
-                    Text("Do you have any recurring activities?")
-                        .font(.headline)
-                        .foregroundColor(.black.opacity(0.5))
+                    if preferenceStore.activities.isEmpty {
+                        ContentUnavailableView(
+                            "No Activities",
+                            systemImage: "figure.walk",
+                            description: Text("Add your recurring activities to schedule them.")
+                        )
+                    }
+
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -484,20 +494,7 @@ struct ActivitiesView: View {
                     Spacer()
 
                     HStack {
-                        Button {
-                            showingAdd = true
-                        } label: {
-                            Image(systemName: "plus")
-                                .font(.title)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                                .shadow(radius: 3)
-                        }
-
-                        Spacer()
-
+                       
                         NavigationLink {
                             RestDaysView(hasSeenOnboarding: $hasSeenOnboarding)
                         } label: {
@@ -514,6 +511,18 @@ struct ActivitiesView: View {
                     .padding(.bottom, 20)
                 }
                 .navigationTitle("Activities")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            showingAdd = true
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                }
+
             }
         }
         .sheet(isPresented: $showingAdd) {
@@ -592,9 +601,15 @@ struct RestDaysView: View {
 
                 VStack(spacing: 20) {
 
-                    Text("When do you rest?")
-                        .font(.headline)
-                        .foregroundColor(.black.opacity(0.5))
+                    if restStore.activities.isEmpty {
+                        ContentUnavailableView(
+                            "No Rest Days",
+                            systemImage: "bed.double",
+                            description: Text("Add your rest dates to block off your schedule.")
+                        )
+                    }
+
+
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
@@ -652,23 +667,8 @@ struct RestDaysView: View {
                     Spacer(minLength: 40)
                 }
                 VStack {
-                    Spacer()
-                    HStack {
-                        Button {
-                            showingAddSheet = true
-                        } label: {
-                            Image(systemName: "plus")
-                                .font(.title)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                                .shadow(radius: 3)
-                        }
-                        .padding(.leading, 25)
-                        .padding(.bottom, 25)
-                        Spacer()
-                    }
+                  
+                  
                 }
 
                 VStack {
@@ -696,6 +696,17 @@ struct RestDaysView: View {
 
             }
             .navigationTitle("Rest Days")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showingAddSheet = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.blue)      
+                    }
+                }
+            }
 
             .sheet(isPresented: $showingAddSheet) {
                 AddRestDaysPickerView(existing: nil) { newActivity in
@@ -780,7 +791,7 @@ struct AddMealTimeView: View {
                     .cornerRadius(12)
                 }
             }
-            .navigationTitle(meal == nil ? "Add Meal" : "Edit Meal")
+            .navigationTitle(meal == nil ? "New Meal" : "Edit Meal")
             .onAppear(perform: setInitialSelections)
             .toolbar {
 
@@ -883,7 +894,7 @@ struct AddActivitiesView: View {
                 }
             }
 
-            .navigationTitle(activity == nil ? "Add Activity" : "Edit Activity")
+            .navigationTitle(activity == nil ? "New Activity" : "Edit Activity")
 
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -915,8 +926,6 @@ struct AddActivitiesView: View {
                     regularity = a.regularity
                     time = a.time
                     durationSeconds = a.durationSeconds
-
-                    // Fill pickers when editing
                     selectedHours = durationSeconds / 3600
                     selectedMinutes = (durationSeconds % 3600) / 60
                 }
@@ -966,7 +975,7 @@ struct AddRestActivityView: View {
                            in: startDate...,
                            displayedComponents: .date)
             }
-            .navigationTitle(activity == nil ? "Add Rest Day" : "Edit Rest Day")
+            .navigationTitle(activity == nil ? "New Rest Day" : "Edit Rest Day")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {

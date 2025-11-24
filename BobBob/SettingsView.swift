@@ -5,9 +5,10 @@
 //  Created by minyi on 14/11/25.
 //
 import SwiftUI
+
 struct SettingsView: View {
     @Binding var hasSeenOnboarding: Bool
-
+    @StateObject private var notificationManager = NotificationManager.shared
     @EnvironmentObject var mealStore: MealTimeStore
     @EnvironmentObject var restActivityStore: RestActivityStore
     @EnvironmentObject var taskStore: TaskStore
@@ -26,6 +27,7 @@ struct SettingsView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
+
                 Form {
                     Section(header: Text("General")) {
                         NavigationLink { NotifsView() } label: {
@@ -34,26 +36,22 @@ struct SettingsView: View {
                     }
 
                     Section(header: Text("Personal Information")) {
-                        NavigationLink {
-                            ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: { Text("Chronotype") }
-                        NavigationLink {
-                            NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: { Text("Sleep Schedule") }
-                        NavigationLink {
-                            MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: { Text("Meal Time") }
-
-                        NavigationLink {
-                            ActivitiesView2(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: { Text("Activity") }
-
-                        NavigationLink {
-                            RestDaysView2(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: { Text("Rest Day") }
+                        NavigationLink { ChronotypeView2(hasSeenOnboarding: $hasSeenOnboarding) } label: { Text("Chronotype") }
+                        NavigationLink { NapTimeView2(hasSeenOnboarding: $hasSeenOnboarding) } label: { Text("Sleep Schedule") }
+                        NavigationLink { MealTimeView2(hasSeenOnboarding: $hasSeenOnboarding) } label: { Text("Meal Time") }
+                        NavigationLink { ActivitiesView2(hasSeenOnboarding: $hasSeenOnboarding) } label: { Text("Activity") }
+                        NavigationLink { RestDaysView2(hasSeenOnboarding: $hasSeenOnboarding) } label: { Text("Rest Day") }
                     }
                 }
-                .scrollContentBackground(.hidden) 
+                .scrollContentBackground(.hidden)
+                .alert("Notifications Disabled", isPresented: $notificationManager.showDeniedAlert) {
+                    Button("Open Settings") {
+                        notificationManager.openSettings()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("To enable notifications, allow notifications in system settings.")
+                }
             }
             .navigationTitle("Settings")
         }
@@ -64,6 +62,8 @@ struct SettingsView: View {
     SettingsView(hasSeenOnboarding: .constant(false))
 }
 
+
+import SwiftUI
 
 struct NotifsView: View {
     @AppStorage("startOfTasks") private var startOfTasks: Bool = false
@@ -86,24 +86,30 @@ struct NotifsView: View {
                 .ignoresSafeArea()
 
                 List {
-                    
                     Toggle("5 minutes before task", isOn: $fiveMinBefTask)
-                        .onChange(of: fiveMinBefTask) {
-                            NotificationManager.shared.requestPermission()
+                        .onChange(of: fiveMinBefTask) { newValue in
+                            if newValue {
+                                NotificationManager.shared.requestPermissionAndUpdate($fiveMinBefTask)
+                            }
                             scheduleVM.refreshNotifications()
                         }
-                    
+
                     Toggle("At the start of the task", isOn: $startOfTasks)
-                        .onChange(of: startOfTasks) {
-                            NotificationManager.shared.requestPermission()
+                        .onChange(of: startOfTasks) { newValue in
+                            if newValue {
+                                NotificationManager.shared.requestPermissionAndUpdate($startOfTasks)
+                            }
                             scheduleVM.refreshNotifications()
                         }
-                    
+
                     Toggle("At the end of the tasks", isOn: $endOfTasks)
-                        .onChange(of: endOfTasks) {
-                            NotificationManager.shared.requestPermission()
+                        .onChange(of: endOfTasks) { newValue in
+                            if newValue {
+                                NotificationManager.shared.requestPermissionAndUpdate($endOfTasks)
+                            }
                             scheduleVM.refreshNotifications()
                         }
+
                 }
                 .scrollContentBackground(.hidden)
                 .listRowBackground(Color.clear)

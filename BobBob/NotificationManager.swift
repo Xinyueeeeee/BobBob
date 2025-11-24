@@ -5,17 +5,26 @@
 //  Created by Hanyi on 20/11/25.
 //
 
-
-import UserNotifications
 import Foundation
+import UserNotifications
+import SwiftUI
 
-final class NotificationManager {
+final class NotificationManager: ObservableObject {
 
     static let shared = NotificationManager()
+    @Published var showDeniedAlert = false
+
     private init() {}
 
     func requestPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+        UNUserNotificationCenter.current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                DispatchQueue.main.async {
+                    if !granted {
+                        self.showDeniedAlert = true
+                    }
+                }
+            }
     }
 
     func clearAll() {
@@ -43,5 +52,23 @@ final class NotificationManager {
         )
 
         UNUserNotificationCenter.current().add(request)
+    }
+
+    func openSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+}
+extension NotificationManager {
+    func requestPermissionAndUpdate(_ binding: Binding<Bool>) {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+            DispatchQueue.main.async {
+                if !granted {
+                    binding.wrappedValue = false
+                    self.showDeniedAlert = true
+                }
+            }
+        }
     }
 }
