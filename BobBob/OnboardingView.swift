@@ -44,14 +44,24 @@ struct IntroductionScreenView1: View {
         ZStack {
             VStack {
                 Spacer()
-                Text("Welcome to Timely!")
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundColor(.white)
-                Text("A task organiser that adapts to the way you work")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.gray)
+
+                // Unified Title Area
+                VStack(spacing: 8) {
+                    Text("Welcome to Timely!")
+                        .font(.largeTitle)
+                        .bold()
+                        .foregroundColor(.white)
+
+                    Text("A task organiser that adapts to the way you work")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.gray)
+                }
+                .padding(.horizontal, 24)
+
                 Spacer()
+
+                // Empty footer space to match screen 2's button spacing
+                Spacer().frame(height: 120)
             }
             .padding()
         }
@@ -64,14 +74,22 @@ struct IntroductionScreenView2: View {
     var body: some View {
         VStack {
             Spacer()
-            Text("Discover")
-                .font(.largeTitle)
-                .bold()
-                .foregroundColor(.white)
-            Text("your working style")
-                .padding(.bottom, 40)
-                .foregroundColor(.gray)
+
+            // Unified Title Area
+            VStack(spacing: 8) {
+                Text("Discover")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.white)
+
+                Text("your working style")
+                    .foregroundColor(.gray)
+            }
+            .padding(.horizontal, 24)
+
             Spacer()
+
+            // Button in same vertical layout position
             NavigationLink {
                 ChronotypeView(hasSeenOnboarding: $hasSeenOnboarding)
             } label: {
@@ -89,6 +107,7 @@ struct IntroductionScreenView2: View {
         .padding()
     }
 }
+
 
 struct ChronotypeView: View {
     @AppStorage("selectedChronotype") private var selectedChronotype: String?
@@ -414,13 +433,13 @@ struct MealTimeView: View {
 struct ActivitiesView: View {
     @EnvironmentObject var activityStore: ActivityStore
     @Binding var hasSeenOnboarding: Bool
-    @EnvironmentObject var preferenceStore: PreferencesStore
 
     @State private var showingAdd = false
     @State private var editingActivity: Activity? = nil
 
     var body: some View {
         ZStack {
+            // Background
             LinearGradient(
                 colors: [
                     Color.blue.opacity(0.2),
@@ -434,7 +453,7 @@ struct ActivitiesView: View {
             NavigationStack {
                 VStack(spacing: 20) {
 
-                    if preferenceStore.activities.isEmpty {
+                    if activityStore.activities.isEmpty {
                         ContentUnavailableView(
                             "No Activities",
                             systemImage: "figure.walk",
@@ -442,10 +461,8 @@ struct ActivitiesView: View {
                         )
                     }
 
-
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 15) {
-
                             ForEach(activityStore.activities) { activity in
                                 HStack {
                                     Button {
@@ -485,30 +502,12 @@ struct ActivitiesView: View {
                                 .shadow(color: .black.opacity(0.05),
                                         radius: 6, x: 0, y: 4)
                             }
-
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
                     }
 
-                    Spacer()
-
-                    HStack {
-                       
-                        NavigationLink {
-                            RestDaysView(hasSeenOnboarding: $hasSeenOnboarding)
-                        } label: {
-                            Text("Next")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 20)
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
+                    Spacer(minLength: 80)   // Push content above the fixed button
                 }
                 .navigationTitle("Activities")
                 .toolbar {
@@ -522,7 +521,27 @@ struct ActivitiesView: View {
                         }
                     }
                 }
+            }
 
+            // FIXED NEXT BUTTON (bottom-right corner)
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    NavigationLink {
+                        RestDaysView(hasSeenOnboarding: $hasSeenOnboarding)
+                    } label: {
+                        Text("Next")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    .padding(.trailing, 25)
+                    .padding(.bottom, 25)
+                }
             }
         }
         .sheet(isPresented: $showingAdd) {
@@ -703,7 +722,7 @@ struct RestDaysView: View {
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.blue)      
+                            .foregroundColor(.blue)
                     }
                 }
             }

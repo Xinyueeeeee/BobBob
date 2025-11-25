@@ -56,7 +56,7 @@ struct ChronotypeView2: View {
                     Button {
                         selectedChronotype = "Night Owl"
                         prefsStore.chronotype = "Night Owl"
-                        scheduleVM.refreshSchedule()    
+                        scheduleVM.refreshSchedule()
                         scheduleVM.refreshNotifications()
                     } label: {
                         VStack(alignment: .leading, spacing: 6) {

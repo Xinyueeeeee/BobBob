@@ -76,7 +76,7 @@ struct AddRestDaysPickerView: View {
                     }
                 }
             }
-            .navigationTitle(existing == nil ? "Add Rest Days" : "Edit Rest Days")
+            .navigationTitle(existing == nil ? "New Rest Day" : "Edit Rest Day")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

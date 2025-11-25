@@ -39,7 +39,7 @@ struct MainTabView: View {
 
             TasksView()
                 .tabItem { Label("Tasks", systemImage: "list.bullet") }
-                .tag(1)   
+                .tag(1)
 
             SettingsView(hasSeenOnboarding: .constant(false))
                 .tabItem { Label("Settings", systemImage: "gearshape") }

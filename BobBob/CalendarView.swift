@@ -83,7 +83,7 @@ struct CalendarView: View {
                                                 Circle()
                                                     .stroke(Color.blue, lineWidth: 2)
                                                     .frame(width: 38, height: 38)
-                                                    .offset(y: -5.5) 
+                                                    .offset(y: -5.5)
                                             }
 
                                             VStack(spacing: 4) {
@@ -256,27 +256,29 @@ struct DayDetailView: View {
         let blocks = (scheduleVM.blocks(for: day) + dailyFixedBlocks(for: day))
             .sorted { $0.start < $1.start }
 
-
         ScrollView {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 20) {
+
+                // TOP-LEFT HEADER
                 VStack(alignment: .leading, spacing: 4) {
                     Text(day, format: .dateTime.weekday(.wide))
                         .font(.largeTitle)
-                        .fontWeight(.bold)
+                        .bold()
                         .foregroundColor(.black)
 
                     Text(day, format: .dateTime.day().month().year())
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
+                        .font(.title2)
+                        .foregroundColor(.black.opacity(0.8))
                 }
-                .padding(.top, 20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 10)   // small padding to avoid hitting nav bar
 
+                // REST DAY
                 if isRestDay {
                     VStack(spacing: 10) {
                         Text("Rest Day")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .font(.title)
+                            .bold()
                             .foregroundColor(.blue)
 
                         Text("You have marked today as a rest day.")
@@ -284,41 +286,41 @@ struct DayDetailView: View {
                             .foregroundColor(.gray)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.top, 30)
+                    .padding(.top, 20)
 
+                // EMPTY
                 } else if blocks.isEmpty {
-                    VStack(spacing: 10) {
-                        if blocks.isEmpty && isRestDay == false {
-                            ContentUnavailableView(
-                                "Nothing Scheduled",
-                                systemImage: "calendar.badge.exclamationmark",
-                                description: Text("You have no tasks or activities today.")
-                            )
-                        }
+                    ContentUnavailableView(
+                        "Nothing Scheduled",
+                        systemImage: "calendar.badge.exclamationmark",
+                        description: Text("You have no tasks or activities today.")
+                    )
+                    .padding(.top, 20)
 
-                    }
-                    .padding(.top, 40)
+                // BLOCKS
                 } else {
-                    ForEach(blocks) { block in
-                        NavigationLink {
-                            TaskDetailView(item: block.task)
-                        } label: {
-                            TaskBlockView(block: block)
-                                .environmentObject(taskStore)
+                    VStack(spacing: 12) {
+                        ForEach(blocks) { block in
+                            NavigationLink {
+                                TaskDetailView(item: block.task)
+                            } label: {
+                                TaskBlockView(block: block)
+                                    .environmentObject(taskStore)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.top, 10)
                 }
 
-                Spacer()
+                Spacer(minLength: 20)
             }
-            .padding(.horizontal)
-            .padding(.top, 20)
+            .padding(.horizontal, 20)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .navigationTitle("Schedule")
-        .navigationBarTitleDisplayMode(.inline)
+        
     }
+
     private func dailyFixedBlocks(for day: Date) -> [ScheduledBlock] {
         var result: [ScheduledBlock] = []
         let calendar = Calendar.current

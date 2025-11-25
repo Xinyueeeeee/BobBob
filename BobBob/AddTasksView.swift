@@ -74,23 +74,34 @@ struct addTasksView: View {
                     Toggle("Enable", isOn: $prefersTime)
                     
                     if prefersTime {
+                        // START TIME
                         DatePicker(
                             "Start",
                             selection: Binding(
                                 get: { startDate ?? Date() },
-                                set: { startDate = $0 }
+                                set: {
+                                    startDate = $0
+
+                                    // Force endDate ≥ startDate
+                                    if let end = endDate, end < $0 {
+                                        endDate = $0
+                                    }
+                                }
                             ),
                             displayedComponents: [.date, .hourAndMinute]
                         )
-                        
+
+                        // END TIME (cannot be earlier than start)
                         DatePicker(
                             "End",
                             selection: Binding(
-                                get: { endDate ?? Date() },
+                                get: { endDate ?? (startDate ?? Date()) },
                                 set: { endDate = $0 }
                             ),
+                            in: (startDate ?? Date())...,           // <-- prevents going earlier
                             displayedComponents: [.date, .hourAndMinute]
                         )
+
                     }
                 }
                 

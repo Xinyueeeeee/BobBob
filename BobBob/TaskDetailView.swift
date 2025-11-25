@@ -1,4 +1,5 @@
 import SwiftUI
+
 struct TaskDetailView: View {
 
     @Environment(\.dismiss) var dismiss
@@ -7,6 +8,10 @@ struct TaskDetailView: View {
 
     @State var item: Task
     @State private var showEdit = false
+    @State private var editSeconds: Int = 0
+
+    /// Detects whether this looks like a Meal or an Activity based on the name.
+    /// This was already in your original code – now we actually use it.  :contentReference[oaicite:1]{index=1}
     private var itemType: String {
         if item.name.lowercased().contains("meal") ||
             item.name.lowercased().contains("breakfast") ||
@@ -24,11 +29,23 @@ struct TaskDetailView: View {
         return "Task"
     }
 
+    /// True if this task actually lives in TaskStore (normal task),
+    /// false for the pseudo tasks created in `dailyFixedBlocks` for meals/activities.
+    private var isStoredTask: Bool {
+        taskStore.tasks.contains(where: { $0.id == item.id })
+    }
+
+    /// Convenience: is this a meal or activity block?
+    private var isRoutineBlock: Bool {
+        itemType == "Meal" || itemType == "Activity"
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
+                    // OVERDUE WARNING
                     if let block = scheduleVM.allBlocks.first(where: { $0.task.id == item.id }),
                        block.isOverdue {
                         HStack(spacing: 10) {
@@ -43,23 +60,34 @@ struct TaskDetailView: View {
                         .cornerRadius(12)
                     }
 
+                    // DATE / DEADLINE ROW
                     detailRow(
                         icon: "calendar",
-                        title: "Deadline",
-                        value: item.deadline.formatted(date: .abbreviated, time: .shortened)
+                        title: isRoutineBlock ? "Date" : "Deadline",
+                        value: isRoutineBlock
+                            // Meals / Activities: date only
+                            ? item.deadline.formatted(date: .abbreviated, time: .omitted)
+                            // Normal tasks: date + time, as before
+                            : item.deadline.formatted(date: .abbreviated, time: .shortened)
                     )
 
+                    // DURATION
                     detailRow(
                         icon: "timer",
                         title: "Duration",
                         value: durationLabel(item.durationSeconds)
                     )
 
+                    // TIME / PREFERRED TIME
                     if let start = item.startDate, let end = item.endDate {
                         detailRow(
                             icon: "clock",
-                            title: "Preferred Time",
-                            value: "\(start.formatted(date: .abbreviated, time: .shortened)) → \(end.formatted(date: .abbreviated, time: .shortened))"
+                            title: isRoutineBlock ? "Time" : "Preferred Time",
+                            value: isRoutineBlock
+                                // Meals / Activities: time range only
+                                ? "\(start.formatted(date: .omitted, time: .shortened)) → \(end.formatted(date: .omitted, time: .shortened))"
+                                // Normal tasks: keep date + time as before
+                                : "\(start.formatted(date: .abbreviated, time: .shortened)) → \(end.formatted(date: .abbreviated, time: .shortened))"
                         )
                     }
 
@@ -67,25 +95,29 @@ struct TaskDetailView: View {
                 }
                 .padding(.horizontal)
             }
-
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button {
-                            showEdit = true
-                        } label: {
-                            Label("Edit", systemImage: "pencil")
-                        }
+                    // Only show Edit/Delete for REAL tasks that live in TaskStore.
+                    if isStoredTask {
+                        Menu {
+                            Button {
+                                // Seed seconds for the editor; addTasksView will also override from existingTask.
+                                editSeconds = item.durationSeconds
+                                showEdit = true
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
 
-                        Button(role: .destructive) {
-                            deleteItem()
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
+                            Button(role: .destructive) {
+                                deleteItem()
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
 
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .font(.title2)
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.title2)
+                        }
                     }
                 }
             }
@@ -93,9 +125,16 @@ struct TaskDetailView: View {
         .navigationTitle(item.name)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showEdit) {
-            TaskEditSheet(task: item) { updated in
-                updateItem(updated)
-            }
+            // Use the SAME editor as TasksView (addTasksView).
+            addTasksView(
+                totalSeconds: $editSeconds,
+                onSave: { updated in
+                    updateItem(updated)
+                },
+                existingTask: item
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
         }
     }
 
@@ -103,12 +142,18 @@ struct TaskDetailView: View {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == updated.id }) {
             taskStore.tasks[index] = updated
             item = updated
+        } else {
+            // If somehow it's not in the store, at least update the local copy.
+            item = updated
         }
     }
 
     private func deleteItem() {
         if let index = taskStore.tasks.firstIndex(where: { $0.id == item.id }) {
             taskStore.tasks.remove(at: index)
+            dismiss()
+        } else {
+            // Pseudo task from calendar – nothing to delete in the store, just dismiss.
             dismiss()
         }
     }
@@ -137,108 +182,6 @@ struct TaskDetailView: View {
         case (0, _): return "\(m)m"
         case (_, 0): return "\(h)h"
         default: return "\(h)h \(m)m"
-        }
-    }
-}
-
-struct TaskEditSheet: View {
-
-    @Environment(\.dismiss) var dismiss
-
-    let task: Task
-    var onSave: (Task) -> Void
-
-    @State private var name: String
-    @State private var deadline: Date
-    @State private var durationSeconds: Int
-    @State private var startDate: Date?
-    @State private var endDate: Date?
-    @State private var selectedHours = 0
-    @State private var selectedMinutes = 0
-    @State private var prefersTime = false
-
-    init(task: Task, onSave: @escaping (Task) -> Void) {
-        self.task = task
-        self.onSave = onSave
-
-        _name = State(initialValue: task.name)
-        _deadline = State(initialValue: task.deadline)
-        _durationSeconds = State(initialValue: task.durationSeconds)
-        _startDate = State(initialValue: task.startDate)
-        _endDate = State(initialValue: task.endDate)
-        _prefersTime = State(initialValue: task.startDate != nil)
-    }
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Task Name") {
-                    TextField("Name", text: $name)
-                }
-                Section("Deadline") {
-                    DatePicker("Deadline", selection: $deadline)
-                }
-                Section("Duration") {
-                    Picker("Hours", selection: $selectedHours) {
-                        ForEach(0..<4) { Text("\($0)h") }
-                    }
-
-                    Picker("Minutes", selection: $selectedMinutes) {
-                        ForEach(0..<60) { Text("\($0)m") }
-                    }
-                }
-
-                Toggle("Preferred Working Time", isOn: $prefersTime)
-
-                if prefersTime {
-                    DatePicker(
-                        "Start",
-                        selection: Binding(
-                            get: { startDate ?? Date() },
-                            set: { startDate = $0 }
-                        ),
-                        displayedComponents: [.date, .hourAndMinute]
-                    )
-
-                    DatePicker(
-                        "End",
-                        selection: Binding(
-                            get: { endDate ?? Date() },
-                            set: { endDate = $0 }
-                        ),
-                        displayedComponents: [.date, .hourAndMinute]
-                    )
-                }
-
-            }
-            .navigationTitle("Edit Task")
-            .toolbar {
-
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let updated = Task(
-                            id: task.id,
-                            name: name,
-                            deadline: deadline,
-                            durationSeconds: selectedHours * 3600 + selectedMinutes * 60,
-                            importance: task.importance,
-                            startDate: prefersTime ? startDate : nil,
-                            endDate: prefersTime ? endDate : nil
-                        )
-
-                        onSave(updated)
-                        dismiss()
-                    }
-                }
-            }
-            .onAppear {
-                selectedHours = durationSeconds / 3600
-                selectedMinutes = (durationSeconds % 3600) / 60
-            }
         }
     }
 }

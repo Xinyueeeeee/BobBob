@@ -56,7 +56,7 @@ struct ActivitiesView2: View {
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.blue)       
+                            .foregroundColor(.blue)
                     }
                 }
             }
