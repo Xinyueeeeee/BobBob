@@ -20,8 +20,9 @@ struct TasksView: View {
                     Button {
                         showingAddSheet = true
                     } label: {
-                        Image(systemName: "plus")
+                        Image(systemName: "plus.circle.fill")
                             .font(.title2)
+                            .foregroundColor(.blue)
                     }
                 }
             }

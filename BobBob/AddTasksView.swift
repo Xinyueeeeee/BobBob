@@ -39,6 +39,14 @@ struct addTasksView: View {
                     TextField("E.g. Science Project", text: $name)
                 }
                 
+                Section(header: Text("Deadline")) {
+                    DatePicker(
+                        "Select Deadline",
+                        selection: $deadline,
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                }
+                
                 Section(header: Text("Duration")) {
                     HStack {
                         Picker("Hours", selection: $selectedHours) {
@@ -100,7 +108,7 @@ struct addTasksView: View {
                 }
             }
             
-            .navigationTitle(existingTask == nil ? "Add Task" : "Edit Task")
+            .navigationTitle(existingTask == nil ? "New Task" : "Edit Task")
             .navigationBarTitleDisplayMode(.large)
             .navigationBarBackButtonHidden(true)
             

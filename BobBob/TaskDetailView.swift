@@ -29,11 +29,6 @@ struct TaskDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
-                    Text(item.name)
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(.black)
-                        .padding(.top, 10)
-
                     if let block = scheduleVM.allBlocks.first(where: { $0.task.id == item.id }),
                        block.isOverdue {
                         HStack(spacing: 10) {
@@ -73,42 +68,29 @@ struct TaskDetailView: View {
                 .padding(.horizontal)
             }
 
-            VStack(spacing: 12) {
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button {
+                            showEdit = true
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
 
-                Button {
-                    showEdit = true
-                } label: {
-                    HStack {
-                        Image(systemName: "pencil")
-                        Text("Edit \(itemType)")
+                        Button(role: .destructive) {
+                            deleteItem()
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .font(.title2)
                     }
-
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue.opacity(0.9))
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
                 }
-
-                Button(role: .destructive) {
-                    deleteItem()
-                } label: {
-                    HStack {
-                        Image(systemName: "trash")
-                        Text("Delete \(itemType)")
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.red.opacity(0.15))
-                    .cornerRadius(12)
-                }
-
             }
-            .padding(.horizontal)
-            .padding(.bottom, 16)
-            .background(Color(.systemGray6))
         }
-        .navigationTitle("Task Details")
+        .navigationTitle(item.name)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showEdit) {
             TaskEditSheet(task: item) { updated in
