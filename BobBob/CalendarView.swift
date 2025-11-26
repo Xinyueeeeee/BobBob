@@ -259,7 +259,6 @@ struct DayDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
 
-                // TOP-LEFT HEADER
                 VStack(alignment: .leading, spacing: 4) {
                     Text(day, format: .dateTime.weekday(.wide))
                         .font(.largeTitle)
@@ -271,9 +270,8 @@ struct DayDetailView: View {
                         .foregroundColor(.black.opacity(0.8))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 10)   // small padding to avoid hitting nav bar
-
-                // REST DAY
+                .padding(.top, 10)
+                
                 if isRestDay {
                     VStack(spacing: 10) {
                         Text("Rest Day")
@@ -288,7 +286,6 @@ struct DayDetailView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 20)
 
-                // EMPTY
                 } else if blocks.isEmpty {
                     ContentUnavailableView(
                         "Nothing Scheduled",
@@ -297,7 +294,6 @@ struct DayDetailView: View {
                     )
                     .padding(.top, 20)
 
-                // BLOCKS
                 } else {
                     VStack(spacing: 12) {
                         ForEach(blocks) { block in
